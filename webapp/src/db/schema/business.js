@@ -1,0 +1,67 @@
+// business, business_member, business_settings
+import { 
+  pgTable, 
+  uuid, 
+  varchar, 
+  text, 
+  timestamp, 
+  date,
+  integer,
+  pgEnum, 
+  uniqueIndex,
+  index,
+  unique
+} from 'drizzle-orm/pg-core';
+// Importing the users table to establish the cross-module foreign key
+import { users } from './identity.js';
+
+export const businessTypeEnum = pgEnum('business_type', ['RETAIL', 'WHOLESALE', 'DISTRIBUTOR', 'MANUFACTURER', 'SERVICE']);
+export const businessStatusEnum = pgEnum('business_status', ['ACTIVE', 'INACTIVE']);
+export const memberStatusEnum = pgEnum('member_status', ['ACTIVE', 'INVITED', 'REMOVED']);
+
+export const businesses = pgTable('business', {
+  id: uuid('id').primaryKey(),
+  name: varchar('name', { length: 150 }).notNull(),
+  legalName: varchar('legal_name', { length: 200 }),
+  businessType: businessTypeEnum('business_type').notNull(),
+  gstin: varchar('gstin', { length: 15 }),
+  pan: varchar('pan', { length: 10 }),
+  phone: varchar('phone', { length: 15 }).notNull(),
+  email: varchar('email', { length: 255 }),
+  addressLine1: varchar('address_line1', { length: 255 }),
+  addressLine2: varchar('address_line2', { length: 255 }),
+  city: varchar('city', { length: 100 }),
+  state: varchar('state', { length: 100 }),
+  pincode: varchar('pincode', { length: 10 }),
+  logoUrl: text('logo_url'),
+  status: businessStatusEnum('status').notNull().default('ACTIVE'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (table) => ({
+  // Blueprint: UNIQUE (gstin) WHERE gstin IS NOT NULL
+  gstinUniqueIdx: uniqueIndex('business_gstin_unique_idx').on(table.gstin).where(table.gstin.isNotNull()),
+  // Blueprint: INDEX (name), INDEX (phone)
+  nameIdx: index('business_name_idx').on(table.name),
+  phoneIdx: index('business_phone_idx').on(table.phone),
+}));
+
+export const businessMembers = pgTable('business_member', {
+  id: uuid('id').primaryKey(),
+  businessId: uuid('business_id').notNull().references(() => businesses.id),
+  userId: uuid('user_id').notNull().references(() => users.id),
+  joinedAt: timestamp('joined_at', { withTimezone: true }).notNull().defaultNow(),
+  status: memberStatusEnum('status').notNull().default('ACTIVE'),
+}, (table) => ({
+  // Blueprint: UNIQUE (business_id, user_id)
+  businessUserUnique: unique('business_member_unique').on(table.businessId, table.userId),
+}));
+
+export const businessSettings = pgTable('business_settings', {
+  // business_id acts as both Primary Key and Foreign Key
+  businessId: uuid('business_id').primaryKey().references(() => businesses.id),
+  invoicePrefix: varchar('invoice_prefix', { length: 20 }).notNull().default('INV'),
+  financialYearStart: date('financial_year_start').notNull(),
+  lowStockThreshold: integer('low_stock_threshold').notNull().default(10),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
