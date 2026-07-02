@@ -14,7 +14,7 @@ import {
   unique
 } from 'drizzle-orm/pg-core';
 import { users } from './identity.js';
-import { generateId, timestamps } from './helpers.js';
+import { generateId, timestamps, foreignBusinessId } from './helpers.js';
 
 export const businessTypeEnum = pgEnum('business_type', ['RETAIL', 'WHOLESALE', 'DISTRIBUTOR', 'MANUFACTURER', 'SERVICE']);
 export const businessStatusEnum = pgEnum('business_status', ['ACTIVE', 'INACTIVE']);
