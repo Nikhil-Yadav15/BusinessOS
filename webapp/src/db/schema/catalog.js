@@ -13,18 +13,18 @@ import {
   unique
 } from 'drizzle-orm/pg-core';
 import { businesses } from './business.js';
+import { generateId, foreignBusinessId, timestamps } from './helpers.js';
 
 // Shared enum for Catalog entities
 export const catalogStatusEnum = pgEnum('catalog_status', ['ACTIVE', 'INACTIVE']);
 
 export const categories = pgTable('category', {
-  id: uuid('id').primaryKey(),
-  businessId: uuid('business_id').notNull().references(() => businesses.id),
+  id: generateId(),
+  businessId: foreignBusinessId(businesses),
   name: varchar('name', { length: 100 }).notNull(),
   description: text('description'),
   status: catalogStatusEnum('status').notNull().default('ACTIVE'),
-  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  ...timestamps,
 }, (table) => ({
   // Blueprint: UNIQUE (business_id, name)
   businessNameUnique: unique('category_business_name_unique').on(table.businessId, table.name),
@@ -34,31 +34,29 @@ export const categories = pgTable('category', {
 }));
 
 export const brands = pgTable('brand', {
-  id: uuid('id').primaryKey(),
-  businessId: uuid('business_id').notNull().references(() => businesses.id),
+  id: generateId(),
+  businessId: foreignBusinessId(businesses),
   name: varchar('name', { length: 100 }).notNull(),
   description: text('description'),
   status: catalogStatusEnum('status').notNull().default('ACTIVE'),
-  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  ...timestamps,
 }, (table) => ({
   // Blueprint: UNIQUE (business_id, name)
   businessNameUnique: unique('brand_business_name_unique').on(table.businessId, table.name),
 }));
 
 export const units = pgTable('unit', {
-  id: uuid('id').primaryKey(),
-  businessId: uuid('business_id').notNull().references(() => businesses.id),
+  id: generateId(),
+  businessId: foreignBusinessId(businesses),
   name: varchar('name', { length: 50 }).notNull(),
   shortName: varchar('short_name', { length: 20 }).notNull(),
   status: catalogStatusEnum('status').notNull().default('ACTIVE'),
-  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  ...timestamps,
 });
 
 export const products = pgTable('product', {
-  id: uuid('id').primaryKey(),
-  businessId: uuid('business_id').notNull().references(() => businesses.id),
+  id: generateId(),
+  businessId: foreignBusinessId(businesses),
   categoryId: uuid('category_id').references(() => categories.id),
   brandId: uuid('brand_id').references(() => brands.id),
   unitId: uuid('unit_id').notNull().references(() => units.id),
@@ -73,8 +71,7 @@ export const products = pgTable('product', {
   minimumStock: decimal('minimum_stock', { precision: 18, scale: 3 }).notNull().default('0'),
   hsnCode: varchar('hsn_code', { length: 20 }),
   status: catalogStatusEnum('status').notNull().default('ACTIVE'),
-  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  ...timestamps,
 }, (table) => ({
   // Blueprint: UNIQUE (business_id, sku)
   businessSkuUnique: unique('product_business_sku_unique').on(table.businessId, table.sku),
@@ -92,9 +89,9 @@ export const products = pgTable('product', {
 }));
 
 export const productImages = pgTable('product_image', {
-  id: uuid('id').primaryKey(),
+  id: generateId(),
   productId: uuid('product_id').notNull().references(() => products.id),
   imageUrl: text('image_url').notNull(),
   displayOrder: smallint('display_order').notNull(),
-  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  createdAt: timestamps.createdAt,
 });

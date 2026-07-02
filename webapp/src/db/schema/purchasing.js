@@ -15,13 +15,14 @@ import { products } from './catalog.js';
 import { users } from './identity.js';
 import { parties } from './crm.js';
 import { paymentMethodEnum } from './sales.js'; // Imported to ensure enum consistency
+import { generateId, foreignBusinessId, timestamps } from './helpers.js';
 
 export const purchaseTypeEnum = pgEnum('purchase_type', ['PURCHASE', 'RETURN']);
 export const purchaseStatusEnum = pgEnum('purchase_status', ['DRAFT', 'FINALIZED', 'PARTIALLY_PAID', 'PAID', 'CANCELLED']);
 
 export const purchases = pgTable('purchase', {
-  id: uuid('id').primaryKey(),
-  businessId: uuid('business_id').notNull().references(() => businesses.id),
+  id: generateId(),
+  businessId: foreignBusinessId(businesses),
   supplierId: uuid('supplier_id').notNull().references(() => parties.id),
   purchaseNumber: varchar('purchase_number', { length: 50 }).notNull(),
   purchaseType: purchaseTypeEnum('purchase_type').notNull(),
@@ -36,15 +37,14 @@ export const purchases = pgTable('purchase', {
   notes: text('notes'),
   status: purchaseStatusEnum('status').notNull(),
   createdBy: uuid('created_by').notNull().references(() => users.id),
-  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  ...timestamps,
 }, (table) => ({
   // Blueprint: UNIQUE (business_id, purchase_number)
   businessNumUnique: unique('purchase_business_num_unique').on(table.businessId, table.purchaseNumber),
 }));
 
 export const purchaseItems = pgTable('purchase_item', {
-  id: uuid('id').primaryKey(),
+  id: generateId(),
   purchaseId: uuid('purchase_id').notNull().references(() => purchases.id),
   productId: uuid('product_id').notNull().references(() => products.id),
   quantity: decimal('quantity', { precision: 18, scale: 3 }).notNull(),
@@ -55,8 +55,8 @@ export const purchaseItems = pgTable('purchase_item', {
 });
 
 export const supplierPayments = pgTable('supplier_payment', {
-  id: uuid('id').primaryKey(),
-  businessId: uuid('business_id').notNull().references(() => businesses.id),
+  id: generateId(),
+  businessId: foreignBusinessId(businesses),
   purchaseId: uuid('purchase_id').notNull().references(() => purchases.id),
   paymentDate: timestamp('payment_date', { withTimezone: true }).notNull(),
   paymentMethod: paymentMethodEnum('payment_method').notNull(),
@@ -64,5 +64,5 @@ export const supplierPayments = pgTable('supplier_payment', {
   referenceNumber: varchar('reference_number', { length: 100 }),
   remarks: text('remarks'),
   paidBy: uuid('paid_by').notNull().references(() => users.id),
-  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  createdAt: timestamps.createdAt,
 });

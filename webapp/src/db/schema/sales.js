@@ -1,17 +1,19 @@
 // invoice, invoice_item, payment
+// webapp/src/db/schema/sales.js
 import { pgTable, uuid, varchar, text, timestamp, decimal, pgEnum, index, unique } from 'drizzle-orm/pg-core';
 import { businesses } from './business.js';
 import { products } from './catalog.js';
 import { users } from './identity.js';
 import { parties } from './crm.js';
+import { generateId, foreignBusinessId, timestamps } from './helpers.js';
 
 export const invoiceTypeEnum = pgEnum('invoice_type', ['SALE', 'RETURN']);
 export const invoiceStatusEnum = pgEnum('invoice_status', ['DRAFT', 'FINALIZED', 'PARTIALLY_PAID', 'PAID', 'CANCELLED']);
 export const paymentMethodEnum = pgEnum('payment_method', ['CASH', 'UPI', 'CARD', 'BANK_TRANSFER', 'CHEQUE']);
 
 export const invoices = pgTable('invoice', {
-  id: uuid('id').primaryKey(),
-  businessId: uuid('business_id').notNull().references(() => businesses.id),
+  id: generateId(),
+  businessId: foreignBusinessId(businesses),
   customerId: uuid('customer_id').references(() => parties.id),
   invoiceNumber: varchar('invoice_number', { length: 50 }).notNull(),
   invoiceType: invoiceTypeEnum('invoice_type').notNull(),
@@ -25,8 +27,7 @@ export const invoices = pgTable('invoice', {
   notes: text('notes'),
   status: invoiceStatusEnum('status').notNull(),
   createdBy: uuid('created_by').notNull().references(() => users.id),
-  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  ...timestamps,
 }, (table) => ({
   businessNumUnique: unique('invoice_business_num_unique').on(table.businessId, table.invoiceNumber),
   businessIdx: index('invoice_business_idx').on(table.businessId),
@@ -36,7 +37,7 @@ export const invoices = pgTable('invoice', {
 }));
 
 export const invoiceItems = pgTable('invoice_item', {
-  id: uuid('id').primaryKey(),
+  id: generateId(),
   invoiceId: uuid('invoice_id').notNull().references(() => invoices.id),
   productId: uuid('product_id').notNull().references(() => products.id),
   quantity: decimal('quantity', { precision: 18, scale: 3 }).notNull(),
@@ -50,8 +51,8 @@ export const invoiceItems = pgTable('invoice_item', {
 }));
 
 export const payments = pgTable('payment', {
-  id: uuid('id').primaryKey(),
-  businessId: uuid('business_id').notNull().references(() => businesses.id),
+  id: generateId(),
+  businessId: foreignBusinessId(businesses),
   invoiceId: uuid('invoice_id').notNull().references(() => invoices.id),
   paymentDate: timestamp('payment_date', { withTimezone: true }).notNull(),
   paymentMethod: paymentMethodEnum('payment_method').notNull(),
@@ -59,7 +60,7 @@ export const payments = pgTable('payment', {
   referenceNumber: varchar('reference_number', { length: 100 }),
   remarks: text('remarks'),
   receivedBy: uuid('received_by').notNull().references(() => users.id),
-  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  createdAt: timestamps.createdAt,
 }, (table) => ({
   invoiceIdx: index('payment_invoice_idx').on(table.invoiceId),
   dateIdx: index('payment_date_idx').on(table.paymentDate),

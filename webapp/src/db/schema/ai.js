@@ -13,19 +13,19 @@ import {
 } from 'drizzle-orm/pg-core';
 import { businesses } from './business.js';
 import { users } from './identity.js';
+import { generateId, foreignBusinessId, timestamps } from './helpers.js';
 
 export const conversationStatusEnum = pgEnum('conversation_status', ['ACTIVE', 'ARCHIVED']);
 export const messageRoleEnum = pgEnum('message_role', ['USER', 'ASSISTANT', 'SYSTEM']);
 export const memoryScopeEnum = pgEnum('memory_scope', ['BUSINESS', 'USER', 'CONVERSATION']);
 
 export const conversations = pgTable('conversation', {
-  id: uuid('id').primaryKey(),
-  businessId: uuid('business_id').notNull().references(() => businesses.id),
+  id: generateId(),
+  businessId: foreignBusinessId(businesses),
   userId: uuid('user_id').notNull().references(() => users.id),
   title: varchar('title', { length: 200 }),
   status: conversationStatusEnum('status').notNull().default('ACTIVE'),
-  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  ...timestamps,
 }, (table) => ({
   businessIdx: index('conv_business_idx').on(table.businessId),
   userIdx: index('conv_user_idx').on(table.userId),
@@ -33,12 +33,12 @@ export const conversations = pgTable('conversation', {
 }));
 
 export const messages = pgTable('message', {
-  id: uuid('id').primaryKey(),
+  id: generateId(),
   conversationId: uuid('conversation_id').notNull().references(() => conversations.id),
   role: messageRoleEnum('role').notNull(),
   content: text('content').notNull(),
   metadata: jsonb('metadata'),
-  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  createdAt: timestamps.createdAt,
 }, (table) => ({
   conversationIdx: index('msg_conversation_idx').on(table.conversationId),
   createdIdx: index('msg_created_at_idx').on(table.createdAt),
@@ -46,8 +46,8 @@ export const messages = pgTable('message', {
 }));
 
 export const aiMemories = pgTable('ai_memory', {
-  id: uuid('id').primaryKey(),
-  businessId: uuid('business_id').notNull().references(() => businesses.id),
+  id: generateId(),
+  businessId: foreignBusinessId(businesses),
   userId: uuid('user_id').references(() => users.id), // Nullable
   conversationId: uuid('conversation_id').references(() => conversations.id), // Nullable
   namespace: varchar('namespace', { length: 100 }).notNull(),
@@ -57,8 +57,7 @@ export const aiMemories = pgTable('ai_memory', {
   importance: smallint('importance').notNull(), // 1-10
   expiresAt: timestamp('expires_at', { withTimezone: true }),
   lastAccessedAt: timestamp('last_accessed_at', { withTimezone: true }),
-  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  ...timestamps,
 }, (table) => ({
   // Blueprint: Business-wide memory unique constraint
   businessMemoryUnique: uniqueIndex('aim_business_memory_unique')

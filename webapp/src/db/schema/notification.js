@@ -9,27 +9,27 @@ import {
   index 
 } from 'drizzle-orm/pg-core';
 import { businesses } from './business.js';
+import { generateId, foreignBusinessId, timestamps } from './helpers.js';
 
 export const notificationStatusEnum = pgEnum('notification_status', ['PENDING', 'SENT', 'FAILED']);
 export const deliveryStatusEnum = pgEnum('delivery_status', ['PENDING', 'SUCCESS', 'FAILED']);
 export const channelEnum = pgEnum('notification_channel', ['WHATSAPP', 'SMS', 'EMAIL']);
 
 export const notificationTemplates = pgTable('notification_template', {
-  id: uuid('id').primaryKey(),
-  businessId: uuid('business_id').notNull().references(() => businesses.id),
+  id: generateId(),
+  businessId: foreignBusinessId(businesses),
   name: varchar('name', { length: 150 }).notNull(),
   channel: channelEnum('channel').notNull(),
   subject: varchar('subject', { length: 200 }),
   body: text('body').notNull(),
-  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  ...timestamps,
 }, (table) => ({
   businessIdx: index('nt_business_idx').on(table.businessId),
   channelIdx: index('nt_channel_idx').on(table.channel),
 }));
 
 export const notifications = pgTable('notification', {
-  id: uuid('id').primaryKey(),
+  id: generateId(),
   businessId: uuid('business_id').references(() => businesses.id), // Nullable for system notifications
   recipientType: varchar('recipient_type', { length: 30 }).notNull(), // PARTY, USER, BUSINESS_MEMBER
   recipientId: uuid('recipient_id').notNull(),
@@ -37,7 +37,7 @@ export const notifications = pgTable('notification', {
   title: varchar('title', { length: 200 }),
   message: text('message').notNull(),
   status: notificationStatusEnum('status').notNull().default('PENDING'),
-  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  createdAt: timestamps.createdAt,
 }, (table) => ({
   businessIdx: index('notification_business_idx').on(table.businessId),
   recipientTypeIdx: index('notification_recipient_type_idx').on(table.recipientType),
@@ -47,7 +47,7 @@ export const notifications = pgTable('notification', {
 }));
 
 export const notificationDeliveries = pgTable('notification_delivery', {
-  id: uuid('id').primaryKey(),
+  id: generateId(),
   notificationId: uuid('notification_id').notNull().references(() => notifications.id),
   channel: channelEnum('channel').notNull(),
   status: deliveryStatusEnum('status').notNull().default('PENDING'),

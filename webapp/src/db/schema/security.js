@@ -12,18 +12,18 @@ import {
 } from 'drizzle-orm/pg-core';
 import { businesses, businessMembers } from './business.js';
 import { users } from './identity.js';
+import { generateId, foreignBusinessId, timestamps } from './helpers.js';
 
 export const roleStatusEnum = pgEnum('role_status', ['ACTIVE', 'INACTIVE']);
 
 export const roles = pgTable('role', {
-  id: uuid('id').primaryKey(),
-  businessId: uuid('business_id').notNull().references(() => businesses.id),
+  id: generateId(),
+  businessId: foreignBusinessId(businesses),
   name: varchar('name', { length: 100 }).notNull(),
   description: text('description'),
   isSystem: boolean('is_system').notNull().default(false), // System roles cannot be modified
   status: roleStatusEnum('status').notNull().default('ACTIVE'),
-  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  ...timestamps,
 }, (table) => ({
   // Blueprint: UNIQUE (business_id, name)
   businessNameUnique: unique('role_business_name_unique').on(table.businessId, table.name),
@@ -32,18 +32,18 @@ export const roles = pgTable('role', {
 }));
 
 export const permissions = pgTable('permission', {
-  id: uuid('id').primaryKey(),
+  id: generateId(),
   code: varchar('code', { length: 100 }).notNull().unique(), // e.g., 'sales.create_invoice'
   name: varchar('name', { length: 150 }).notNull(),
   description: text('description'),
-  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  createdAt: timestamps.createdAt,
 });
 
 export const rolePermissions = pgTable('role_permission', {
-  id: uuid('id').primaryKey(),
+  id: generateId(),
   roleId: uuid('role_id').notNull().references(() => roles.id),
   permissionId: uuid('permission_id').notNull().references(() => permissions.id),
-  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  createdAt: timestamps.createdAt,
 }, (table) => ({
   // Blueprint: UNIQUE (role_id, permission_id)
   rolePermissionUnique: unique('rp_role_permission_unique').on(table.roleId, table.permissionId),
@@ -52,7 +52,7 @@ export const rolePermissions = pgTable('role_permission', {
 }));
 
 export const memberRoles = pgTable('member_role', {
-  id: uuid('id').primaryKey(),
+  id: generateId(),
   businessMemberId: uuid('business_member_id').notNull().references(() => businessMembers.id),
   roleId: uuid('role_id').notNull().references(() => roles.id),
   assignedBy: uuid('assigned_by').references(() => users.id), // Nullable per blueprint

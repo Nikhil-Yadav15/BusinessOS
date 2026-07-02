@@ -15,25 +15,26 @@ import {
   index 
 } from 'drizzle-orm/pg-core';
 import { businesses } from './business.js';
+import { generateId, foreignBusinessId, timestamps } from './helpers.js';
 
 export const refreshStrategyEnum = pgEnum('refresh_strategy', ['EVENT', 'SCHEDULE']);
 export const periodTypeEnum = pgEnum('period_type', ['DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY']);
 
 export const analyticsSnapshotTypes = pgTable('analytics_snapshot_type', {
-  id: uuid('id').primaryKey(),
+  id: generateId(),
   code: varchar('code', { length: 100 }).notNull().unique(), // e.g., 'BUSINESS_SUMMARY'
   name: varchar('name', { length: 150 }).notNull(),
   description: text('description'),
   refreshStrategy: refreshStrategyEnum('refresh_strategy').notNull(),
   isActive: boolean('is_active').notNull().default(true),
-  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  createdAt: timestamps.createdAt,
 }, (table) => ({
   activeIdx: index('ast_active_idx').on(table.isActive),
 }));
 
 export const analyticsSnapshots = pgTable('analytics_snapshot', {
-  id: uuid('id').primaryKey(),
-  businessId: uuid('business_id').notNull().references(() => businesses.id),
+  id: generateId(),
+  businessId: foreignBusinessId(businesses),
   snapshotTypeId: uuid('snapshot_type_id').notNull().references(() => analyticsSnapshotTypes.id),
   version: smallint('version').notNull(),
   data: jsonb('data').notNull(),
@@ -48,15 +49,15 @@ export const analyticsSnapshots = pgTable('analytics_snapshot', {
 }));
 
 export const analyticsHistory = pgTable('analytics_history', {
-  id: uuid('id').primaryKey(),
-  businessId: uuid('business_id').notNull().references(() => businesses.id),
+  id: generateId(),
+  businessId: foreignBusinessId(businesses),
   snapshotTypeId: uuid('snapshot_type_id').notNull().references(() => analyticsSnapshotTypes.id),
   periodType: periodTypeEnum('period_type').notNull(),
   periodStart: date('period_start').notNull(),
   periodEnd: date('period_end').notNull(),
   version: smallint('version').notNull(),
   data: jsonb('data').notNull(),
-  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  createdAt: timestamps.createdAt,
 }, (table) => ({
   // Blueprint: UNIQUE(business_id, snapshot_type_id, period_type, period_start)
   historyUnique: unique('ah_history_unique').on(

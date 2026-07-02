@@ -1,22 +1,20 @@
-// party
 import { 
   pgTable, 
-  uuid, 
   varchar, 
   text, 
-  timestamp, 
   decimal, 
   pgEnum, 
   uniqueIndex 
 } from 'drizzle-orm/pg-core';
 import { businesses } from './business.js';
+import { generateId, foreignBusinessId, timestamps } from './helpers.js';
 
 export const partyTypeEnum = pgEnum('party_type', ['CUSTOMER', 'SUPPLIER', 'BOTH']);
 export const partyStatusEnum = pgEnum('party_status', ['ACTIVE', 'INACTIVE']);
 
 export const parties = pgTable('party', {
-  id: uuid('id').primaryKey(),
-  businessId: uuid('business_id').notNull().references(() => businesses.id),
+  id: generateId(),
+  businessId: foreignBusinessId(businesses),
   partyType: partyTypeEnum('party_type').notNull(),
   name: varchar('name', { length: 200 }).notNull(),
   companyName: varchar('company_name', { length: 200 }),
@@ -32,14 +30,11 @@ export const parties = pgTable('party', {
   openingBalance: decimal('opening_balance', { precision: 18, scale: 2 }).notNull().default('0'),
   notes: text('notes'),
   status: partyStatusEnum('status').notNull().default('ACTIVE'),
-  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  ...timestamps,
 }, (table) => ({
-  // Blueprint: UNIQUE (business_id, mobile) WHERE mobile IS NOT NULL
   businessMobileUniqueIdx: uniqueIndex('party_business_mobile_unique_idx')
     .on(table.businessId, table.mobile)
     .where(table.mobile.isNotNull()),
-  // Blueprint: UNIQUE (business_id, gstin) WHERE gstin IS NOT NULL
   businessGstinUniqueIdx: uniqueIndex('party_business_gstin_unique_idx')
     .on(table.businessId, table.gstin)
     .where(table.gstin.isNotNull()),

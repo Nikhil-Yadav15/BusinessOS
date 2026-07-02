@@ -14,20 +14,20 @@ import {
 import { businesses } from './business.js';
 import { users } from './identity.js';
 import { events } from './system.js';
+import { generateId, foreignBusinessId, timestamps } from './helpers.js';
 
 export const workflowStatusEnum = pgEnum('workflow_status', ['RUNNING', 'COMPLETED', 'FAILED']);
 
 export const workflows = pgTable('workflow', {
-  id: uuid('id').primaryKey(),
-  businessId: uuid('business_id').notNull().references(() => businesses.id),
+  id: generateId(),
+  businessId: foreignBusinessId(businesses),
   name: varchar('name', { length: 150 }).notNull(),
   description: text('description'),
   triggerEvent: varchar('trigger_event', { length: 100 }).notNull(),
   condition: jsonb('condition'),
   isEnabled: boolean('is_enabled').notNull().default(true),
   createdBy: uuid('created_by').notNull().references(() => users.id),
-  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  ...timestamps,
 }, (table) => ({
   businessIdx: index('workflow_business_idx').on(table.businessId),
   triggerIdx: index('workflow_trigger_event_idx').on(table.triggerEvent),
@@ -35,19 +35,19 @@ export const workflows = pgTable('workflow', {
 }));
 
 export const workflowActions = pgTable('workflow_action', {
-  id: uuid('id').primaryKey(),
+  id: generateId(),
   workflowId: uuid('workflow_id').notNull().references(() => workflows.id),
   actionOrder: smallint('action_order').notNull(),
   actionType: varchar('action_type', { length: 100 }).notNull(),
   configuration: jsonb('configuration'),
-  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  createdAt: timestamps.createdAt,
 }, (table) => ({
   workflowIdx: index('wa_workflow_idx').on(table.workflowId),
   orderIdx: index('wa_action_order_idx').on(table.actionOrder),
 }));
 
 export const workflowExecutions = pgTable('workflow_execution', {
-  id: uuid('id').primaryKey(),
+  id: generateId(),
   workflowId: uuid('workflow_id').notNull().references(() => workflows.id),
   eventId: uuid('event_id').notNull().references(() => events.id),
   status: workflowStatusEnum('status').notNull(),
