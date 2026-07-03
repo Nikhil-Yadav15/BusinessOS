@@ -1,3 +1,4 @@
+import { sql } from 'drizzle-orm';
 import { 
   pgTable, 
   varchar, 
@@ -34,8 +35,8 @@ export const parties = pgTable('party', {
 }, (table) => ({
   businessMobileUniqueIdx: uniqueIndex('party_business_mobile_unique_idx')
     .on(table.businessId, table.mobile)
-    .where(table.mobile.isNotNull()),
+    .where(sql`${table.mobile} IS NOT NULL`),
   businessGstinUniqueIdx: uniqueIndex('party_business_gstin_unique_idx')
     .on(table.businessId, table.gstin)
-    .where(table.gstin.isNotNull()),
+    .where(sql`${table.gstin} IS NOT NULL`),
 }));

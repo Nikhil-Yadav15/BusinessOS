@@ -1,4 +1,5 @@
 // category, brand, unit, product, product_image
+import { sql } from 'drizzle-orm';
 import { 
   pgTable, 
   uuid, 
@@ -78,7 +79,7 @@ export const products = pgTable('product', {
   // Blueprint: UNIQUE (business_id, barcode) WHERE barcode IS NOT NULL
   businessBarcodeUniqueIdx: uniqueIndex('product_business_barcode_unique_idx')
     .on(table.businessId, table.barcode)
-    .where(table.barcode.isNotNull()),
+    .where(sql`${table.barcode} IS NOT NULL`),
   // Blueprint: Indexes
   businessIdx: index('product_business_idx').on(table.businessId),
   categoryIdx: index('product_category_idx').on(table.categoryId),

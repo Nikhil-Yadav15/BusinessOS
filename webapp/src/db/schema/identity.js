@@ -1,5 +1,6 @@
 // user, session, device, otp
 // webapp/src/db/schema/identity.js
+import { sql } from 'drizzle-orm';
 import { 
   pgTable, 
   uuid, 
@@ -28,7 +29,9 @@ export const users = pgTable('user', {
   lastLoginAt: timestamp('last_login_at', { withTimezone: true }),
   ...timestamps,
 }, (table) => ({
-  emailUniqueIdx: uniqueIndex('user_email_unique_idx').on(table.email).where(table.email.isNotNull()),
+  emailUniqueIdx: uniqueIndex('user_email_unique_idx')
+    .on(table.email)
+    .where(sql`${table.email} IS NOT NULL`),
 }));
 
 export const sessions = pgTable('session', {

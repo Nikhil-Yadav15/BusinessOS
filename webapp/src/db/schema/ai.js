@@ -1,4 +1,5 @@
 // conversation, message, ai_memory
+import { sql } from 'drizzle-orm';
 import { 
   pgTable, 
   uuid, 
@@ -62,17 +63,17 @@ export const aiMemories = pgTable('ai_memory', {
   // Blueprint: Business-wide memory unique constraint
   businessMemoryUnique: uniqueIndex('aim_business_memory_unique')
     .on(table.businessId, table.namespace, table.memoryKey)
-    .where(table.userId.isNull().and(table.conversationId.isNull())),
+    .where(sql`${table.userId} IS NULL AND ${table.conversationId} IS NULL`),
     
   // Blueprint: User-specific memory unique constraint
   userMemoryUnique: uniqueIndex('aim_user_memory_unique')
     .on(table.businessId, table.userId, table.namespace, table.memoryKey)
-    .where(table.userId.isNotNull()),
+    .where(sql`${table.userId} IS NOT NULL`),
 
   // Blueprint: Conversation memory unique constraint
   conversationMemoryUnique: uniqueIndex('aim_conversation_memory_unique')
     .on(table.conversationId, table.namespace, table.memoryKey)
-    .where(table.conversationId.isNotNull()),
+    .where(sql`${table.conversationId} IS NOT NULL`),
 
   // Additional Indexes
   businessIdx: index('aim_business_idx').on(table.businessId),

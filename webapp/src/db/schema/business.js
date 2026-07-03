@@ -1,5 +1,6 @@
 // business, business_member, business_settings
 // webapp/src/db/schema/business.js
+import { sql } from 'drizzle-orm';
 import { 
   pgTable, 
   uuid, 
@@ -38,7 +39,9 @@ export const businesses = pgTable('business', {
   status: businessStatusEnum('status').notNull().default('ACTIVE'),
   ...timestamps,
 }, (table) => ({
-  gstinUniqueIdx: uniqueIndex('business_gstin_unique_idx').on(table.gstin).where(table.gstin.isNotNull()),
+  gstinUniqueIdx: uniqueIndex('business_gstin_unique_idx')
+    .on(table.gstin)
+    .where(sql`${table.gstin} IS NOT NULL`),
   nameIdx: index('business_name_idx').on(table.name),
   phoneIdx: index('business_phone_idx').on(table.phone),
 }));
