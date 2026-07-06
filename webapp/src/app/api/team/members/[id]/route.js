@@ -1,6 +1,6 @@
 import { GetMemberOperation } from '../../../../../application/operations/team/GetMemberOperation.js';
 import { UpdateMemberRoleOperation } from '../../../../../application/operations/team/UpdateMemberRoleOperation.js';
-
+import { RemoveMemberOperation } from '../../../../../application/operations/team/RemoveMemberOperation.js';
 import { withExecutionContext } from '../../../../../infrastructure/context/withExecutionContext.js';
 import { withPermission } from '../../../../../infrastructure/context/withPermission.js';
 import { withApiHandler } from '../../../../../infrastructure/context/withApiHandler.js';
@@ -40,6 +40,23 @@ export const PATCH = withExecutionContext(
 
       return Response.json(result);
 
+    })
+  )
+);
+
+export const DELETE = withExecutionContext(
+  withPermission(
+    'team.remove',
+    withApiHandler(async (req, { executionContext, params }) => {
+
+      const result = await new RemoveMemberOperation().execute(
+        executionContext,
+        {
+          memberId: params.id,
+        }
+      );
+
+      return Response.json(result);
     })
   )
 );

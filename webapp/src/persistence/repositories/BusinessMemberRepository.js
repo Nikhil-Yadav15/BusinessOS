@@ -152,5 +152,15 @@ export class BusinessMemberRepository extends BaseRepository {
 
   return Number(total);
 }
+  static async remove(memberId, tx) {
+  const conn = this.getDB(tx);
+
+  const [member] = await conn
+    .delete(businessMembers)
+    .where(eq(businessMembers.id, memberId))
+    .returning();
+
+  return member || null;
+}
 
 }
