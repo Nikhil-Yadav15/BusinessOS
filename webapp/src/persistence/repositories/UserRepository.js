@@ -24,4 +24,9 @@ export class UserRepository {
     
     return user;
   }
+  static async findById(id, tx) {
+    const conn = this.getDB(tx);
+    const [user] = await conn.select().from(users).where(eq(users.id, id)).limit(1);
+    return user || null;
+  }
 }
