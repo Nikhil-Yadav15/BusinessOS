@@ -253,20 +253,20 @@ Accounting layer built on top of all business transactions.
 
 # ✅ Phase 8 — Frontend UI Integrations *(MVP Completed)*
 
-# 🔜 Phase 9 — Production Readiness
+# ✅ Phase 9 — Production Readiness *(Local Complete)*
 
-- Logging & Monitoring
+- ✅ Logging & Monitoring
 - ✅ Rate Limiting (Edge Memory Isolates)
 - ✅ Security Hardening (HTTP Strict Headers)
-- Vercel Deployment
+- 🔜 Vercel Deployment (Deferred by User)
 
 ---
 
-# 🔜 Phase 10 — v2 Scaling & Integration *(Postponed)*
+# 🔄 Phase 10 — v2 Scaling & Integration *(Active)*
 
-- External API Integrations (Twilio, AWS, Xero)
+- External API Integrations (Twilio, Resend, etc.)
 - Advanced Workflow Engine
 - AI Assistant
-- File Storage (S3)
+- 🔜 File Storage (Cloudinary Free Tier - Deferred)
 - Scheduled Cron Jobs (EventBridge)
 - Cleanup Workers

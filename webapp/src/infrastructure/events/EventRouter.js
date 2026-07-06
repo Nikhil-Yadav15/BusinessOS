@@ -1,5 +1,6 @@
 import { AnalyticsConsumer } from '../../application/consumers/analytics/AnalyticsConsumer.js';
 import { NotificationConsumer } from '../../application/consumers/notifications/NotificationConsumer.js';
+import { WorkflowConsumer } from '../../application/consumers/workflows/WorkflowConsumer.js';
 
 export class EventRouter {
   /**
@@ -9,8 +10,8 @@ export class EventRouter {
   static async dispatch(event, tx) {
      const consumers = [
        AnalyticsConsumer,
-       NotificationConsumer
-       // WorkflowsConsumer
+       NotificationConsumer,
+       WorkflowConsumer
      ];
 
      for (const consumerClass of consumers) {
