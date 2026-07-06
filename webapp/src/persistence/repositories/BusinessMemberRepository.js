@@ -135,5 +135,22 @@ export class BusinessMemberRepository extends BaseRepository {
 
   return member;
 }
+  static async countActiveByBusiness(businessId, tx) {
+  const conn = this.getDB(tx);
+
+  const [{ total }] = await conn
+    .select({
+      total: count(),
+    })
+    .from(businessMembers)
+    .where(
+      and(
+        eq(businessMembers.businessId, businessId),
+        eq(businessMembers.status, 'ACTIVE')
+      )
+    );
+
+  return Number(total);
+}
 
 }

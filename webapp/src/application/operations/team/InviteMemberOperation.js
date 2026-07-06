@@ -12,7 +12,7 @@ export class InviteMemberOperation extends BaseOperation {
     if (!context.businessId) {
       throw new ValidationError('Active business context is required to invite members.');
     }
-    if (!input.email || !input.roleName) {
+    if (!input.email || !input.roleId) {
       throw new ValidationError('Email and roleName are required.');
     }
   }
@@ -20,7 +20,7 @@ export class InviteMemberOperation extends BaseOperation {
   async perform(context, input, tx) {
     const { businessId, userId: inviterId } = context;
     const { ipAddress } = context.metadata;
-    const { email, roleName } = input;
+    const { email, roleId } = input;
 
     // 1. Verify User Exists (V1 constraint)
     const userToInvite = await UserRepository.findByEmail(email, tx);
@@ -39,10 +39,17 @@ export class InviteMemberOperation extends BaseOperation {
     }
 
     // 3. Verify Requested Role Exists in Tenant
-    const role = await RoleRepository.findByNameAndBusiness(roleName, businessId, tx);
-    if (!role) {
-      throw new ValidationError(`Role '${roleName}' does not exist in this business.`);
-    }
+    const role = await RoleRepository.findByIdAndBusiness(
+        roleId,
+        businessId,
+        tx
+      );
+
+      if (!role) {
+        throw new ValidationError(
+          'Role not found.'
+        );
+      }
 
     // 4. Create Membership
     // Defaulting to ACTIVE. If you add an invite acceptance flow later, change this to 'INVITED'.
