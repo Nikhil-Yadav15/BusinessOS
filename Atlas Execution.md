@@ -155,53 +155,45 @@ Inventory depends on Products.
 
 ---
 
-## 🔄 3. Inventory *(Next)*
-Warehouse
+## ✅ 3. Inventory *(Completed)*
+✅ Inventory Snapshot
 ↓
-Stock Movement
+✅ Stock Movement Ledger
 ↓
-Adjustments
+✅ Adjustments API
 
 Depends on Products.
 
 ---
 
-## 4. Sales
-
-
-Invoice
+## ✅ 4. Sales *(Completed)*
+✅ Invoice
 ↓
-Invoice Items
+✅ Invoice Items
 ↓
-Payments
-
+✅ Payments
 
 Depends on:
-
 - Customer
 - Product
 - Inventory
 
 ---
 
-## 5. Purchasing
-
-
-Purchase
+## ✅ 5. Purchasing *(Completed)*
+✅ Purchase
 ↓
-Purchase Items
+✅ Purchase Items
 ↓
-Supplier Payments
-
+✅ Supplier Payments
 
 Depends on:
-
 - Supplier
 - Product
 
 ---
 
-## 6. Ledger
+## 🔄 6. Ledger *(Next)*
 
 
 Chart of Accounts
