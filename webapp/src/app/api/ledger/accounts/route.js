@@ -1,4 +1,5 @@
 import { CreateLedgerAccountOperation } from '../../../../application/operations/ledger/accounts/CreateLedgerAccountOperation.js';
+import { ListLedgerAccountsOperation } from '../../../../application/operations/ledger/accounts/ListLedgerAccountsOperation.js';
 import { withExecutionContext } from '../../../../infrastructure/context/withExecutionContext.js';
 import { withPermission } from '../../../../infrastructure/context/withPermission.js';
 import { withApiHandler } from '../../../../infrastructure/context/withApiHandler.js';
@@ -14,6 +15,23 @@ export const POST = withExecutionContext(
         payload
       );
       return Response.json(StandardResponse.success(result), { status: 201 });
+    })
+  )
+);
+
+export const GET = withExecutionContext(
+  withPermission(
+    'ledger.account.read',
+    withApiHandler(async (req, { executionContext }) => {
+      const { searchParams } = new URL(req.url);
+      const result = await new ListLedgerAccountsOperation().execute(
+        executionContext,
+        {
+          page: searchParams.get('page') || 1,
+          limit: searchParams.get('limit') || 50,
+        }
+      );
+      return Response.json(StandardResponse.success(result));
     })
   )
 );

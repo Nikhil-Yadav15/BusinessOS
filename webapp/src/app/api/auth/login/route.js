@@ -16,7 +16,7 @@ export const POST = withApiHandler(async (req) => {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    path: '/api/auth', // Restrict cookie to auth routes
+    path: '/', // Must be '/' so middleware can read it across all routes
     maxAge: 7 * 24 * 60 * 60, // 7 days
   });
 

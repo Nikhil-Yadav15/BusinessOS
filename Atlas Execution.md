@@ -218,16 +218,36 @@ Accounting layer built on top of all business transactions.
 
 ---
 
-# 🔄 Phase 8 — Frontend *(Next)*
+# 🔄 Phase 8 — Frontend Security & UI Integration *(Next)*
 
-- UI Foundation
-- Dashboard Layout
-- Authentication Views
-- Business Settings
-- CRM Pages
-- Catalog & Inventory Views
-- Sales & Purchasing UIs
-- Ledger Dashboard
+### Stage 1: Authentication & Gateway
+- ✅ Setup Clean UI Layouts
+- ✅ Central `apiClient.js` (JWT & Headers Wrapper)
+- ✅ Next.js Edge Middleware (Route Protection)
+- ✅ HTTP-Only Cookie Handshake on `/login`
+
+### Stage 2: Contextual Wrappers
+- ✅ React Context (`BusinessContext.js`) mapping Global State
+- RBAC Component Hiding Wrapper (Hide/Show buttons based on Auth)
+
+### Stage 3: Component Foundation
+- ✅ Reusable `DataTable` component (Pagination, Search)
+- Accessible Modals, Slide-out Drawers, Toasts
+
+### Stage 4: Catalog & CRM UI
+- ✅ CRM Party Data Grid (GET `/api/crm`)
+- ✅ Product Catalog Matrix (GET `/api/catalog`)
+- Drawer Mutation hooks for safe creations
+
+### Stage 5: Transactions & Workflow UIs
+- ✅ Stock Adjustment Ledger View (GET `/api/inventory/movements`)
+- ✅ Sales Invoice Data Grid (GET `/api/sales/invoices`)
+- ✅ Purchasing Data Grid (GET `/api/purchasing/purchases`)
+- ✅ Chart of Accounts Ledger (GET `/api/ledger/accounts`)
+- Master-Detail Creation Forms (Invoices, Purchases, Adjustments)
+
+### Stage 6: The Analytics Bindings
+- ✅ Wire Real-time Dashboard to `GET /api/system/analytics` natively
 
 ---
 
