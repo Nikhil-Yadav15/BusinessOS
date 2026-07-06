@@ -35,13 +35,13 @@ export default function LoginPage() {
         headers: { Authorization: `Bearer ${data.accessToken}` },
       });
       const bizData = await bizRes.json();
-      const firstBusiness = bizData?.data?.items?.[0];
+      const firstBusiness = bizData?.businesses?.[0];
 
       if (firstBusiness) {
         saveSession({
           accessToken: data.accessToken,
           user: data.user,
-          businessId: firstBusiness.id,
+          businessId: firstBusiness.id, // Extract the correct ID
         });
       }
 

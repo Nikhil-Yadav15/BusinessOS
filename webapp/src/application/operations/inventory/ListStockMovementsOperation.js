@@ -1,5 +1,5 @@
-import { BaseOperation } from '../../BaseOperation.js';
-import { StockMovementRepository } from '../../../../persistence/repositories/StockMovementRepository.js';
+import { BaseOperation } from '../BaseOperation.js';
+import { StockMovementRepository } from '../../../persistence/repositories/StockMovementRepository.js';
 
 export class ListStockMovementsOperation extends BaseOperation {
   async perform(context, input) {

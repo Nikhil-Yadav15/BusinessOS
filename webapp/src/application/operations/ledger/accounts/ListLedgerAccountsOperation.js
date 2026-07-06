@@ -6,8 +6,8 @@ export class ListLedgerAccountsOperation extends BaseOperation {
     const { businessId } = context;
     const { page = 1, limit = 50 } = input || {};
 
-    const result = await LedgerAccountRepository.findAll({
-      businessId,
+    const result = await LedgerAccountRepository.findList({
+      filters: { businessId },
       page: parseInt(page),
       limit: parseInt(limit),
     });
