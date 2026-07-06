@@ -2,7 +2,9 @@ import { roles, permissions, rolePermissions, memberRoles } from '../../db/schem
 import { generateId } from '../../infrastructure/id/uuid.js';
 import { BaseRepository } from './BaseRepository.js';
 import { eq, and,inArray } from 'drizzle-orm';
-
+import { memberRoles } from '../../db/schema/security.js';
+import { eq } from 'drizzle-orm';
+import { generateId } from '../../infrastructure/id/uuid.js';
 export class RoleRepository extends BaseRepository {
   
   static async getAllPermissions(tx) {
@@ -161,5 +163,43 @@ export class RoleRepository extends BaseRepository {
     const roles = await this.getMemberRoles(businessMemberId, tx);
     return roles.some(role => role.isSystem);
   }
+  /**
+ * Replaces all existing roles for a member with a single new role.
+ * Entire operation runs inside the caller's transaction.
+ */
+static async replaceMemberRole(
+  {
+    businessMemberId,
+    roleId,
+    assignedBy
+  },
+  tx
+) {
+  const conn = this.getDB(tx);
+
+  // Remove previous assignments
+  await conn
+    .delete(memberRoles)
+    .where(
+      eq(
+        memberRoles.businessMemberId,
+        businessMemberId
+      )
+    );
+
+  // Assign the new role
+  const [mapping] = await conn
+    .insert(memberRoles)
+    .values({
+      id: generateId(),
+      businessMemberId,
+      roleId,
+      assignedBy,
+      assignedAt: new Date()
+    })
+    .returning();
+
+  return mapping;
+}
 
 }
