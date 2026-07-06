@@ -256,8 +256,8 @@ Accounting layer built on top of all business transactions.
 # 🔜 Phase 9 — Production Readiness
 
 - Logging & Monitoring
-- Rate Limitingin 
-- Security Hardening
+- ✅ Rate Limiting (Edge Memory Isolates)
+- ✅ Security Hardening (HTTP Strict Headers)
 - Vercel Deployment
 
 ---

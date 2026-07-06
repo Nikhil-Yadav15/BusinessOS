@@ -13,14 +13,32 @@ import { NextResponse } from 'next/server';
 
 const PUBLIC_ROUTES = ['/login', '/register', '/api/auth/login', '/api/auth/register', '/api/auth/refresh'];
 
+// Free-tier Vercel memory rate limiting (Isolate Local)
+const ipHits = new Map();
+
+function checkRateLimit(ip) {
+  const now = Date.now();
+  const windowTime = 10 * 1000; // 10 seconds rolling window
+  const limit = 100; // Genereous 100 requests per 10s
+
+  let hits = ipHits.get(ip) || [];
+  hits = hits.filter(time => now - time < windowTime);
+  
+  if (hits.length >= limit) return false;
+
+  hits.push(now);
+  ipHits.set(ip, hits);
+  
+  // Extremely basic memory leak prevention for Edge isolates
+  if (ipHits.size > 5000) ipHits.clear(); 
+  
+  return true;
+}
+
 export function middleware(request) {
   const { pathname } = request.nextUrl;
 
-  // Allow all public routes
-  const isPublic = PUBLIC_ROUTES.some(route => pathname.startsWith(route));
-  if (isPublic) return NextResponse.next();
-
-  // Allow all static assets
+  // Allow all static assets explicitly first to avoid hitting Maps
   if (
     pathname.startsWith('/_next') ||
     pathname.startsWith('/favicon') ||
@@ -28,6 +46,23 @@ export function middleware(request) {
   ) {
     return NextResponse.next();
   }
+
+  // Edge-Local API Rate Limiting protection
+  if (pathname.startsWith('/api') || pathname.startsWith('/login')) {
+    const ip = request.ip || request.headers.get('x-forwarded-for') || 'unknown';
+    if (!checkRateLimit(ip)) {
+      return new NextResponse(JSON.stringify({ 
+         error: 'Rate limit exceeded. Please slow down.' 
+      }), {
+        status: 429,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+  }
+
+  // Allow all public routes
+  const isPublic = PUBLIC_ROUTES.some(route => pathname.startsWith(route));
+  if (isPublic) return NextResponse.next();
 
   // Allow system/cron endpoints (secured by separate API key in production)
   if (pathname.startsWith('/api/system/cron')) {
