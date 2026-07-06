@@ -63,10 +63,9 @@ export class CreateBusinessOperation extends BaseOperation {
     );
 
     // 4. Business Settings (Relying on DB defaults for invoicePrefix and thresholds)
-    const currentYear = new Date().getFullYear();
     await BusinessSettingsRepository.create({
       businessId: business.id,
-      financialYearStart: `${currentYear}-04-01`
+      financialYearStart: input.financialYearStart || `${new Date().getFullYear()}-04-01`
     }, tx);
 
     // 5. Audit
