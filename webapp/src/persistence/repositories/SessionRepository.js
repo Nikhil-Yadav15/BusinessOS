@@ -7,10 +7,12 @@ import { generateId } from '../../infrastructure/id/uuid.js';
 export class SessionRepository extends BaseRepository {
   static async create(sessionData, tx) {
     const conn = this.getDB(tx);
+    const now = new Date();
     const [session] = await conn.insert(sessions).values({
       id: generateId(),
+      lastActivityAt: now,
       ...sessionData,
-      createdAt: new Date(),
+      createdAt: now,
     }).returning();
     return session;
   }

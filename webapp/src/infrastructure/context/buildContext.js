@@ -1,9 +1,27 @@
 import { ExecutionContext } from './ExecutionContext.js';
 import { verifyToken } from '../auth/jwt.js'; 
 import { db } from '../../db/index.js';
-import { business_member } from '../../db/schema/business.js'; 
+import { businessMembers } from '../../db/schema/business.js'; 
 import { and, eq } from 'drizzle-orm';
 import { generateId } from '../id/uuid.js';
+
+function buildRequestMetadata(req) {
+  return {
+    correlationId: req.headers.get('x-correlation-id') || generateId(),
+    ipAddress: req.headers.get('x-forwarded-for') || 'unknown',
+    userAgent: req.headers.get('user-agent') || 'unknown',
+  };
+}
+
+export function buildAnonymousContext(req) {
+  return new ExecutionContext({
+    userId: null,
+    sessionId: null,
+    businessId: null,
+    memberId: null,
+    metadata: buildRequestMetadata(req),
+  });
+}
 
 /**
  * Parses the incoming HTTP request and securely constructs the Execution Context.
@@ -13,9 +31,7 @@ import { generateId } from '../id/uuid.js';
 export async function buildContext(req) {
   // 1. Establish Request Metadata & Correlation ID (Cross-Cutting Concerns)
   // Accept from header if internal microservice, otherwise generate fresh
-  const correlationId = req.headers.get('x-correlation-id') || generateId();
-  const ipAddress = req.headers.get('x-forwarded-for') || 'unknown';
-  const userAgent = req.headers.get('user-agent') || 'unknown';
+  const metadata = buildRequestMetadata(req);
 
   // 2. Establish Identity (GW-002)
   const authHeader = req.headers.get('authorization');
@@ -34,11 +50,11 @@ export async function buildContext(req) {
 
   if (requestedBusinessId) {
     // Validate Business Membership (MT-004)
-    const memberRecord = await db.query.business_member.findFirst({
+    const memberRecord = await db.query.businessMembers.findFirst({
       where: and(
-        eq(business_member.business_id, requestedBusinessId),
-        eq(business_member.user_id, decoded.userId),
-        eq(business_member.status, 'ACTIVE')
+        eq(businessMembers.businessId, requestedBusinessId),
+        eq(businessMembers.userId, decoded.userId),
+        eq(businessMembers.status, 'ACTIVE')
       )
     });
 
@@ -47,7 +63,7 @@ export async function buildContext(req) {
     }
 
     // Backend assumes authority only after validation
-    authoritativeBusinessId = memberRecord.business_id;
+    authoritativeBusinessId = memberRecord.businessId;
     authoritativeMemberId = memberRecord.id;
   }
 
@@ -57,10 +73,6 @@ export async function buildContext(req) {
     sessionId: decoded.sessionId,
     businessId: authoritativeBusinessId,
     memberId: authoritativeMemberId,
-    metadata: {
-      correlationId,
-      ipAddress,
-      userAgent
-    }
+    metadata
   });
 }

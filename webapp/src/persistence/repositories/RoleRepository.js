@@ -2,9 +2,6 @@ import { roles, permissions, rolePermissions, memberRoles } from '../../db/schem
 import { generateId } from '../../infrastructure/id/uuid.js';
 import { BaseRepository } from './BaseRepository.js';
 import { eq, and,inArray } from 'drizzle-orm';
-import { memberRoles } from '../../db/schema/security.js';
-import { eq } from 'drizzle-orm';
-import { generateId } from '../../infrastructure/id/uuid.js';
 export class RoleRepository extends BaseRepository {
   
   static async getAllPermissions(tx) {

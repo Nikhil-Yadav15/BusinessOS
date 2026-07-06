@@ -10,3 +10,8 @@ export async function signAccessToken(payload, expiresIn = '24h') {
     .setExpirationTime(expiresIn)
     .sign(JWT_SECRET);
 }
+
+export async function verifyToken(token) {
+  const { payload } = await jwtVerify(token, JWT_SECRET);
+  return payload;
+}

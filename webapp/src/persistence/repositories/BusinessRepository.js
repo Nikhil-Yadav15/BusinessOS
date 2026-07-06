@@ -1,4 +1,3 @@
-import { businesses } from '../../db/schema/business.js';
 import { generateId } from '../../infrastructure/id/uuid.js';
 import { BaseRepository } from './BaseRepository.js';
 import { eq, and } from 'drizzle-orm';
