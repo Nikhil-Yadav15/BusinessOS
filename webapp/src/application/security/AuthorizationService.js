@@ -21,6 +21,10 @@ export class AuthorizationService {
    * @param {ExecutionContext} context 
    */
   static async require(permissionCode, context) {
+    if (!context || !context.memberId) {
+      throw new AuthorizationError('Access Denied: Missing business context. Send x-business-id for tenant-scoped permissions.');
+    }
+
     const isAuthorized = await this.has(permissionCode, context);
     if (!isAuthorized) {
       throw new AuthorizationError(`Access Denied: Missing required permission [${permissionCode}]`);

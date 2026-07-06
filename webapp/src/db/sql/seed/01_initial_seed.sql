@@ -25,7 +25,11 @@ INSERT INTO permission (id, code, name, description) VALUES
 (gen_random_uuid(), 'sales.receive_payment', 'Receive Payment', 'Allow receiving payments against invoices'),
 (gen_random_uuid(), 'inventory.adjust_stock', 'Adjust Stock', 'Allow manual inventory adjustments'),
 (gen_random_uuid(), 'catalog.manage_products', 'Manage Products', 'Allow creating and updating products'),
-(gen_random_uuid(), 'ledger.view_reports', 'View Financials', 'Allow viewing P&L and Balance Sheet')
+(gen_random_uuid(), 'ledger.view_reports', 'View Financials', 'Allow viewing P&L and Balance Sheet'),
+(gen_random_uuid(), 'team.invite', 'Invite Team Members', 'Allow inviting users to a business team'),
+(gen_random_uuid(), 'team.read', 'Read Team Members', 'Allow viewing business team members'),
+(gen_random_uuid(), 'team.update_role', 'Update Team Roles', 'Allow changing team member roles'),
+(gen_random_uuid(), 'team.remove', 'Remove Team Members', 'Allow removing users from a business team')
 ON CONFLICT (code) DO NOTHING;
 
 -- ==============================================================================
