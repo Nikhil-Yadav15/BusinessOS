@@ -193,35 +193,32 @@ Depends on:
 
 ---
 
-## 🔄 6. Ledger *(Next)*
-
-
-Chart of Accounts
+## ✅ 6. Ledger *(Completed)*
+✅ Chart of Accounts
 ↓
-Journal Entries
+✅ Journal Entries
 ↓
-Expenses
-
+✅ Expenses
 
 Accounting layer built on top of all business transactions.
 
 ---
 
-# 🔜 Phase 6 — Platform Automation & AI
+# 🔄 Phase 6 — Platform Automation & AI *(In Progress)*
 
 - Workflows
 - Notifications
-- Analytics
+- ✅ Analytics
 - AI Assistant
 - External Integrations
 - File Storage
 
 ---
 
-# 🔜 Phase 7 — Background Processing
+# 🔄 Phase 7 — Background Processing *(In Progress)*
 
-- Event Outbox Dispatcher
-- Event Consumers
+- ✅ Event Outbox Dispatcher
+- ✅ Event Consumers
 - Scheduled Jobs
 - Cleanup Workers
 
