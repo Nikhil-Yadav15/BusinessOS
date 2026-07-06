@@ -5,7 +5,10 @@
 export function withApiHandler(handler) {
   return async (req, context) => {
     try {
-      return await handler(req, context);
+      // Next.js 15: params is a Promise — resolve it once here so all handlers
+      // receive a plain object via context.params without needing to await it themselves.
+      const resolvedParams = context?.params ? await context.params : {};
+      return await handler(req, { ...context, params: resolvedParams });
     } catch (error) {
       const status = error.status || 500;
       const message = status === 500 ? 'Internal Server Error' : error.message;

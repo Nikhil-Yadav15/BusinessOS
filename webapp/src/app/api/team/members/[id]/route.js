@@ -25,7 +25,7 @@ export const GET = withExecutionContext(
 
 export const PATCH = withExecutionContext(
   withPermission(
-    'team.manage_roles',
+    'team.update_role',
     withApiHandler(async (req, { executionContext, params }) => {
 
       const payload = await req.json();
