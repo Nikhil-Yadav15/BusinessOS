@@ -6,10 +6,10 @@ export const ValidationUtils = {
 
   // Pagination query validation schema
   pagination: z.object({
-    page: z.coerce.number().int().min(1).default(1),
-    limit: z.coerce.number().int().min(1).max(100).default(10),
-    sortBy: z.string().optional().default('createdAt'),
-    sortOrder: z.enum(['asc', 'desc', 'ASC', 'DESC']).optional().default('desc'),
+    page: z.coerce.number().int().min(1).nullish().default(1),
+    limit: z.coerce.number().int().min(1).max(100).nullish().default(10),
+    sortBy: z.string().nullish().default('createdAt'),
+    sortOrder: z.enum(['asc', 'desc', 'ASC', 'DESC']).nullish().default('desc'),
   }),
 
   // Standard phone number (simple format)
@@ -25,12 +25,14 @@ export const ValidationUtils = {
 export const validateDto = (schema, input) => {
   const result = schema.safeParse(input);
   if (!result.success) {
-    const errors = result.error.errors.map(err => ({
-      field: err.path.join('.'),
+    const rawErrors = result.error.issues || result.error.errors || [];
+    const errors = rawErrors.map(err => ({
+      field: (err.path || []).join('.'),
       message: err.message
     }));
     const error = new Error('Validation failed');
     error.name = 'ValidationError';
+    error.status = 400; // Force HTTP 400 Bad Request
     error.details = errors;
     throw error;
   }
