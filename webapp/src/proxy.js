@@ -35,7 +35,7 @@ function checkRateLimit(ip) {
   return true;
 }
 
-export function middleware(request) {
+export function proxy(request) {
   const { pathname } = request.nextUrl;
 
   // Allow all static assets explicitly first to avoid hitting Maps
