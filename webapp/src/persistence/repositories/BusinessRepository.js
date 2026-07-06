@@ -15,6 +15,16 @@ export class BusinessRepository extends BaseRepository {
     }).returning();
     return business;
   }
+
+  static async findById(businessId, tx) {
+    const conn = this.getDB(tx);
+    const [business] = await conn.select()
+      .from(businesses)
+      .where(eq(businesses.id, businessId))
+      .limit(1);
+    return business || null;
+  }
+
   static async getBusinessesForUser(userId, tx) {
     const conn = this.getDB(tx);
     

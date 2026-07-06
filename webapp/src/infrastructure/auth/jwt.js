@@ -12,6 +12,14 @@ export async function signAccessToken(payload, expiresIn = '24h') {
 }
 
 export async function verifyToken(token) {
-  const { payload } = await jwtVerify(token, JWT_SECRET);
-  return payload;
+  if (!token || token.split('.').length !== 3) {
+    throw new Error('Unauthorized: Invalid access token format');
+  }
+
+  try {
+    const { payload } = await jwtVerify(token, JWT_SECRET);
+    return payload;
+  } catch {
+    throw new Error('Unauthorized: Invalid or expired access token');
+  }
 }
