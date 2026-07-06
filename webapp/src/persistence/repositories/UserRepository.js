@@ -1,21 +1,25 @@
 import { eq } from 'drizzle-orm';
-import { db } from '../../db/index.js';
 import { users } from '../../db/schema/identity.js';
 import { generateId } from '../../infrastructure/id/uuid.js';
-export class UserRepository {
-  static async findByMobile(mobile, tx = db) {
-    const [user] = await tx.select().from(users).where(eq(users.mobile, mobile)).limit(1);
+import { BaseRepository } from './BaseRepository.js';
+
+export class UserRepository extends BaseRepository {
+  static async findByMobile(mobile, tx) {
+    const conn = this.getDB(tx);
+    const [user] = await conn.select().from(users).where(eq(users.mobile, mobile)).limit(1);
     return user || null;
   }
 
-  static async updateLastLogin(userId, tx = db) {
-    await tx.update(users)
+  static async updateLastLogin(userId, tx) {
+    const conn = this.getDB(tx);
+    await conn.update(users)
       .set({ lastLoginAt: new Date(), updatedAt: new Date() })
       .where(eq(users.id, userId));
   }
 
-  static async create(userData, tx = db) {
-    const [user] = await tx.insert(users).values({
+  static async create(userData, tx) {
+    const conn = this.getDB(tx);
+    const [user] = await conn.insert(users).values({
       id: generateId(),
       ...userData,
       createdAt: new Date(),
