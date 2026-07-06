@@ -62,4 +62,7 @@ export class AuthorizationService {
       throw new AuthorizationError(`Access Denied: Requires all of [${permissionCodes.join(', ')}]`);
     }
   }
+  static resolveEffectivePermissions(rawPermissionCodes) {
+  return [...new Set(rawPermissionCodes)];
+}
 }

@@ -29,4 +29,9 @@ export class UserRepository {
     const [user] = await conn.select().from(users).where(eq(users.id, id)).limit(1);
     return user || null;
   }
+  static async findByEmail(email, tx) {
+    const conn = this.getDB(tx);
+    const [user] = await conn.select().from(users).where(eq(users.email, email)).limit(1);
+    return user || null;
+  }
 }
