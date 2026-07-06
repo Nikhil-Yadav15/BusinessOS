@@ -1,28 +1,10 @@
-import { generateId } from '../../infrastructure/id/uuid.js';
 import { BaseRepository } from './BaseRepository.js';
 import { eq, and } from 'drizzle-orm';
 import { businesses, businessMembers } from '../../db/schema/business.js';
 
-
 export class BusinessRepository extends BaseRepository {
-  static async create(data, tx) {
-    const conn = this.getDB(tx);
-    const [business] = await conn.insert(businesses).values({
-      id: generateId(),
-      ...data,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }).returning();
-    return business;
-  }
-
-  static async findById(businessId, tx) {
-    const conn = this.getDB(tx);
-    const [business] = await conn.select()
-      .from(businesses)
-      .where(eq(businesses.id, businessId))
-      .limit(1);
-    return business || null;
+  static get table() {
+    return businesses;
   }
 
   static async getBusinessesForUser(userId, tx) {
@@ -42,7 +24,7 @@ export class BusinessRepository extends BaseRepository {
       and(
         eq(businessMembers.userId, userId),
         eq(businesses.status, 'ACTIVE'),
-        eq(businessMembers.status, 'ACTIVE') // <-- NEW: Only active memberships
+        eq(businessMembers.status, 'ACTIVE')
       )
     );
   }
