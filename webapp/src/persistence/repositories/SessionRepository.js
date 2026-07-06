@@ -26,6 +26,14 @@ export class SessionRepository extends BaseRepository {
     return session || null;
   }
 
+  static async findById(sessionId, tx) {
+    const conn = this.getDB(tx);
+    const [session] = await conn.select().from(sessions)
+      .where(eq(sessions.id, sessionId))
+      .limit(1);
+    return session || null;
+  }
+
   static async revoke(sessionId, tx) {
     const conn = this.getDB(tx);
     await conn.update(sessions)
