@@ -16,7 +16,7 @@ export class ListMembersOperation extends BaseOperation {
     const members = await BusinessMemberRepository.findByBusiness(
       context.businessId,
       tx
-    );
+    ) || [];
 
     return {
       success: true,

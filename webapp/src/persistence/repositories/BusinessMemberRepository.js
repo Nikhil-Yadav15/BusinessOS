@@ -31,11 +31,8 @@ export class BusinessMemberRepository extends BaseRepository {
       userId: businessMembers.userId,
       status: businessMembers.status,
       joinedAt: businessMembers.joinedAt,
-      createdAt: businessMembers.createdAt,
-      updatedAt: businessMembers.updatedAt,
 
-      firstName: users.firstName,
-      lastName: users.lastName,
+      fullName: users.fullName,
       email: users.email,
       mobile: users.mobile,
     })
@@ -82,11 +79,8 @@ export class BusinessMemberRepository extends BaseRepository {
         userId: businessMembers.userId,
         status: businessMembers.status,
         joinedAt: businessMembers.joinedAt,
-        createdAt: businessMembers.createdAt,
-        updatedAt: businessMembers.updatedAt,
 
-        firstName: users.firstName,
-        lastName: users.lastName,
+        fullName: users.fullName,
         email: users.email,
         mobile: users.mobile,
       })
