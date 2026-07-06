@@ -228,11 +228,11 @@ Accounting layer built on top of all business transactions.
 
 ### Stage 2: Contextual Wrappers
 - ✅ React Context (`BusinessContext.js`) mapping Global State
-- RBAC Component Hiding Wrapper (Hide/Show buttons based on Auth)
+- ✅ RBAC Component Hiding Wrapper (Hide/Show buttons based on Auth)
 
 ### Stage 3: Component Foundation
 - ✅ Reusable `DataTable` component (Pagination, Search)
-- Accessible Modals, Slide-out Drawers, Toasts
+- ✅ Accessible Modals, Slide-out Drawers, Toasts
 
 ### Stage 4: Catalog & CRM UI
 - ✅ CRM Party Data Grid (GET `/api/crm`)
@@ -256,7 +256,7 @@ Accounting layer built on top of all business transactions.
 # 🔜 Phase 9 — Production Readiness
 
 - Logging & Monitoring
-- Rate Limiting
+- Rate Limitingin 
 - Security Hardening
 - Vercel Deployment
 
