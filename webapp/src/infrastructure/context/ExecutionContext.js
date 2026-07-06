@@ -1,8 +1,15 @@
 export class ExecutionContext {
-  constructor({ userId, sessionId, businessId, memberId }) {
+  constructor({ userId, sessionId, businessId, memberId, metadata }) {
     this.userId = userId;
     this.sessionId = sessionId;
-    this.businessId = businessId; // Can be null for tenant-agnostic operations
-    this.memberId = memberId;     // Can be null for tenant-agnostic operations
+    // Authoritative tenant data (server-validated)
+    this.businessId = businessId; 
+    this.memberId = memberId;     
+    // Request & Observability Metadata
+    this.metadata = metadata || {
+      correlationId: null,
+      ipAddress: null,
+      userAgent: null,
+    };
   }
 }

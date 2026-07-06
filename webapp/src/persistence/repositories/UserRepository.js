@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm';
 import { db } from '../../db/index.js';
 import { users } from '../../db/schema/identity.js';
-
+import { generateId } from '../../infrastructure/id/uuid.js';
 export class UserRepository {
   static async findByMobile(mobile, tx = db) {
     const [user] = await tx.select().from(users).where(eq(users.mobile, mobile)).limit(1);
@@ -12,5 +12,16 @@ export class UserRepository {
     await tx.update(users)
       .set({ lastLoginAt: new Date(), updatedAt: new Date() })
       .where(eq(users.id, userId));
+  }
+
+  static async create(userData, tx = db) {
+    const [user] = await tx.insert(users).values({
+      id: generateId(),
+      ...userData,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }).returning();
+    
+    return user;
   }
 }
