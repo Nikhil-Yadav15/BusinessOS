@@ -10,6 +10,26 @@ export class RoleRepository extends BaseRepository {
     return await conn.select().from(permissions);
   }
 
+  static async getMemberRoles(businessMemberId, tx) {
+    const conn = this.getDB(tx);
+
+    return await conn
+      .select({
+        id: roles.id,
+        name: roles.name,
+        isSystem: roles.isSystem,
+        status: roles.status,
+      })
+      .from(memberRoles)
+      .innerJoin(
+        roles,
+        eq(memberRoles.roleId, roles.id)
+      )
+      .where(
+        eq(memberRoles.businessMemberId, businessMemberId)
+      );
+  }
+
   static async createRoles(rolesData, tx) {
     const conn = this.getDB(tx);
     const rolesToInsert = rolesData.map(role => ({
@@ -114,4 +134,32 @@ export class RoleRepository extends BaseRepository {
 
     return { roles: rolesData, permissions: permsData.map(p => p.permissionCode) };
   }
+  static async removeMemberRoles(businessMemberId, tx) {
+    const conn = this.getDB(tx);
+
+    await conn
+      .delete(memberRoles)
+      .where(eq(memberRoles.businessMemberId, businessMemberId));
+  }
+  static async findByIdAndBusiness(roleId, businessId, tx) {
+    const conn = this.getDB(tx);
+
+    const [role] = await conn
+      .select()
+      .from(roles)
+      .where(
+        and(
+          eq(roles.id, roleId),
+          eq(roles.businessId, businessId)
+        )
+      )
+      .limit(1);
+
+    return role || null;
+  }
+  static async memberHasSystemRole(businessMemberId, tx) {
+    const roles = await this.getMemberRoles(businessMemberId, tx);
+    return roles.some(role => role.isSystem);
+  }
+
 }
