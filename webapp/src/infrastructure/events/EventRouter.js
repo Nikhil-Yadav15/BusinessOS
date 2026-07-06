@@ -1,4 +1,5 @@
 import { AnalyticsConsumer } from '../../application/consumers/analytics/AnalyticsConsumer.js';
+import { NotificationConsumer } from '../../application/consumers/notifications/NotificationConsumer.js';
 
 export class EventRouter {
   /**
@@ -7,9 +8,9 @@ export class EventRouter {
    */
   static async dispatch(event, tx) {
      const consumers = [
-       AnalyticsConsumer
+       AnalyticsConsumer,
+       NotificationConsumer
        // WorkflowsConsumer
-       // NotificationsConsumer (Phase 6 expansion)
      ];
 
      for (const consumerClass of consumers) {
