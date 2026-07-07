@@ -1,8 +1,10 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useBusinessContext } from '../providers/BusinessProvider.js';
+import ChatDrawer from '../ai/ChatDrawer.js';
 
 const navItems = [
   { name: 'Overview', href: '/dashboard' },
@@ -17,14 +19,15 @@ const navItems = [
 export default function DashboardShell({ children }) {
   const pathname = usePathname();
   const { session, logout } = useBusinessContext();
-  const user = session?.user;
+  const [isAiOpen, setAiOpen] = useState(false);
 
+  const user = session?.user;
   const initials = user?.fullName
     ? user.fullName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
     : 'U';
 
   return (
-    <div className="flex h-screen bg-slate-50 text-slate-900 font-sans">
+    <div className="flex h-screen bg-slate-50 text-slate-900 font-sans relative">
       {/* Sidebar */}
       <aside className="w-64 bg-white border-r border-slate-200 flex flex-col shrink-0 shadow-sm">
         <div className="h-16 flex items-center px-6 border-b border-slate-100">
@@ -91,6 +94,18 @@ export default function DashboardShell({ children }) {
           </div>
         </div>
       </main>
+
+      {/* Floating AI Action Button (FAB) */}
+      <button 
+        onClick={() => setAiOpen(true)}
+        className="fixed bottom-8 right-8 w-14 h-14 bg-indigo-600 text-white rounded-full flex items-center justify-center shadow-2xl hover:bg-indigo-700 hover:scale-105 transition-all z-40 text-2xl"
+        title="Open Atlas AI Co-Pilot"
+      >
+        ✨
+      </button>
+
+      {/* AI Chat Drawer Component */}
+      <ChatDrawer isOpen={isAiOpen} onClose={() => setAiOpen(false)} />
     </div>
   );
 }
