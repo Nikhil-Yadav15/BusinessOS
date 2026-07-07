@@ -14,6 +14,7 @@ const navItems = [
   { name: 'Sales Invoices', href: '/dashboard/sales' },
   { name: 'Purchasing', href: '/dashboard/purchasing' },
   { name: 'Accounting', href: '/dashboard/ledger' },
+  { name: 'Workflows & AI', href: '/dashboard/workflows' },
 ];
 
 export default function DashboardShell({ children }) {

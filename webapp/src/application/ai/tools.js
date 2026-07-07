@@ -6,6 +6,7 @@ import { ListInventoryOperation } from '../operations/inventory/ListInventoryOpe
 import { CreateWorkflowOperation } from '../operations/workflows/CreateWorkflowOperation.js';
 import { db } from '../../db/index.js';
 import { aiMemories } from '../../db/schema/ai.js';
+import { workflows } from '../../db/schema/workflow.js';
 import { eq, and } from 'drizzle-orm';
 import { generateId } from '../../infrastructure/id/uuid.js';
 
@@ -128,7 +129,7 @@ export const buildAITools = (executionContext) => {
       },
       {
         name: 'create_workflow_rule',
-        description: 'Creates a background automation rule (IFTTT). Use this when the user asks you to automate something or trigger an alert.',
+        description: 'Creates a background automation rule (IFTTT). CRITICAL: Before deploying a new rule, ALWAYS use list_workflows first! If a functionally identical rule exists but is disabled, use toggle_workflow_status to turn it back on instead of creating a duplicate.',
         schema: z.object({
           name: z.string().describe('Readable name of the workflow'),
           triggerEvent: z.enum(['inventory.adjusted', 'invoice.created', 'purchase.created', 'payment.recorded']).describe('The system event that wakes up the workflow'),
@@ -142,6 +143,46 @@ export const buildAITools = (executionContext) => {
             configuration: z.record(z.any()).optional()
           })).describe('The sequence of actions to take if the condition passes. Return an array of action objects.')
         })
+      }
+    ),
+
+    // 6. List Workflows Tool
+    tool(
+      async () => {
+        try {
+          const rules = await db.select({
+             id: workflows.id,
+             name: workflows.name,
+             triggerEvent: workflows.triggerEvent,
+             isEnabled: workflows.isEnabled
+          }).from(workflows).where(eq(workflows.businessId, executionContext.businessId));
+          return JSON.stringify(rules);
+        } catch (e) { return `Error: ${e.message}`; }
+      },
+      {
+         name: 'list_workflows',
+         description: 'Retrieves all background IFTTT workflow logic rules configured for the business along with their UUIDs.',
+         schema: z.object({})
+      }
+    ),
+
+    // 7. Toggle Workflow Status Tool
+    tool(
+      async ({ workflowId, enable }) => {
+        try {
+          await db.update(workflows)
+            .set({ isEnabled: enable })
+            .where(and(eq(workflows.id, workflowId), eq(workflows.businessId, executionContext.businessId)));
+          return `Successfully set workflow ID ${workflowId} to enabled=${enable}`;
+        } catch (e) { return `Error toggling workflow: ${e.message}`; }
+      },
+      {
+         name: 'toggle_workflow_status',
+         description: 'Turns an existing background workflow ON or OFF given its ID.',
+         schema: z.object({
+           workflowId: z.string().describe('The UUID of the workflow to toggle'),
+           enable: z.boolean().describe('Set to true to activate the workflow, false to disable it')
+         })
       }
     )
   ];
