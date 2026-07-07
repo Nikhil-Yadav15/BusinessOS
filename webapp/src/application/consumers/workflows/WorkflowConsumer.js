@@ -1,5 +1,5 @@
 import { WorkflowRepository } from '../../../persistence/repositories/WorkflowRepository.js';
-import { db } from '../../../infrastructure/db/index.js';
+import { db } from '../../../db/index.js';
 import { purchases, purchaseItems } from '../../../db/schema/purchasing.js';
 import { notifications, notificationDeliveries } from '../../../db/schema/notification.js';
 import { generateId } from '../../../infrastructure/id/uuid.js';
