@@ -1,6 +1,25 @@
-# Atlas BusinessOS
+<div align="center">
+  <h1>Atlas BusinessOS</h1>
+  <p><strong>A meticulously engineered, multi-tenant Enterprise Resource Planning (ERP) platform.</strong></p>
+  
+  [![Production Ready](https://img.shields.io/badge/Production-Ready-success?style=for-the-badge&logo=vercel)](#)
+  [![Database](https://img.shields.io/badge/Postgres-Drizzle_ORM-316192?style=for-the-badge&logo=postgresql)](#)
+  [![Security](https://img.shields.io/badge/Security-Strict_RBAC-critical?style=for-the-badge&logo=auth0)](#)
+</div>
 
-**Atlas BusinessOS** is a meticulously engineered, multi-tenant Enterprise Resource Planning (ERP) platform. Built for robust performance and scale, Atlas moves beyond standard monolithic CRUD applications by utilizing a highly normalized PostgreSQL cluster under strict architectural patterns. It guarantees data integrity, cryptographic security, and autonomous scalability—essential for true enterprise production environments.
+<br />
+
+**Atlas BusinessOS** strictly moves beyond standard monolithic CRUD applications by utilizing a highly normalized PostgreSQL cluster under strict architectural patterns. It guarantees data integrity, cryptographic security, and autonomous scalability—essential for true enterprise production environments.
+
+## 📖 Table of Contents
+- [🚀 Key Production-Ready Capabilities](#-key-production-ready-capabilities)
+- [🛠 Standardized Tech Stack](#-standardized-tech-stack)
+- [💻 Getting Started (Local Development)](#-getting-started-local-development)
+- [📂 Architecture & Project Structure](#-architecture--project-structure)
+- [🤝 Contribution Guidelines](#-contribution-guidelines)
+- [📄 License](#-license)
+
+---
 
 ## 🚀 Key Production-Ready Capabilities
 
@@ -37,3 +56,69 @@ A state-of-the-art AI assistant seamlessly integrated via logically bound tool g
 A highly reliable IFTTT (If This Then That) rule engine empowers businesses to automate tasks with confidence.
 - **Engine Execution Integrity:** Matches highly validated Outbox Events against customized webhooks and triggers safely without affecting main ERP transactional bottlenecks.
 - **Zero-Code Extensibility:** Natively handles continuous integration with third-party webhooks (e.g., SMTP or SMS networks) to facilitate highly configurable domain behaviors dynamically.
+
+---
+
+## 🛠 Standardized Tech Stack
+- **Framework:** Next.js (Edge-ready configuration)
+- **Database:** Highly-normalized PostgreSQL Cluster
+- **ORM & Type Safety:** Drizzle ORM
+- **Authentication:** Custom Asymmetric JWT + Secure Email OTP
+- **AI Automation:** LangGraph with Deterministic Tooling Guardrails
+
+## 💻 Getting Started (Local Development)
+
+### Prerequisites
+- **Node.js** (v18.0.0 or higher)
+- **PostgreSQL** (v14 or localized Docker equivalent)
+- **Package Manager:** `npm` or `pnpm`
+
+### Installation
+
+1. **Clone the repository & enter the client folder:**
+   ```bash
+   git clone https://github.com/YourOrg/BusinessOS.git
+   cd BusinessOS/webapp
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Configure Environment Variables:**
+   Copy the example environment securely and populate your specific keys (Database URL, JWT Secrets, SMTP setups):
+   ```bash
+   cp .env.example .env.local
+   ```
+
+4. **Run Database Migrations:**
+   Ensure the Drizzle schema is synced via the migration tools.
+   ```bash
+   npm run db:push
+   ```
+
+5. **Start the Development Server:**
+   ```bash
+   npm run dev
+   ```
+
+## 📂 Architecture & Project Structure
+```text
+BusinessOS/
+├── .agents/              # AI workflows & deterministic automation commands
+├── webapp/               # Core Next.js Application
+│   ├── src/
+│   │   ├── app/          # Edge-level Routing & Next.js App Router Pages
+│   │   ├── domain/       # Strict Object-Oriented Domain Logic Models
+│   │   ├── db/           # Drizzle Schema Definitions & Migrations
+│   │   ├── components/   # Modular, re-usable user interfaces
+│   │   └── lib/          # Utilities, Outbox routines, and API adapters
+└── MVP.md                # V1.0 Internal Schema & Core Architecture Specs
+```
+
+
+
+## 📄 License
+Copyright © 2026 Atlas BusinessOS. All Rights Reserved.
+
