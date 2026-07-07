@@ -10,7 +10,7 @@ export function withApiHandler(handler) {
       const resolvedParams = context?.params ? await context.params : {};
       return await handler(req, { ...context, params: resolvedParams });
     } catch (error) {
-      const status = error.status || 500;
+      const status = error.status || (error.message && !error.message.includes('Internal') ? 400 : 500);
       const message = status === 500 ? 'Internal Server Error' : error.message;
 
       // Ensure 500s are still logged to the console for internal debugging
@@ -18,7 +18,7 @@ export function withApiHandler(handler) {
         console.error('[Unhandled API Error]', error);
       }
 
-      return Response.json({ error: message }, { status });
+      return Response.json({ error: message, message: message }, { status });
     }
   };
 }

@@ -68,7 +68,7 @@ export const devices = pgTable('device', {
 
 export const otps = pgTable('otp', {
   id: generateId(),
-  mobile: varchar('mobile', { length: 15 }).notNull(),
+  mobile: varchar('mobile', { length: 255 }).notNull(), // Also used for email in hybrid OTP flow
   purpose: otpPurposeEnum('purpose').notNull(),
   otpHash: text('otp_hash').notNull(),
   attempts: smallint('attempts').notNull().default(0),

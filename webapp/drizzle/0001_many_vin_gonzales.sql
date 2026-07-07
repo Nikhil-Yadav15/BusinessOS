@@ -1,0 +1,1 @@
+ALTER TABLE "otp" ALTER COLUMN "mobile" SET DATA TYPE varchar(255);

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { saveSession } from '../../../lib/session.js';
 
@@ -30,20 +31,26 @@ export default function LoginPage() {
       // Save short-lived access token in sessionStorage
       saveSession({ accessToken: data.accessToken, user: data.user });
       
-      // Now fetch the user's first business to auto-select it
+      // Now fetch the user's businesses to decide routing
       const bizRes = await fetch('/api/businesses', {
         headers: { Authorization: `Bearer ${data.accessToken}` },
       });
       const bizData = await bizRes.json();
-      const firstBusiness = bizData?.businesses?.[0];
 
-      if (firstBusiness) {
-        saveSession({
-          accessToken: data.accessToken,
-          user: data.user,
-          businessId: firstBusiness.id, // Extract the correct ID
-        });
+      // Smart routing: If user has no business, send them to onboarding wizard
+      const businesses = bizData?.businesses || bizData?.data || [];
+      
+      if (!Array.isArray(businesses) || businesses.length === 0) {
+        router.push('/onboarding');
+        return;
       }
+
+      const firstBusiness = businesses[0];
+      saveSession({
+        accessToken: data.accessToken,
+        user: data.user,
+        businessId: firstBusiness.id,
+      });
 
       router.push('/dashboard');
     } catch (err) {
@@ -57,7 +64,9 @@ export default function LoginPage() {
     <div className="flex bg-slate-50 min-h-screen items-center justify-center p-4">
       <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-lg border border-slate-100">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-indigo-700 tracking-tight">Atlas BusinessOS</h1>
+          <Link href="/">
+            <h1 className="text-2xl font-bold text-indigo-700 tracking-tight hover:text-indigo-600 transition-colors">Atlas BusinessOS</h1>
+          </Link>
           <p className="text-slate-500 mt-2 text-sm">Sign in to manage your operations</p>
         </div>
 
@@ -98,6 +107,13 @@ export default function LoginPage() {
             {loading ? 'Signing in...' : 'Access Dashboard'}
           </button>
         </form>
+
+        <p className="mt-6 text-center text-sm text-slate-500">
+          Don't have an account?{' '}
+          <Link href="/register" className="text-indigo-600 hover:text-indigo-700 font-semibold transition-colors">
+            Create one free
+          </Link>
+        </p>
       </div>
     </div>
   );

@@ -8,6 +8,13 @@
       "when": 1783063268567,
       "tag": "0000_volatile_vin_gonzales",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1783409340417,
+      "tag": "0001_many_vin_gonzales",
+      "breakpoints": true
     }
   ]
 }

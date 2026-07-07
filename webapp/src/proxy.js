@@ -11,7 +11,17 @@ import { NextResponse } from 'next/server';
  * via withExecutionContext middleware.
  */
 
-const PUBLIC_ROUTES = ['/login', '/register', '/api/auth/login', '/api/auth/register', '/api/auth/refresh'];
+const PUBLIC_ROUTES = [
+  '/', 
+  '/login', 
+  '/register', 
+  '/onboarding',
+  '/api/auth/login', 
+  '/api/auth/register', 
+  '/api/auth/refresh',
+  '/api/auth/send-otp',
+  '/api/auth/verify-otp'
+];
 
 // Free-tier Vercel memory rate limiting (Isolate Local)
 const ipHits = new Map();
