@@ -3,15 +3,31 @@ import { UserRepository } from '../../../persistence/repositories/UserRepository
 import { SecurityEventRepository } from '../../../persistence/repositories/SecurityEventRepository.js';
 import { hashPassword } from '../../../infrastructure/auth/crypto.js';
 import { ValidationError, ConflictError } from '../../errors/index.js';
+import { db } from '../../../db/index.js';
+import { otps } from '../../../db/schema/identity.js';
+import { eq, and, isNotNull, desc } from 'drizzle-orm';
 
 export class RegisterOperation extends BaseOperation {
   
   async validate(context, input) {
-    if (!input.fullName || !input.mobile || !input.password) {
-      throw new ValidationError('Full name, mobile, and password are required.');
+    if (!input.fullName || !input.mobile || !input.password || !input.email) {
+      throw new ValidationError('Full name, mobile, email, and password are required.');
     }
     if (input.password.length < 8) {
       throw new ValidationError('Password must be at least 8 characters long.');
+    }
+
+    // Hard Security Invariant: Block any remote POST request that hasn't successfully passed our OTP gateway!
+    const verified = await db.select().from(otps)
+      .where(and(
+        eq(otps.mobile, input.email),
+        isNotNull(otps.verifiedAt)
+      ))
+      .orderBy(desc(otps.verifiedAt))
+      .limit(1);
+
+    if (verified.length === 0) {
+      throw new ValidationError('Access Denied: Unverified emails cannot bypass frontend registration checks.');
     }
   }
 
