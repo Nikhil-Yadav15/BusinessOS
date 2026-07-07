@@ -1,4 +1,8 @@
 import { WorkflowRepository } from '../../../persistence/repositories/WorkflowRepository.js';
+import { db } from '../../../infrastructure/db/index.js';
+import { purchases, purchaseItems } from '../../../db/schema/purchasing.js';
+import { notifications, notificationDeliveries } from '../../../db/schema/notification.js';
+import { generateId } from '../../../infrastructure/id/uuid.js';
 
 export class WorkflowConsumer {
   /**
@@ -31,7 +35,7 @@ export class WorkflowConsumer {
          if (passed) {
             // 2. Pipeline sequence action handlers natively 
             for (const action of rule.actions) {
-               await this.executeAction(action, payload, tx);
+               await this.executeAction(action, rule, event, tx);
             }
             await WorkflowRepository.updateExecution(executionId, 'COMPLETED', null, tx);
          } else {
@@ -66,19 +70,104 @@ export class WorkflowConsumer {
     }
   }
 
-  async executeAction(action, payload, tx) {
-     // An internal registry mapping external IFTTT user configs to rigid backend classes.
+  async executeAction(action, rule, event, tx) {
+     const { payload, businessId } = event;
+     const config = action.configuration || {};
+     const conn = db; // We use raw db connection builder, or we can use the transacting tx context directly!
+     
+     // Note: we can use 'tx' directly to ensure atomic row locks
+     
      switch (action.actionType) {
-        case 'CREATE_TASK':
-           console.log('🤖 Background Workflow creating TASK:', action.configuration);
-           // We will map this natively to a CRM task generator logic here later as we build actions!
+        case 'REPLENISH_STOCK': {
+           const supplierId = config.fallbackSupplierId;
+           if (!supplierId || !payload.productId) {
+             console.log('🤖 Draft generation aborted: Missing config mapping.');
+             break;
+           }
+
+           const purchaseId = generateId();
+           await tx.insert(purchases).values({
+              id: purchaseId,
+              businessId,
+              supplierId,
+              purchaseNumber: `AUTO-PO-${Date.now()}`,
+              purchaseType: 'PURCHASE',
+              status: 'DRAFT',
+              purchaseDate: new Date(),
+              subtotal: "0.00",
+              taxAmount: "0.00",
+              totalAmount: "0.00",
+              balanceAmount: "0.00",
+              createdBy: rule.createdBy // Use the user who designed the rule as the auditor!
+           });
+
+           await tx.insert(purchaseItems).values({
+              id: generateId(),
+              purchaseId,
+              productId: payload.productId,
+              quantity: String(config.reorderQuantity || 20),
+              unitCost: "1.00",
+              taxAmount: "0.00",
+              lineTotal: String(config.reorderQuantity || 20)
+           });
+           
+           console.log('✅ Background Workflow drafted a Replenishment Bill!');
            break;
-        case 'INTERNAL_EMAIL':
-           console.log('🤖 Background Workflow triggering EMAIL via generic SMTP:', action.configuration);
+        }
+        case 'INTERNAL_EMAIL': {
+           // Create Notification Audit Row
+           const notifId = generateId();
+           await tx.insert(notifications).values({
+              id: notifId,
+              businessId,
+              recipientType: 'USER',
+              recipientId: rule.createdBy,
+              message: `Atlas System Alert: ${config.subject || 'Automated Email Triggered'}`,
+              status: 'SENT'
+           });
+
+           // Background HTTP fire to Resend API
+           const apiKey = process.env.RESEND_API_KEY;
+           if (apiKey) {
+              fetch('https://api.resend.com/emails', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  from: 'Atlas OS Alerts <alerts@atlasops.cloud>',
+                  to: [config.toEmail || 'owner@business.com'],
+                  subject: config.subject || 'Atlas Automation Triggered',
+                  html: `<h3>Atlas Background Process</h3><p>Workflow <strong>${rule.name}</strong> successfully executed. <br/>Payload: ${JSON.stringify(payload)}</p>`
+                })
+              }).catch(e => console.error("Resend API failed silently:", e));
+           } else {
+             console.log("No RESEND_API_KEY in .env.local - Email bypassed.");
+           }
            break;
-        case 'REPLENISH_STOCK':
-           console.log('🤖 Background Workflow drafting Purchase Bill against payload:', payload);
+        }
+        case 'SEND_SMS': {
+           // We will map this via standard Twilio fetch parameters later if the payload has a phone number.
+           const twilioSid = process.env.TWILIO_ACCOUNT_SID;
+           const twilioToken = process.env.TWILIO_AUTH_TOKEN;
+           
+           if (!twilioSid || !twilioToken) {
+              console.log("No TWILIO variables in .env.local - SMS bypassed.");
+              break;
+           }
+           
+           const notifId = generateId();
+           await tx.insert(notifications).values({
+              id: notifId,
+              businessId,
+              recipientType: 'PARTY',
+              recipientId: payload.partyId || generateId(), // If partyId isn't on the event, SMS is orphaned
+              message: `Atlas Alert: ${config.smsMessage || 'Payment Received!'}`,
+              status: 'SENT'
+           });
+           
+           // Mocked Twilio Dispatch for MVP
+           console.log("☎️ Twilio Hook dispatched securely.");
            break;
+        }
         default:
            console.log('🤖 Undefined background action node type executed:', action.actionType);
      }

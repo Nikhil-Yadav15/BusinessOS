@@ -138,7 +138,7 @@ export const buildAITools = (executionContext) => {
             value: z.any()
           }).optional().describe('Mathematical if-condition logic. Ex: { field: "quantity", operator: "<", value: 10 }'),
           actions: z.array(z.object({
-            actionType: z.enum(['CREATE_TASK', 'INTERNAL_EMAIL', 'REPLENISH_STOCK']),
+            actionType: z.enum(['CREATE_TASK', 'INTERNAL_EMAIL', 'REPLENISH_STOCK', 'SEND_SMS']),
             configuration: z.record(z.any()).optional()
           })).describe('The sequence of actions to take if the condition passes. Return an array of action objects.')
         })
