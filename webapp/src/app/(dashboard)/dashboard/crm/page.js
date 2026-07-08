@@ -55,7 +55,7 @@ export default function CRMPage() {
     try {
       const url = filter ? `/api/crm/parties?partyType=${filter}` : '/api/crm/parties';
       const res = await apiClient.get(url, { token: session.token, businessId: session.businessId });
-      setParties(res.data?.items || []);
+      setParties(Array.isArray(res.data) ? res.data : (res.data?.items || []));
     } catch (err) { setError(err.message || 'Failed to load parties.'); } 
     finally { setLoading(false); }
   }, [session, filter]);

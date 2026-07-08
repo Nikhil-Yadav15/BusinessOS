@@ -45,7 +45,7 @@ export default function SalesPage() {
     setLoading(true);
     try {
       const res = await apiClient.get('/api/sales/invoices', { token: session.token, businessId: session.businessId });
-      setInvoices(res.data?.items || []);
+      setInvoices(Array.isArray(res.data) ? res.data : (res.data?.items || []));
     } catch (err) { setError(err.message || 'Failed to load invoices.'); } finally { setLoading(false); }
   }, [session]);
 
@@ -55,8 +55,8 @@ export default function SalesPage() {
         apiClient.get('/api/crm/parties?partyType=CUSTOMER', { token: session.token, businessId: session.businessId }),
         apiClient.get('/api/catalog/products', { token: session.token, businessId: session.businessId })
       ]);
-      setCustomers(crmRes.data?.items || []);
-      setProducts(prodRes.data?.items || []);
+      setCustomers(Array.isArray(crmRes.data) ? crmRes.data : (crmRes.data?.items || []));
+      setProducts(Array.isArray(prodRes.data) ? prodRes.data : (prodRes.data?.items || []));
     } catch(e) { console.error('Failed to load dropdowns', e); }
   };
 

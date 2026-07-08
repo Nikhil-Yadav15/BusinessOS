@@ -52,7 +52,7 @@ export default function LedgerPage() {
         token: session.token,
         businessId: session.businessId,
       });
-      setAccounts(res.data?.items || []);
+      setAccounts(Array.isArray(res.data) ? res.data : (res.data?.items || []));
     } catch (err) {
       setError(err.message || 'Failed to load chart of accounts.');
     } finally {

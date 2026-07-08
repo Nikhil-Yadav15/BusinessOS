@@ -45,7 +45,7 @@ export default function PurchasingPage() {
     setLoading(true);
     try {
       const res = await apiClient.get('/api/purchasing/purchases', { token: session.token, businessId: session.businessId });
-      setPurchases(res.data?.items || []);
+      setPurchases(Array.isArray(res.data) ? res.data : (res.data?.items || []));
     } catch (err) { setError(err.message || 'Failed to load purchases.'); } finally { setLoading(false); }
   }, [session]);
 
@@ -55,8 +55,8 @@ export default function PurchasingPage() {
         apiClient.get('/api/crm/parties?partyType=SUPPLIER', { token: session.token, businessId: session.businessId }),
         apiClient.get('/api/catalog/products', { token: session.token, businessId: session.businessId })
       ]);
-      setSuppliers(crmRes.data?.items || []);
-      setProducts(prodRes.data?.items || []);
+      setSuppliers(Array.isArray(crmRes.data) ? crmRes.data : (crmRes.data?.items || []));
+      setProducts(Array.isArray(prodRes.data) ? prodRes.data : (prodRes.data?.items || []));
     } catch(e) { console.error('Failed to load dropdowns', e); }
   };
 

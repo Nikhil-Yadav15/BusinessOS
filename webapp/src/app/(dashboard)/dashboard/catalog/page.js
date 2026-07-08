@@ -52,7 +52,7 @@ export default function CatalogPage() {
         token: session.token,
         businessId: session.businessId,
       });
-      setProducts(res.data?.items || []);
+      setProducts(Array.isArray(res.data) ? res.data : (res.data?.items || []));
     } catch (err) {
       setError(err.message || 'Failed to load products.');
     } finally {

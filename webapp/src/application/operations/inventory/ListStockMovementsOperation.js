@@ -6,11 +6,11 @@ export class ListStockMovementsOperation extends BaseOperation {
     const { businessId } = context;
     const { page = 1, limit = 50 } = input || {};
 
-    const result = await StockMovementRepository.findAll({
-      businessId,
+    const result = await StockMovementRepository.findList({
+      filters: { businessId },
       page: parseInt(page),
       limit: parseInt(limit),
-    });
+    }, context.tx);
 
     return result;
   }

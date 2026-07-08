@@ -64,7 +64,8 @@ export default function OnboardingPage() {
 
       // Persist business context
       saveSession({
-        ...session,
+        accessToken: session.token,
+        user: session.user,
         businessId: data.business.id,
       });
 
@@ -143,7 +144,7 @@ export default function OnboardingPage() {
               <form onSubmit={handleSubmit} className="mt-6 space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Business Name *</label>
-                  <input type="text" placeholder="e.g. Yadav Enterprises" value={form.name} onChange={handleChange('name')}
+                  <input type="text" placeholder="e.g. Enterprises" value={form.name} onChange={handleChange('name')}
                     className="w-full px-4 py-3 rounded-lg border border-slate-200 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" required />
                 </div>
                 <div>

@@ -41,8 +41,8 @@ export default function InventoryPage() {
         apiClient.get('/api/inventory', { token: session.token, businessId: session.businessId }),
         apiClient.get('/api/inventory/movements', { token: session.token, businessId: session.businessId }),
       ]);
-      setSnapshot(snapRes.data?.items || []);
-      setMovements(movRes.data?.items || []);
+      setSnapshot(Array.isArray(snapRes.data) ? snapRes.data : (snapRes.data?.items || []));
+      setMovements(Array.isArray(movRes.data) ? movRes.data : (movRes.data?.items || []));
     } catch (err) { setError(err.message || 'Failed to load inventory.'); } finally { setLoading(false); }
   }, [session]);
 
@@ -51,7 +51,7 @@ export default function InventoryPage() {
   useEffect(() => {
     if (isDrawerOpen) {
        apiClient.get('/api/catalog/products', { token: session.token, businessId: session.businessId })
-        .then(res => setProducts(res.data?.items || []))
+        .then(res => setProducts(Array.isArray(res.data) ? res.data : (res.data?.items || [])))
         .catch(console.error);
     }
   }, [isDrawerOpen]);
