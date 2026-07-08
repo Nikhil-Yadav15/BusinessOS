@@ -1,7 +1,7 @@
 import { roles, permissions, rolePermissions, memberRoles } from '../../db/schema/security.js';
 import { generateId } from '../../infrastructure/id/uuid.js';
 import { BaseRepository } from './BaseRepository.js';
-import { eq, and,inArray } from 'drizzle-orm';
+import { eq, and, inArray, or, isNull } from 'drizzle-orm';
 export class RoleRepository extends BaseRepository {
   
   static async getAllPermissions(tx) {
@@ -69,7 +69,7 @@ export class RoleRepository extends BaseRepository {
       .from(roles)
       .where(and(
         eq(roles.name, roleName), 
-        eq(roles.businessId, businessId)
+        or(eq(roles.businessId, businessId), isNull(roles.businessId))
       ))
       .limit(1);
     return role || null;
@@ -149,7 +149,7 @@ export class RoleRepository extends BaseRepository {
       .where(
         and(
           eq(roles.id, roleId),
-          eq(roles.businessId, businessId)
+          or(eq(roles.businessId, businessId), isNull(roles.businessId))
         )
       )
       .limit(1);

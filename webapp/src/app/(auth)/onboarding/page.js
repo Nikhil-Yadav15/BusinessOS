@@ -123,6 +123,14 @@ export default function OnboardingPage() {
               >
                 Continue →
               </button>
+
+              <div className="mt-8 pt-6 border-t border-slate-200 text-center">
+                <h3 className="text-sm font-semibold text-slate-900">Joining an existing business?</h3>
+                <p className="text-sm text-slate-500 mt-1">
+                  Ask your manager to invite this account's email address from their team settings. 
+                  Once invited, you can <button onClick={() => window.location.href = '/login'} className="text-indigo-600 font-semibold hover:underline">re-login</button> to access their dashboard.
+                </p>
+              </div>
             </div>
           )}
 
