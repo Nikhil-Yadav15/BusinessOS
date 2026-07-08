@@ -40,6 +40,7 @@ export default function CatalogPage() {
   
   // Drawer State
   const [isDrawerOpen, setDrawerOpen] = useState(false);
+  const [editingId, setEditingId] = useState(null);
   const [form, setForm] = useState({ name: '', sku: '', type: 'PHYSICAL', sellingPrice: '', purchasePrice: '' });
   const [saving, setSaving] = useState(false);
 
@@ -64,27 +65,73 @@ export default function CatalogPage() {
     fetchProducts();
   }, [fetchProducts]);
 
-  async function handleCreateProduct(e) {
-    e.preventDefault();
-    setSaving(true);
+  const handleEdit = (row) => {
+    setEditingId(row.id);
+    setForm({ 
+      name: row.name, 
+      sku: row.sku || '', 
+      type: row.type || 'PHYSICAL', 
+      sellingPrice: row.sellingPrice || '', 
+      purchasePrice: row.purchasePrice || '' 
+    });
+    setDrawerOpen(true);
+  };
+
+  const handleDelete = async (id, name) => {
+    if (!confirm(`Are you sure you want to definitively delete '${name}'? This action cannot be undone.`)) return;
     try {
-      await apiClient.post('/api/catalog/products', {
-        ...form,
-        sellingPrice: form.sellingPrice || undefined,
-        purchasePrice: form.purchasePrice || undefined
-      }, {
+      await apiClient.delete(`/api/catalog/products/${id}`, {
         token: session.token,
         businessId: session.businessId
       });
+      fetchProducts();
+    } catch (err) {
+      alert(err.message || 'Failed to delete product');
+    }
+  };
+
+  async function handleSaveProduct(e) {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      const payload = {
+        ...form,
+        sellingPrice: form.sellingPrice || undefined,
+        purchasePrice: form.purchasePrice || undefined
+      };
+
+      if (editingId) {
+        await apiClient.patch(`/api/catalog/products/${editingId}`, payload, {
+          token: session.token,
+          businessId: session.businessId
+        });
+      } else {
+        await apiClient.post('/api/catalog/products', payload, {
+          token: session.token,
+          businessId: session.businessId
+        });
+      }
       setDrawerOpen(false);
+      setEditingId(null);
       setForm({ name: '', sku: '', type: 'PHYSICAL', sellingPrice: '', purchasePrice: '' });
       fetchProducts(); // Refresh table
     } catch(err) {
-      alert(err.message || 'Failed to create product');
+      alert(err.message || 'Failed to save product');
     } finally {
       setSaving(false);
     }
   }
+
+  const dynamicColumns = [...columns, {
+    key: 'actions', 
+    label: '', 
+    render: (_, row) => (
+      <div className="flex justify-end gap-3 font-medium">
+        <button onClick={() => handleEdit(row)} className="text-indigo-600 hover:text-indigo-800 transition-colors">Edit</button>
+        <button onClick={() => handleDelete(row.id, row.name)} className="text-red-500 hover:text-red-700 transition-colors">Delete</button>
+      </div>
+    )
+  }];
 
   return (
     <div className="space-y-6">
@@ -101,7 +148,11 @@ export default function CatalogPage() {
             ↻ Refresh
           </button>
           <button
-            onClick={() => setDrawerOpen(true)}
+            onClick={() => {
+              setEditingId(null);
+              setForm({ name: '', sku: '', type: 'PHYSICAL', sellingPrice: '', purchasePrice: '' });
+              setDrawerOpen(true);
+            }}
             className="text-sm px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors shadow-sm font-medium"
           >
             + Add Product
@@ -116,14 +167,14 @@ export default function CatalogPage() {
       )}
 
       <DataTable
-        columns={columns}
+        columns={dynamicColumns}
         data={products}
         loading={loading}
-        emptyMessage="No products yet. Add your first product via the API."
+        emptyMessage="No products yet. Add your first product to get started."
       />
 
-      <Drawer isOpen={isDrawerOpen} onClose={() => setDrawerOpen(false)} title="Create New Product">
-        <form onSubmit={handleCreateProduct} className="space-y-4">
+      <Drawer isOpen={isDrawerOpen} onClose={() => setDrawerOpen(false)} title={editingId ? "Edit Product" : "Create New Product"}>
+        <form onSubmit={handleSaveProduct} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">Product Name *</label>
             <input required type="text" value={form.name} onChange={e => setForm({...form, name: e.target.value})} className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
@@ -144,7 +195,7 @@ export default function CatalogPage() {
           </div>
           <div className="pt-4 border-t border-slate-100">
             <button type="submit" disabled={saving} className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white font-medium py-2.5 rounded-lg transition-colors shadow-sm">
-              {saving ? 'Saving...' : 'Save Product'}
+              {saving ? 'Saving...' : (editingId ? 'Update Product' : 'Save Product')}
             </button>
           </div>
         </form>

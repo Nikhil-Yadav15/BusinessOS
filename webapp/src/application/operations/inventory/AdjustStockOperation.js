@@ -61,7 +61,7 @@ export class AdjustStockOperation extends BaseOperation {
   }
 
   createEvents(context, result) {
-    return [
+    const events = [
       DomainEvent.create('inventory.stock.adjusted', {
         businessId: context.businessId,
         productId: this.validatedData.productId,
@@ -70,5 +70,19 @@ export class AdjustStockOperation extends BaseOperation {
         movementId: result.movement.id
       }, context)
     ];
+
+    // Trigger low stock notifications when stock falls below global threshold
+    if (parseFloat(result.inventory.quantity) <= 10 && parseFloat(this.validatedData.quantityChange) < 0) {
+      events.push(
+        DomainEvent.create('inventory.low_stock', {
+          businessId: context.businessId,
+          productId: this.validatedData.productId,
+          currentQuantity: result.inventory.quantity,
+          threshold: 10
+        }, context)
+      );
+    }
+
+    return events;
   }
 }
