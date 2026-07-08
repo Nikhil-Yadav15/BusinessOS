@@ -18,7 +18,7 @@ export const roleStatusEnum = pgEnum('role_status', ['ACTIVE', 'INACTIVE']);
 
 export const roles = pgTable('role', {
   id: generateId(),
-  businessId: foreignBusinessId(businesses),
+  businessId: uuid('business_id').references(() => businesses.id), // Nullable for global system roles
   name: varchar('name', { length: 100 }).notNull(),
   description: text('description'),
   isSystem: boolean('is_system').notNull().default(false), // System roles cannot be modified

@@ -15,6 +15,13 @@
       "when": 1783409340417,
       "tag": "0001_many_vin_gonzales",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1783495653639,
+      "tag": "0002_nappy_rhino",
+      "breakpoints": true
     }
   ]
 }

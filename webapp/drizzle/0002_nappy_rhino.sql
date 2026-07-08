@@ -1,0 +1,1 @@
+ALTER TABLE "role" ALTER COLUMN "business_id" DROP NOT NULL;
