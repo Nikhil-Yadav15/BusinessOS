@@ -3,17 +3,31 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useBusinessContext } from '../../../components/providers/BusinessProvider.js';
 import { apiClient } from '../../../lib/apiClient.js';
+import { Plus, Receipt, CircleDollarSign, RefreshCcw, BellRing, AlertTriangle, CheckCircle2, ChevronRight, TrendingUp } from 'lucide-react';
+import Link from 'next/link';
 
 function NotificationBadge({ title, message, createdAt }) {
   const isLowStock = title?.includes('Low Stock');
+  const isInvoice = title?.includes('Invoice');
+  
   return (
-    <div className={`flex items-start gap-3 p-4 rounded-lg border ${isLowStock ? 'border-amber-200 bg-amber-50' : 'border-slate-100 bg-slate-50'}`}>
-      <span className="text-xl mt-0.5">{isLowStock ? '⚠️' : '🔔'}</span>
-      <div className="flex-1 min-w-0">
-        <p className={`text-sm font-semibold ${isLowStock ? 'text-amber-800' : 'text-slate-800'}`}>{title}</p>
-        <p className="text-sm text-slate-500 mt-0.5 break-words">{message}</p>
+    <div className="group flex items-start gap-4 p-4 -mx-4 rounded-xl hover:bg-slate-50 transition-colors">
+      <div className={`mt-0.5 w-8 h-8 rounded-full flex items-center justify-center shrink-0 border ${
+        isLowStock ? 'bg-amber-50 border-amber-100 text-amber-600' : 
+        isInvoice ? 'bg-emerald-50 border-emerald-100 text-emerald-600' : 
+        'bg-blue-50 border-blue-100 text-blue-600'
+      }`}>
+        {isLowStock ? <AlertTriangle size={14} /> : isInvoice ? <CheckCircle2 size={14} /> : <BellRing size={14} />}
       </div>
-      <span className="text-xs text-slate-400 whitespace-nowrap">{new Date(createdAt).toLocaleTimeString()}</span>
+      <div className="flex-1 min-w-0 pt-1">
+        <div className="flex items-center justify-between gap-4">
+          <p className="text-sm font-semibold text-slate-900 truncate">{title}</p>
+          <span className="text-xs font-medium text-slate-400 whitespace-nowrap shrink-0 group-hover:text-slate-600 transition-colors">
+            {new Date(createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          </span>
+        </div>
+        <p className="text-sm text-slate-500 mt-1 line-clamp-2">{message}</p>
+      </div>
     </div>
   );
 }
@@ -66,71 +80,124 @@ export default function DashboardHome() {
   }, [fetchAnalytics, fetchNotifications]);
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center mb-8">
+    <div className="space-y-8 animate-in fade-in duration-500">
+      
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
          <div>
-           <h1 className="text-2xl font-bold text-slate-900">Business Overview</h1>
-           <p className="text-slate-500 mt-1">Live metrics and system alerts for your business.</p>
+           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Overview</h1>
+           <p className="text-slate-500 text-sm mt-1">Here's what's happening today.</p>
          </div>
-         <button
-           onClick={() => { fetchAnalytics(); fetchNotifications(); }}
-           className="text-sm px-4 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600 transition-colors"
-         >
-           ↻ Refresh
-         </button>
+         
+         <div className="flex items-center gap-3">
+           <button
+             onClick={() => { fetchAnalytics(); fetchNotifications(); }}
+             className="p-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-400 hover:text-slate-900 transition-colors shadow-sm"
+             title="Refresh Data"
+           >
+             <RefreshCcw size={16} className={loading || notifLoading ? 'animate-spin text-blue-600' : ''} />
+           </button>
+           <Link href="/dashboard/sales?action=new" className="inline-flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-lg font-medium text-sm shadow-sm transition-all focus:ring-2 focus:ring-slate-900/20 focus:outline-none">
+              <Plus size={16} /> New Sale
+           </Link>
+         </div>
       </div>
 
+      {/* Metrics Row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         
-        <div className={`bg-white rounded-xl border border-slate-200 shadow-sm p-6 ${loading ? 'animate-pulse' : ''}`}>
-          <h3 className="text-slate-500 text-sm font-medium">Total Sales Revenue</h3>
-          <p className="text-3xl font-bold text-slate-900 mt-2">
-            ₹{parseFloat(metrics.totalSalesRevenue).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-          </p>
-          <span className="text-emerald-500 text-sm font-medium mt-2 block">O(1) JSONB Snapshot Read</span>
+        {/* Metric 1 */}
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 hover:border-slate-300 transition-colors">
+          <div className="flex justify-between items-start">
+            <p className="text-sm font-medium text-slate-500">Total Revenue</p>
+            <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
+              <CircleDollarSign size={16} />
+            </div>
+          </div>
+          <div className="mt-4">
+            <h3 className="text-3xl font-bold text-slate-900 tracking-tight">
+              {loading ? '...' : `₹${parseFloat(metrics.totalSalesRevenue).toLocaleString('en-IN', { maximumFractionDigits: 0 })}`}
+            </h3>
+            <div className="flex items-center gap-1.5 mt-2 text-xs font-medium text-emerald-600">
+              <TrendingUp size={14} /> <span>Live tracking</span>
+            </div>
+          </div>
         </div>
 
-        <div className={`bg-white rounded-xl border border-slate-200 shadow-sm p-6 ${loading ? 'animate-pulse' : ''}`}>
-           <h3 className="text-slate-500 text-sm font-medium">Inventory Valuations</h3>
-           <p className="text-3xl font-bold text-slate-900 mt-2">Live Mode</p>
-           <span className="text-indigo-500 text-sm font-medium mt-2 block">See Inventory Tab</span>
+        {/* Metric 2 */}
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 hover:border-slate-300 transition-colors">
+           <div className="flex justify-between items-start">
+             <p className="text-sm font-medium text-slate-500">Stock Alerts</p>
+             <div className="p-2 bg-amber-50 text-amber-600 rounded-lg">
+               <AlertTriangle size={16} />
+             </div>
+           </div>
+           <div className="mt-4">
+             <h3 className="text-3xl font-bold text-slate-900 tracking-tight">
+               {loading ? '...' : notifications.filter(n => n.title?.includes('Low Stock')).length}
+             </h3>
+             <Link href="/dashboard/inventory" className="flex items-center gap-1 mt-2 text-xs font-medium text-slate-500 hover:text-slate-900 transition-colors">
+               Review catalog <ChevronRight size={14} />
+             </Link>
+           </div>
         </div>
 
-        <div className={`bg-white rounded-xl border border-slate-200 shadow-sm p-6 ${loading ? 'animate-pulse' : ''}`}>
-           <h3 className="text-slate-500 text-sm font-medium">Pending Output Pings</h3>
-           <p className="text-3xl font-bold text-slate-900 mt-2">{metrics.pendingOutboxEvents}</p>
-           <span className="text-emerald-500 text-sm font-medium mt-2 block">All events processed cleanly</span>
+        {/* Metric 3 */}
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 hover:border-slate-300 transition-colors">
+           <div className="flex justify-between items-start">
+             <p className="text-sm font-medium text-slate-500">Event Queue</p>
+             <div className="p-2 bg-slate-50 text-slate-600 rounded-lg">
+               <Receipt size={16} />
+             </div>
+           </div>
+           <div className="mt-4">
+             <h3 className="text-3xl font-bold text-slate-900 tracking-tight">
+               {loading ? '...' : metrics.pendingOutboxEvents}
+             </h3>
+             <div className="flex items-center gap-1.5 mt-2 text-xs font-medium text-slate-500">
+               <span className="relative flex h-2 w-2">
+                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+               </span>
+               Background synced
+             </div>
+           </div>
         </div>
 
       </div>
 
-      <div className="mt-8 bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-        <div className="p-6 border-b border-slate-100 flex justify-between items-center">
-           <div>
-             <h3 className="font-semibold text-slate-900">Recent Alerts & Notifications</h3>
-             <p className="text-xs text-slate-400 mt-0.5">Low stock warnings, invoice events, and system messages</p>
-           </div>
-           {notifications.length > 0 && (
-             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">
-               {notifications.filter(n => n.title?.includes('Low Stock')).length} stock alerts
-             </span>
-           )}
+      {/* Activity Log Feed */}
+      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm">
+        <div className="px-6 py-5 border-b border-slate-200">
+           <h3 className="font-semibold text-slate-900 text-base">Recent Activity</h3>
+           <p className="text-sm text-slate-500 mt-1">Real-time alerts, stock warnings, and transaction logs.</p>
         </div>
-        <div className="p-4 space-y-2">
+        
+        <div className="px-6 py-2">
           {notifLoading ? (
-            <div className="py-8 text-center text-slate-400 text-sm animate-pulse">Loading alerts...</div>
+            <div className="py-12 flex flex-col items-center justify-center space-y-4">
+               <RefreshCcw className="animate-spin text-slate-300" size={24} />
+               <p className="text-slate-500 text-sm">Loading activity feed...</p>
+            </div>
           ) : notifications.length === 0 ? (
-            <div className="py-8 text-center text-slate-400 text-sm">
-              <p className="text-3xl mb-2">✅</p>
-              <p>No alerts — everything is running smoothly!</p>
+            <div className="py-12 text-center flex flex-col items-center justify-center">
+              <div className="w-12 h-12 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center mb-4 border border-slate-100">
+                <CheckCircle2 size={24} />
+              </div>
+              <p className="text-sm font-medium text-slate-900">No activity yet</p>
+              <p className="text-slate-500 text-sm mt-1">Your ledger is completely caught up.</p>
             </div>
           ) : (
-            notifications.map(n => (
-              <NotificationBadge key={n.id} title={n.title} message={n.message} createdAt={n.createdAt} />
+            notifications.map((n, i) => (
+              <div key={n.id}>
+                <NotificationBadge title={n.title} message={n.message} createdAt={n.createdAt} />
+                {i < notifications.length - 1 && <hr className="border-slate-100" />}
+              </div>
             ))
           )}
         </div>
       </div>
+      
     </div>
   );
 }
