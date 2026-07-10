@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useBusinessContext } from '../../../../components/providers/BusinessProvider.js';
 import DataTable from '../../../../components/ui/DataTable.js';
 import { apiClient } from '../../../../lib/apiClient.js';
+import { CashflowBalanceBar, ExpenseCategoryPie } from '../../../../components/dashboard/charts/LedgerCharts.js';
 
 const accountColumns = [
   { key: 'accountCode', label: 'Code' },
@@ -40,6 +41,8 @@ const accountColumns = [
 export default function LedgerPage() {
   const { session } = useBusinessContext();
   const [accounts, setAccounts] = useState([]);
+  const [expenses, setExpenses] = useState([]);
+  const [journal, setJournal] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -48,11 +51,14 @@ export default function LedgerPage() {
     setLoading(true);
     setError('');
     try {
-      const res = await apiClient.get('/api/ledger/accounts', {
-        token: session.token,
-        businessId: session.businessId,
-      });
-      setAccounts(Array.isArray(res.data) ? res.data : (res.data?.items || []));
+      const [accRes, expRes, journalRes] = await Promise.all([
+        apiClient.get('/api/ledger/accounts', { token: session.token, businessId: session.businessId }),
+        apiClient.get('/api/ledger/expenses', { token: session.token, businessId: session.businessId }),
+        apiClient.get('/api/ledger/journal', { token: session.token, businessId: session.businessId })
+      ]);
+      setAccounts(Array.isArray(accRes.data) ? accRes.data : (accRes.data?.items || []));
+      setExpenses(Array.isArray(expRes.data) ? expRes.data : (expRes.data?.items || []));
+      setJournal(Array.isArray(journalRes.data) ? journalRes.data : (journalRes.data?.items || []));
     } catch (err) {
       setError(err.message || 'Failed to load chart of accounts.');
     } finally {
@@ -97,6 +103,38 @@ export default function LedgerPage() {
           ))}
         </div>
       )}
+
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8 print:hidden">
+        <div className="xl:col-span-2 bg-white border border-slate-200 rounded-2xl shadow-sm p-5 flex flex-col">
+           <div className="flex items-center gap-2 mb-6">
+             <div className="p-1.5 bg-blue-50 text-blue-600 rounded-md">
+               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><line x1="3" x2="21" y1="9" y2="9"/><path d="M9 21V9"/></svg>
+             </div>
+             <div>
+               <h3 className="font-semibold text-slate-900 text-sm">Cashflow Balance</h3>
+               <p className="text-xs text-slate-500">Master Journal Credit (In) vs Debit (Out)</p>
+             </div>
+           </div>
+           <div className="flex-1 min-h-[300px]">
+             {loading ? <div className="h-[300px] flex items-center justify-center text-slate-400">Loading data...</div> : <CashflowBalanceBar journal={journal} />}
+           </div>
+        </div>
+        
+        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-5 flex flex-col">
+           <div className="flex items-center gap-2 mb-6">
+             <div className="p-1.5 bg-slate-100 text-slate-700 rounded-md">
+               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+             </div>
+             <div>
+               <h3 className="font-semibold text-slate-900 text-sm">Expense Categories</h3>
+               <p className="text-xs text-slate-500">Distribution of logged expenses</p>
+             </div>
+           </div>
+           <div className="flex-1 min-h-[300px]">
+             {loading ? <div className="h-[300px] flex items-center justify-center text-slate-400">Loading ratio...</div> : <ExpenseCategoryPie expenses={expenses} />}
+           </div>
+        </div>
+      </div>
 
       <DataTable
         columns={accountColumns}

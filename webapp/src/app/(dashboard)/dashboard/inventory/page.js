@@ -5,6 +5,7 @@ import { useBusinessContext } from '../../../../components/providers/BusinessPro
 import DataTable from '../../../../components/ui/DataTable.js';
 import Drawer from '../../../../components/ui/Drawer.js';
 import { apiClient } from '../../../../lib/apiClient.js';
+import { ProductStockBarChart, StockHealthPie } from '../../../../components/dashboard/charts/InventoryCharts.js';
 
 const movementColumns = [
   { key: 'movementType', label: 'Type',
@@ -29,7 +30,7 @@ export default function InventoryPage() {
   
   const [form, setForm] = useState({ 
     productId: '', 
-    quantity: '', 
+    quantityChange: '', 
     reason: 'Stock correction' 
   });
 
@@ -61,11 +62,12 @@ export default function InventoryPage() {
     setSaving(true);
     try {
       await apiClient.post('/api/inventory/adjust', {
-        ...form,
-        quantity: parseFloat(form.quantity)
+        productId: form.productId,
+        quantityChange: parseFloat(form.quantityChange),
+        reason: form.reason
       }, { token: session.token, businessId: session.businessId });
       setDrawerOpen(false);
-      setForm({ productId: '', quantity: '', reason: 'Stock correction' });
+      setForm({ productId: '', quantityChange: '', reason: 'Stock correction' });
       fetchInventory();
     } catch(err) {
       alert(err.message || 'Failed to adjust stock');
@@ -89,9 +91,41 @@ export default function InventoryPage() {
 
       {error && <div className="px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">{error}</div>}
 
-      <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+      <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm mb-6">
         <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Total Stock Units</p>
         <p className="text-2xl font-bold text-slate-900 mt-1">{totalStock.toFixed(3)}</p>
+      </div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
+        <div className="xl:col-span-2 bg-white border border-slate-200 rounded-2xl shadow-sm p-5 flex flex-col">
+           <div className="flex items-center gap-2 mb-6">
+             <div className="p-1.5 bg-indigo-50 text-indigo-600 rounded-md">
+               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+             </div>
+             <div>
+               <h3 className="font-semibold text-slate-900 text-sm">Product Stock Levels</h3>
+               <p className="text-xs text-slate-500">Current actual physical quantity of catalog items in your business</p>
+             </div>
+           </div>
+           <div className="flex-1 min-h-[300px]">
+             {loading ? <div className="h-[300px] flex items-center justify-center text-slate-400">Loading data...</div> : <ProductStockBarChart inventory={snapshot} />}
+           </div>
+        </div>
+        
+        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-5 flex flex-col">
+           <div className="flex items-center gap-2 mb-6">
+             <div className="p-1.5 bg-slate-100 text-slate-700 rounded-md">
+               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+             </div>
+             <div>
+               <h3 className="font-semibold text-slate-900 text-sm">Stock Health</h3>
+               <p className="text-xs text-slate-500">Ratio of healthy vs critically low stock</p>
+             </div>
+           </div>
+           <div className="flex-1 min-h-[300px]">
+             {loading ? <div className="h-[300px] flex items-center justify-center text-slate-400">Loading ratio...</div> : <StockHealthPie inventory={snapshot} />}
+           </div>
+        </div>
       </div>
 
       <div>
@@ -110,7 +144,7 @@ export default function InventoryPage() {
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">Quantity Change (+ or -) *</label>
-            <input required type="number" step="any" value={form.quantity} onChange={e => setForm({...form, quantity: e.target.value})} className="w-full px-3 py-2 border border-slate-200 rounded-lg" placeholder="-5 or +10" />
+            <input required type="number" step="any" value={form.quantityChange} onChange={e => setForm({...form, quantityChange: e.target.value})} className="w-full px-3 py-2 border border-slate-200 rounded-lg" placeholder="-5 or +10" />
             <p className="text-xs text-slate-500 mt-1">Use a negative number to subtract stock.</p>
           </div>
           <div>
