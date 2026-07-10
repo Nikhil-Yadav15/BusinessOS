@@ -1,8 +1,10 @@
 import { db } from '../../../../db/index.js';
 import { invoices } from '../../../../db/schema/sales.js';
+import { purchases } from '../../../../db/schema/purchasing.js';
 import { products } from '../../../../db/schema/catalog.js';
 import { inventory } from '../../../../db/schema/inventory.js';
 import { securityEvents } from '../../../../db/schema/audit.js';
+import { notifications as outboundAlerts } from '../../../../db/schema/notification.js';
 import { eq, and, sql, desc } from 'drizzle-orm';
 import { withExecutionContext } from '../../../../infrastructure/context/withExecutionContext.js';
 import { withApiHandler } from '../../../../infrastructure/context/withApiHandler.js';
@@ -84,9 +86,95 @@ export const GET = withExecutionContext(
       });
     }
 
-    // 3. System Events (Audit Log)
-    // Avoid securityEvents.businessId as the schema might not have it directly on the event if it's tenant-agnostic
-    // Wait, audit.js might not have businessId on securityEvents. Let's just return what we have.
+    // 3. Upcoming Bills / Payables (Purchasing)
+    const unpaidBills = await db.select({
+       id: purchases.id,
+       num: purchases.purchaseNumber,
+       balance: purchases.balanceAmount,
+       date: purchases.purchaseDate
+    })
+    .from(purchases)
+    .where(
+       and(
+         eq(purchases.businessId, executionContext.businessId),
+         sql`${purchases.balanceAmount} > 0`
+       )
+    )
+    .limit(2);
+
+    for (const item of unpaidBills) {
+      notifications.push({
+        id: `bill-${item.id}`,
+        type: 'FINANCE',
+        title: 'Supplier Bill Due',
+        desc: `Purchase #${item.num} has a pending payable of ₹${Number(item.balance)}.`,
+        time: timeAgo(item.date),
+        read: false
+      });
+    }
+
+    // 4. High-Value Client Transactions
+    const highValueSales = await db.select({
+       id: invoices.id,
+       num: invoices.invoiceNumber,
+       total: invoices.totalAmount,
+       date: invoices.invoiceDate
+    })
+    .from(invoices)
+    .where(
+       and(
+         eq(invoices.businessId, executionContext.businessId),
+         sql`${invoices.totalAmount} >= 50000`
+       )
+    )
+    .orderBy(desc(invoices.invoiceDate))
+    .limit(2);
+
+    for (const item of highValueSales) {
+      notifications.push({
+        id: `high-val-${item.id}`,
+        type: 'SYSTEM', // SYSTEM color (indigo) stands out well for this
+        title: 'High-Value Sale',
+        desc: `Awesome! Invoice #${item.num} generated for ₹${Number(item.total)}.`,
+        time: timeAgo(item.date),
+        read: false
+      });
+    }
+
+    // 5. System Events (Audit Log)
+    // 4. Failed CRM Outbound Messages (WhatsApp / Email failures)
+    const failedMessages = await db.select({
+       id: outboundAlerts.id,
+       title: outboundAlerts.title,
+       date: outboundAlerts.createdAt
+    })
+    .from(outboundAlerts)
+    .where(
+       and(
+         eq(outboundAlerts.businessId, executionContext.businessId),
+         eq(outboundAlerts.status, 'FAILED')
+       )
+    )
+    .orderBy(desc(outboundAlerts.createdAt))
+    .limit(2);
+
+    for (const item of failedMessages) {
+      notifications.push({
+        id: `fail-${item.id}`,
+        type: 'ALERT', // Reusing ALERT type so it shows orange warning
+        title: 'Message Delivery Failed',
+        desc: `Failed to deliver: "${item.title || 'Untitled Notification'}"`,
+        time: timeAgo(item.date),
+        read: false
+      });
+    }
+
+    // Sort all combined notifications by newest first
+    notifications.sort((a, b) => {
+       if (a.time === 'Just now') return -1;
+       if (b.time === 'Just now') return 1;
+       return 0; // Simple sort since they rely on string distances right now
+    });
     
     return Response.json({ success: true, count: notifications.length, data: notifications });
   })
