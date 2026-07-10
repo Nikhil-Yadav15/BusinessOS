@@ -1,11 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useBusinessContext } from '../providers/BusinessProvider.js';
 import ChatDrawer from '../ai/ChatDrawer.js';
-import { Home, Users, Package, Tags, ReceiptText, ShoppingCart, Wallet, Settings, Command, Sparkles, ChevronsUpDown, Bell, Menu, X } from 'lucide-react';
+import GlobalSearchModal from './GlobalSearchModal.js';
+import NotificationDropdown from './NotificationDropdown.js';
+import { Home, Users, Package, Tags, ReceiptText, ShoppingCart, Wallet, Settings, Command, Sparkles, ChevronsUpDown, Bell, Menu, X, Shield } from 'lucide-react';
 
 const navItems = [
   { name: 'Overview', href: '/dashboard', icon: Home },
@@ -18,6 +20,7 @@ const navItems = [
 ];
 
 const secondaryNav = [
+  { name: 'Team & Access', href: '/dashboard/team', icon: Shield },
   { name: 'Settings & Workflows', href: '/dashboard/workflows', icon: Settings },
 ];
 
@@ -26,6 +29,19 @@ export default function DashboardShell({ children }) {
   const { session, logout } = useBusinessContext();
   const [isAiOpen, setAiOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  
+  // Register Cmd+K / Ctrl+K Global Shortcut
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setIsSearchOpen(true);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const user = session?.user;
   const initials = user?.fullName
@@ -156,15 +172,28 @@ export default function DashboardShell({ children }) {
               <Menu size={20} />
             </button>
 
-            <div className="hidden sm:flex items-center gap-2 text-sm text-slate-500 bg-slate-50 hover:bg-slate-100 transition-colors border border-slate-200 px-3 py-1.5 rounded-lg cursor-pointer">
-              <Command size={14} /> <span>Search everything...</span> <span className="text-xs border border-slate-200 px-1.5 rounded bg-white ml-2 text-slate-400">⌘K</span>
+            {/* Clickable Search input triggering Modal */}
+            <div 
+              onClick={() => setIsSearchOpen(true)}
+              className="hidden sm:flex items-center gap-2 text-sm text-slate-500 bg-slate-50 hover:bg-slate-100 transition-colors border border-slate-200 px-3 py-1.5 rounded-lg cursor-pointer shadow-sm w-64"
+            >
+              <Command size={14} /> <span>Search everything...</span> <span className="text-xs border border-slate-200 px-1.5 rounded bg-white ml-auto text-slate-400 font-medium tracking-widest uppercase">⌘K</span>
             </div>
+            
+            {/* Mobile simplified search trigger */}
+            <button 
+              onClick={() => setIsSearchOpen(true)}
+              className="sm:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-md"
+            >
+              <Command size={20} />
+            </button>
           </div>
           
           <div className="flex items-center gap-4">
-            <button className="text-slate-400 hover:text-[#0F172A] transition-colors">
-              <Bell size={20} />
-            </button>
+            
+            {/* NEW: Notification Dropdown Component */}
+            <NotificationDropdown />
+
             <div className="hidden sm:flex items-center gap-2 text-xs font-semibold bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full border border-emerald-100">
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
               Online
@@ -191,6 +220,16 @@ export default function DashboardShell({ children }) {
 
       {/* AI Chat Drawer Component */}
       <ChatDrawer isOpen={isAiOpen} onClose={() => setAiOpen(false)} />
+
+      {/* NEW: Global Search Modal Component */}
+      <GlobalSearchModal 
+        isOpen={isSearchOpen} 
+        onClose={() => setIsSearchOpen(false)}
+        openAiDrawer={() => {
+           setIsSearchOpen(false);
+           setAiOpen(true);
+        }}
+      />
     </div>
   );
 }

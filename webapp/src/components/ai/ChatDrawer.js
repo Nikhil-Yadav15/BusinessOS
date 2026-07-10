@@ -144,22 +144,86 @@ export default function ChatDrawer({ isOpen, onClose }) {
     }
   };
 
+  const parseConfirmationPayload = (content) => {
+    try {
+      const cleaned = content.replace(/```json/g, '').replace(/```/g, '').trim();
+      const parsed = JSON.parse(cleaned);
+      if (parsed && parsed._type === 'ACTION_CONFIRMATION') return parsed;
+    } catch { return null; }
+    return null;
+  };
+
+  const handleConfirmAction = async (payloadObj, messageIndex) => {
+    try {
+      setLoading(true);
+      const res = await fetch(payloadObj.endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.token || ''}`,
+          'x-business-id': session?.businessId || ''
+        },
+        body: JSON.stringify(payloadObj.payload)
+      });
+      if (!res.ok) throw new Error('Action failed');
+      
+      // Update that specific message to say it was completed
+      setMessages(prev => {
+        const newMsgs = [...prev];
+        newMsgs[messageIndex] = { role: 'assistant', content: `[System] Action approved and succeeded.` };
+        return newMsgs;
+      });
+      
+      // Tell AI it was successful
+      await submitMessage(`[System] Action approved and succeeded. Please summarize.`);
+    } catch(e) {
+      alert("Action failed: " + e.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Drawer isOpen={isOpen} onClose={onClose} title="Atlas AI Co-Pilot 🧠">
       <div className="flex flex-col h-[calc(100vh-140px)]">
         
         {/* Messages List */}
         <div className="flex-1 overflow-y-auto space-y-4 pr-2 pb-4">
-          {messages.map((m, i) => (
-            <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div 
-                className={`max-w-[85%] p-3 rounded-xl text-sm shadow-[0_4px_20px_rgba(15,23,42,0.04)]
-                  ${m.role === 'user' ? 'bg-[#0F172A] text-white' : 'bg-white text-slate-800 border border-slate-200'}`}
-              >
-                <p className="whitespace-pre-wrap leading-relaxed">{m.content}</p>
+          {messages.map((m, i) => {
+            const confirmation = m.role === 'assistant' ? parseConfirmationPayload(m.content) : null;
+            
+            if (confirmation) {
+              return (
+                <div key={i} className="flex justify-start">
+                  <div className="max-w-[95%] p-4 rounded-xl text-sm shadow-[0_4px_20px_rgba(15,23,42,0.04)] bg-white border-2 border-[#B5995D]">
+                    <div className="flex items-center gap-2 mb-3">
+                       <span className="text-xl">⚠️</span>
+                       <h3 className="font-bold text-[#0F172A] uppercase tracking-wide">Action Required</h3>
+                    </div>
+                    <div className="bg-slate-50 p-3 rounded-lg mb-4 text-xs font-mono text-slate-700 overflow-x-auto border border-slate-200">
+                      <p className="font-bold border-b border-slate-200 pb-2 mb-2">{confirmation.action}</p>
+                      <pre>{JSON.stringify(confirmation.payload, null, 2)}</pre>
+                    </div>
+                    <div className="flex gap-2">
+                       <button onClick={() => handleConfirmAction(confirmation, i)} className="px-4 py-2 bg-[#0F172A] text-white rounded-md hover:bg-slate-800 font-medium shadow-sm transition-all flex items-center justify-center gap-1 flex-1">✅ Confirm</button>
+                       <button onClick={() => setMessages(prev => prev.filter((_, idx) => idx !== i))} className="px-4 py-2 bg-slate-100 text-slate-700 rounded-md hover:bg-slate-200 font-medium transition-all flex items-center justify-center gap-1 flex-1">❌ Cancel</button>
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+
+            return (
+              <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div 
+                  className={`max-w-[85%] p-3 rounded-xl text-sm shadow-[0_4px_20px_rgba(15,23,42,0.04)]
+                    ${m.role === 'user' ? 'bg-[#0F172A] text-white' : 'bg-white text-slate-800 border border-slate-200'}`}
+                >
+                  <p className="whitespace-pre-wrap leading-relaxed">{m.content}</p>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
           
           {loading && (
             <div className="flex justify-start">
