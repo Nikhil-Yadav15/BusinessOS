@@ -22,6 +22,13 @@
       "when": 1783495653639,
       "tag": "0002_nappy_rhino",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1783697747582,
+      "tag": "0003_superb_demogoblin",
+      "breakpoints": true
     }
   ]
 }

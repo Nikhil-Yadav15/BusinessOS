@@ -5,6 +5,8 @@ import { RoleRepository } from '../../../persistence/repositories/RoleRepository
 import { SecurityEventRepository } from '../../../persistence/repositories/SecurityEventRepository.js';
 import { ValidationError } from '../../errors/index.js';
 import { DomainEvent } from '../../../infrastructure/events/DomainEvent.js';
+import { notifications } from '../../../db/schema/notification.js';
+import { generateId } from '../../../infrastructure/id/uuid.js';
 
 export class InviteMemberOperation extends BaseOperation {
   
@@ -65,6 +67,22 @@ export class InviteMemberOperation extends BaseOperation {
       roleId: role.id,
       assignedBy: inviterId
     }, tx);
+
+    // 5.5 Send Email Invite to new staff member via Notifications Queue
+    await tx.insert(notifications).values({
+      id: generateId(),
+      businessId,
+      recipientType: 'USER',
+      recipientId: userToInvite.id,
+      channel: 'EMAIL',
+      title: 'You have been invited to Atlas BusinessOS',
+      message: `<div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px;">
+         <h2 style="color:#0f172a;margin-bottom:8px;">Welcome to Atlas BusinessOS</h2>
+         <p style="color:#475569;font-size:14px;">You have been invited to join a business as <strong>${role.name}</strong>.</p>
+         <p style="color:#94a3b8;font-size:12px;margin-top:24px;">Log in to the Atlas BusinessOS dashboard using this email to accept your role.</p>
+       </div>`,
+      status: 'PENDING'
+    });
 
     // 6. Audit Log
     await SecurityEventRepository.logEvent({
