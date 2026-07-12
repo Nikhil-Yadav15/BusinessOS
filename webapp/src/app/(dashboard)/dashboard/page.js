@@ -7,13 +7,17 @@ import { apiClient } from '../../../lib/apiClient.js';
 function NotificationBadge({ title, message, createdAt }) {
   const isLowStock = title?.includes('Low Stock');
   return (
-    <div className={`flex items-start gap-3 p-4 rounded-lg border ${isLowStock ? 'border-amber-200 bg-amber-50' : 'border-slate-100 bg-slate-50'}`}>
+    <div className={`flex items-start gap-4 p-4 rounded-xl border transition-all duration-200 hover:shadow-sm ${
+      isLowStock 
+        ? 'border-amber-500/25 bg-amber-500/5 text-amber-500' 
+        : 'border-border bg-card text-foreground'
+    }`}>
       <span className="text-xl mt-0.5">{isLowStock ? '⚠️' : '🔔'}</span>
       <div className="flex-1 min-w-0">
-        <p className={`text-sm font-semibold ${isLowStock ? 'text-amber-800' : 'text-slate-800'}`}>{title}</p>
-        <p className="text-sm text-slate-500 mt-0.5 break-words">{message}</p>
+        <p className={`text-sm font-semibold ${isLowStock ? 'text-amber-600 dark:text-amber-400' : 'text-foreground'}`}>{title}</p>
+        <p className="text-sm text-muted-foreground mt-1 break-words leading-relaxed">{message}</p>
       </div>
-      <span className="text-xs text-slate-400 whitespace-nowrap">{new Date(createdAt).toLocaleTimeString()}</span>
+      <span className="text-xs text-muted-foreground whitespace-nowrap ml-2">{new Date(createdAt).toLocaleTimeString()}</span>
     </div>
   );
 }
@@ -66,68 +70,78 @@ export default function DashboardHome() {
   }, [fetchAnalytics, fetchNotifications]);
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center mb-8">
-         <div>
-           <h1 className="text-2xl font-bold text-slate-900">Business Overview</h1>
-           <p className="text-slate-500 mt-1">Live metrics and system alerts for your business.</p>
-         </div>
-         <button
-           onClick={() => { fetchAnalytics(); fetchNotifications(); }}
-           className="text-sm px-4 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600 transition-colors"
-         >
-           ↻ Refresh
-         </button>
+    <div className="space-y-8 animate-in fade-in duration-300">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+        <div>
+          <h1 className="text-2xl font-extrabold text-foreground tracking-tight">Business Overview</h1>
+          <p className="text-muted-foreground mt-1 text-sm">Live metrics and system alerts for your business.</p>
+        </div>
+        <button
+          onClick={() => { fetchAnalytics(); fetchNotifications(); }}
+          className="self-start sm:self-auto text-sm px-4 py-2.5 rounded-xl border border-border hover:bg-muted text-muted-foreground hover:text-foreground transition-all duration-200 font-semibold cursor-pointer active:scale-95"
+        >
+          ↻ Refresh
+        </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        
-        <div className={`bg-white rounded-xl border border-slate-200 shadow-sm p-6 ${loading ? 'animate-pulse' : ''}`}>
-          <h3 className="text-slate-500 text-sm font-medium">Total Sales Revenue</h3>
-          <p className="text-3xl font-bold text-slate-900 mt-2">
+        {/* Metric 1 */}
+        <div className={`bg-card rounded-2xl border border-border shadow-premium p-6 transition-all duration-300 hover:shadow-2xl hover:-translate-y-[2px] ${loading ? 'animate-pulse' : ''}`}>
+          <h3 className="text-muted-foreground text-sm font-semibold">Total Sales Revenue</h3>
+          <p className="text-3xl font-extrabold text-foreground mt-3 tracking-tight">
             ₹{parseFloat(metrics.totalSalesRevenue).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
           </p>
-          <span className="text-emerald-500 text-sm font-medium mt-2 block">O(1) JSONB Snapshot Read</span>
+          <span className="text-emerald-500 text-xs font-semibold mt-3 block bg-emerald-500/10 border border-emerald-500/25 px-2.5 py-1 rounded-full w-fit">
+            O(1) JSONB Snapshot Read
+          </span>
         </div>
 
-        <div className={`bg-white rounded-xl border border-slate-200 shadow-sm p-6 ${loading ? 'animate-pulse' : ''}`}>
-           <h3 className="text-slate-500 text-sm font-medium">Inventory Valuations</h3>
-           <p className="text-3xl font-bold text-slate-900 mt-2">Live Mode</p>
-           <span className="text-indigo-500 text-sm font-medium mt-2 block">See Inventory Tab</span>
+        {/* Metric 2 */}
+        <div className={`bg-card rounded-2xl border border-border shadow-premium p-6 transition-all duration-300 hover:shadow-2xl hover:-translate-y-[2px] ${loading ? 'animate-pulse' : ''}`}>
+          <h3 className="text-muted-foreground text-sm font-semibold">Inventory Valuations</h3>
+          <p className="text-3xl font-extrabold text-foreground mt-3 tracking-tight">Live Mode</p>
+          <span className="text-primary text-xs font-semibold mt-3 block bg-primary/10 border border-primary/25 px-2.5 py-1 rounded-full w-fit">
+            See Inventory Tab
+          </span>
         </div>
 
-        <div className={`bg-white rounded-xl border border-slate-200 shadow-sm p-6 ${loading ? 'animate-pulse' : ''}`}>
-           <h3 className="text-slate-500 text-sm font-medium">Pending Output Pings</h3>
-           <p className="text-3xl font-bold text-slate-900 mt-2">{metrics.pendingOutboxEvents}</p>
-           <span className="text-emerald-500 text-sm font-medium mt-2 block">All events processed cleanly</span>
+        {/* Metric 3 */}
+        <div className={`bg-card rounded-2xl border border-border shadow-premium p-6 transition-all duration-300 hover:shadow-2xl hover:-translate-y-[2px] ${loading ? 'animate-pulse' : ''}`}>
+          <h3 className="text-muted-foreground text-sm font-semibold">Pending Output Pings</h3>
+          <p className="text-3xl font-extrabold text-foreground mt-3 tracking-tight">{metrics.pendingOutboxEvents}</p>
+          <span className="text-emerald-500 text-xs font-semibold mt-3 block bg-emerald-500/10 border border-emerald-500/25 px-2.5 py-1 rounded-full w-fit">
+            All events processed cleanly
+          </span>
         </div>
-
       </div>
 
-      <div className="mt-8 bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-        <div className="p-6 border-b border-slate-100 flex justify-between items-center">
-           <div>
-             <h3 className="font-semibold text-slate-900">Recent Alerts & Notifications</h3>
-             <p className="text-xs text-slate-400 mt-0.5">Low stock warnings, invoice events, and system messages</p>
-           </div>
-           {notifications.length > 0 && (
-             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">
-               {notifications.filter(n => n.title?.includes('Low Stock')).length} stock alerts
-             </span>
-           )}
+      <div className="bg-card border border-border rounded-2xl shadow-premium overflow-hidden transition-all duration-300">
+        <div className="p-6 border-b border-border flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+          <div>
+            <h3 className="font-bold text-foreground">Recent Alerts & Notifications</h3>
+            <p className="text-xs text-muted-foreground mt-1">Low stock warnings, invoice events, and system messages</p>
+          </div>
+          {notifications.length > 0 && (
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-destructive/10 text-destructive border border-destructive/20 animate-pulse">
+              {notifications.filter(n => n.title?.includes('Low Stock')).length} stock alerts
+            </span>
+          )}
         </div>
-        <div className="p-4 space-y-2">
+        <div className="p-6 space-y-3">
           {notifLoading ? (
-            <div className="py-8 text-center text-slate-400 text-sm animate-pulse">Loading alerts...</div>
+            <div className="py-12 text-center text-muted-foreground text-sm animate-pulse">Loading alerts...</div>
           ) : notifications.length === 0 ? (
-            <div className="py-8 text-center text-slate-400 text-sm">
-              <p className="text-3xl mb-2">✅</p>
-              <p>No alerts — everything is running smoothly!</p>
+            <div className="py-12 text-center text-muted-foreground text-sm">
+              <p className="text-4xl mb-3">✅</p>
+              <p className="font-semibold text-foreground">No alerts</p>
+              <p className="text-xs text-muted-foreground mt-1">Everything is running smoothly!</p>
             </div>
           ) : (
-            notifications.map(n => (
-              <NotificationBadge key={n.id} title={n.title} message={n.message} createdAt={n.createdAt} />
-            ))
+            <div className="space-y-3">
+              {notifications.map(n => (
+                <NotificationBadge key={n.id} title={n.title} message={n.message} createdAt={n.createdAt} />
+              ))}
+            </div>
           )}
         </div>
       </div>

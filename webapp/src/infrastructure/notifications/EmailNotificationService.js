@@ -1,39 +1,82 @@
+import nodemailer from 'nodemailer';
+
 /**
  * EmailNotificationService
  * 
- * Sends transactional emails via the Resend API.
- * Requires: RESEND_API_KEY and RESEND_FROM_EMAIL in .env.local
+ * Sends transactional emails via Gmail SMTP or the Resend API.
+ * Requires: SMTP_USER / SMTP_PASS or RESEND_API_KEY in .env.local
  * 
- * Gracefully skips sending if the API key is missing (dev mode — logs to terminal instead).
+ * Gracefully skips sending if no credentials are configured (logs to terminal instead).
  */
 export class EmailNotificationService {
   static async send({ to, subject, html }) {
-    const apiKey = process.env.RESEND_API_KEY;
+    const smtpUser = process.env.SMTP_USER;
+    const smtpPass = process.env.SMTP_PASS;
+
+    if (smtpUser && smtpPass) {
+      try {
+        const transporter = nodemailer.createTransport({
+          host: process.env.SMTP_HOST || 'smtp.gmail.com',
+          port: parseInt(process.env.SMTP_PORT || '465', 10),
+          secure: process.env.SMTP_PORT === '465',
+          auth: {
+            user: smtpUser,
+            pass: smtpPass,
+          },
+        });
+
+        await transporter.sendMail({
+          from: process.env.SMTP_FROM_EMAIL || `"Atlas OS" <${smtpUser}>`,
+          to,
+          subject,
+          html,
+        });
+        console.log(`📧 Transactional email sent via SMTP to: ${to} | Subject: ${subject}`);
+        return { success: true };
+      } catch (smtpError) {
+        console.error('[EmailNotificationService] SMTP sending error:', smtpError);
+        // Fallback to Resend if available
+        const apiKey = process.env.RESEND_API_KEY;
+        if (apiKey) {
+          return this.sendViaResend({ to, subject, html, apiKey });
+        }
+      }
+    } else {
+      const apiKey = process.env.RESEND_API_KEY;
+      if (apiKey) {
+        return this.sendViaResend({ to, subject, html, apiKey });
+      }
+    }
+
+    // DEV MODE: fallback to terminal logs
+    console.log(`\n📧 [DEV - Email Not Sent] To: ${to} | Subject: ${subject}\n`);
+    return { skipped: true, reason: 'No email credentials configured' };
+  }
+
+  static async sendViaResend({ to, subject, html, apiKey }) {
     const fromEmail = process.env.RESEND_FROM_EMAIL || 'Atlas OS <noreply@atlasops.cloud>';
+    try {
+      const res = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ from: fromEmail, to: [to], subject, html }),
+      });
 
-    if (!apiKey) {
-      // DEV MODE: when no Resend key is set, log to terminal so dev can see what would be sent
-      console.log(`\n📧 [DEV - Email Not Sent] To: ${to} | Subject: ${subject}\n`);
-      return { skipped: true, reason: 'RESEND_API_KEY not configured' };
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        console.error(`[EmailNotificationService] Resend API error:`, body);
+        return { success: false, error: body };
+      }
+
+      console.log(`📧 Transactional email sent via Resend to: ${to} | Subject: ${subject}`);
+      return { success: true };
+    } catch (err) {
+      console.error('[EmailNotificationService] Resend network error:', err);
+      return { success: false, error: err };
     }
-
-    const res = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ from: fromEmail, to: [to], subject, html }),
-    });
-
-    if (!res.ok) {
-      const body = await res.json().catch(() => ({}));
-      // Log but do NOT throw — a failed email should never crash a business transaction
-      console.error(`[EmailNotificationService] Resend API error:`, body);
-      return { success: false, error: body };
-    }
-
-    return { success: true };
   }
 
   // Pre-built templates

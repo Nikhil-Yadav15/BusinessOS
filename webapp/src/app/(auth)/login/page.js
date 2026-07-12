@@ -61,56 +61,61 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex bg-slate-50 min-h-screen items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-lg border border-slate-100">
+    <div className="flex bg-background min-h-screen items-center justify-center p-4 transition-colors duration-300">
+      <div className="w-full max-w-md bg-card p-8 rounded-2xl shadow-premium border border-border transition-all duration-300 hover:shadow-2xl">
         <div className="text-center mb-8">
           <Link href="/">
-            <h1 className="text-2xl font-bold text-indigo-700 tracking-tight hover:text-indigo-600 transition-colors">Atlas BusinessOS</h1>
+            <h1 className="text-2xl font-extrabold bg-gradient-to-r from-primary to-indigo-500 bg-clip-text text-transparent tracking-tight hover:opacity-90 transition-opacity">Atlas BusinessOS</h1>
           </Link>
-          <p className="text-slate-500 mt-2 text-sm">Sign in to manage your operations</p>
+          <p className="text-muted-foreground mt-2 text-sm font-medium">Sign in to manage your operations</p>
         </div>
 
         {error && (
-          <div className="mb-4 px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
+          <div className="mb-5 px-4 py-3 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm font-medium animate-in fade-in slide-in-from-top-2 duration-200">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Mobile Number</label>
+            <label className="block text-sm font-semibold text-foreground mb-1.5">Mobile Number</label>
             <input
               type="text"
               placeholder="+91 98765 43210"
               value={form.mobile}
               onChange={(e) => setForm(f => ({ ...f, mobile: e.target.value }))}
-              className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-shadow"
+              className="w-full px-4 py-3 rounded-xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Password</label>
+            <div className="flex justify-between items-center mb-1.5">
+              <label className="block text-sm font-semibold text-foreground">Password</label>
+              <Link href="/reset-password" className="text-xs text-primary hover:underline font-semibold">
+                Forgot password?
+              </Link>
+            </div>
             <input
               type="password"
               placeholder="••••••••"
               value={form.password}
               onChange={(e) => setForm(f => ({ ...f, password: e.target.value }))}
-              className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-shadow"
+              className="w-full px-4 py-3 rounded-xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
               required
             />
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white font-medium py-3 rounded-lg transition-colors shadow-sm"
+            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-primary/20 active:scale-[0.98] disabled:opacity-60 disabled:pointer-events-none"
           >
             {loading ? 'Signing in...' : 'Access Dashboard'}
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-slate-500">
+        <p className="mt-6 text-center text-sm text-muted-foreground">
           Don't have an account?{' '}
-          <Link href="/register" className="text-indigo-600 hover:text-indigo-700 font-semibold transition-colors">
+          <Link href="/register" className="text-primary hover:underline font-bold transition-colors">
             Create one free
           </Link>
         </p>
