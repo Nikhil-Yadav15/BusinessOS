@@ -195,18 +195,18 @@ export default function ChatDrawer({ isOpen, onClose }) {
             if (confirmation) {
               return (
                 <div key={i} className="flex justify-start">
-                  <div className="max-w-[95%] p-4 rounded-xl text-sm shadow-[0_4px_20px_rgba(15,23,42,0.04)] bg-white border-2 border-[#B5995D]">
-                    <div className="flex items-center gap-2 mb-3">
-                       <span className="text-xl">⚠️</span>
-                       <h3 className="font-bold text-[#0F172A] uppercase tracking-wide">Action Required</h3>
+                  <div className="max-w-[95%] p-5 rounded-2xl text-[13px] shadow-[0_4px_24px_rgba(0,0,0,0.08)] bg-white border border-slate-200/60">
+                    <div className="flex items-center gap-2 mb-4">
+                       <span className="p-1.5 bg-amber-50 text-amber-600 rounded-lg"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+                       <h3 className="font-extrabold text-slate-900 uppercase tracking-widest text-[11px]">Action Required</h3>
                     </div>
-                    <div className="bg-slate-50 p-3 rounded-lg mb-4 text-xs font-mono text-slate-700 overflow-x-auto border border-slate-200">
-                      <p className="font-bold border-b border-slate-200 pb-2 mb-2">{confirmation.action}</p>
+                    <div className="bg-slate-50/80 p-4 rounded-xl mb-5 text-[11px] font-mono text-slate-600 overflow-x-auto border border-slate-200/60 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]">
+                      <p className="font-bold border-b border-slate-200/60 pb-2 mb-2 uppercase tracking-wide text-slate-800">{confirmation.action}</p>
                       <pre>{JSON.stringify(confirmation.payload, null, 2)}</pre>
                     </div>
-                    <div className="flex gap-2">
-                       <button onClick={() => handleConfirmAction(confirmation, i)} className="px-4 py-2 bg-[#0F172A] text-white rounded-md hover:bg-slate-800 font-medium shadow-sm transition-all flex items-center justify-center gap-1 flex-1">✅ Confirm</button>
-                       <button onClick={() => setMessages(prev => prev.filter((_, idx) => idx !== i))} className="px-4 py-2 bg-slate-100 text-slate-700 rounded-md hover:bg-slate-200 font-medium transition-all flex items-center justify-center gap-1 flex-1">❌ Cancel</button>
+                    <div className="flex gap-3">
+                       <button onClick={() => handleConfirmAction(confirmation, i)} className="px-4 py-2.5 bg-slate-900 text-white rounded-xl hover:bg-black font-bold active:scale-95 transition-all flex items-center justify-center gap-1 flex-1 shadow-[0_4px_12px_rgba(0,0,0,0.1)]">✅ Confirm</button>
+                       <button onClick={() => setMessages(prev => prev.filter((_, idx) => idx !== i))} className="px-4 py-2.5 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 font-bold transition-all active:scale-95 flex items-center justify-center gap-1 flex-1">✕ Cancel</button>
                     </div>
                   </div>
                 </div>
@@ -216,10 +216,10 @@ export default function ChatDrawer({ isOpen, onClose }) {
             return (
               <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div 
-                  className={`max-w-[85%] p-3 rounded-xl text-sm shadow-[0_4px_20px_rgba(15,23,42,0.04)]
-                    ${m.role === 'user' ? 'bg-[#0F172A] text-white' : 'bg-white text-slate-800 border border-slate-200'}`}
+                  className={`max-w-[85%] p-4 rounded-[20px] text-[13px] font-medium leading-relaxed
+                    ${m.role === 'user' ? 'bg-slate-900 text-white rounded-br-[6px] shadow-[0_4px_12px_rgba(0,0,0,0.1)]' : 'bg-slate-50 border border-slate-200/60 rounded-bl-[6px] text-slate-700 shadow-[inset_0_2px_4px_rgba(0,0,0,0.01)]'}`}
                 >
-                  <p className="whitespace-pre-wrap leading-relaxed">{m.content}</p>
+                  <p className="whitespace-pre-wrap">{m.content}</p>
                 </div>
               </div>
             );
@@ -227,10 +227,10 @@ export default function ChatDrawer({ isOpen, onClose }) {
           
           {loading && (
             <div className="flex justify-start">
-              <div className="max-w-[85%] p-3 rounded-lg text-sm bg-white text-slate-800 border border-slate-200 flex items-center gap-2 shadow-[0_4px_20px_rgba(15,23,42,0.04)]">
-                <span className="w-2 h-2 bg-[#B5995D]/40 rounded-full animate-bounce"></span>
-                <span className="w-2 h-2 bg-[#B5995D]/70 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></span>
-                <span className="w-2 h-2 bg-[#B5995D] rounded-full animate-bounce" style={{animationDelay: '0.4s'}}></span>
+              <div className="max-w-[85%] p-4 rounded-[20px] rounded-bl-[6px] bg-slate-50 border border-slate-200/60 flex items-center gap-1.5 shadow-[inset_0_2px_4px_rgba(0,0,0,0.01)]">
+                <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"></span>
+                <span className="w-1.5 h-1.5 bg-slate-600 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></span>
+                <span className="w-1.5 h-1.5 bg-slate-900 rounded-full animate-bounce" style={{animationDelay: '0.4s'}}></span>
               </div>
             </div>
           )}
@@ -238,14 +238,14 @@ export default function ChatDrawer({ isOpen, onClose }) {
         </div>
         
         {/* Input Form with Voice Button */}
-        <form onSubmit={(e) => { e.preventDefault(); submitMessage(); }} className="pt-4 border-t border-slate-200 flex gap-2 items-center">
+        <form onSubmit={(e) => { e.preventDefault(); submitMessage(); }} className="pt-4 border-t border-slate-200/60 flex gap-2 items-center">
           <input 
             type="text" 
             value={input}
             onChange={e => setInput(e.target.value)}
             disabled={loading}
             placeholder={isRecording ? "Recording..." : "Ask Atlas..."}
-            className={`flex-1 px-4 py-2.5 text-sm border rounded-full focus:outline-none focus:ring-2 shadow-sm transition-all ${isRecording ? 'border-red-400 bg-red-50 text-red-600 focus:ring-red-500 placeholder-red-400' : 'border-slate-300 bg-white focus:ring-[#B5995D]'}`}
+            className={`flex-1 px-5 py-3.5 text-[13px] font-medium border rounded-full focus:outline-none transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] ${isRecording ? 'border-red-400 bg-red-50 text-red-600 focus:ring-1 focus:ring-red-500 placeholder-red-400' : 'border-slate-200/80 bg-slate-50/50 focus:bg-white focus:ring-1 focus:ring-slate-400 focus:border-slate-400'}`}
           />
           <button 
             type="button" 
@@ -255,16 +255,16 @@ export default function ChatDrawer({ isOpen, onClose }) {
             onTouchStart={startRecording}
             onTouchEnd={stopRecording}
             disabled={loading}
-            className={`p-2.5 rounded-full text-white transition-all select-none disabled:opacity-50 ${isRecording ? 'bg-red-500 scale-110 shadow-lg shadow-red-200' : 'bg-[#0F172A] hover:bg-slate-800'}`}
+            className={`p-3.5 rounded-full transition-all select-none disabled:opacity-50 flex items-center justify-center ${isRecording ? 'bg-red-500 text-white scale-110 shadow-lg shadow-red-200' : 'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900 active:scale-95'}`}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
           </button>
           <button 
             type="submit" 
             disabled={loading || !input.trim()}
-            className="p-2.5 bg-[#B5995D] text-white rounded-full hover:bg-[rgb(163,138,83)] disabled:opacity-50 transition-colors shadow-sm"
+            className="p-3.5 bg-slate-900 text-white rounded-full hover:bg-black disabled:opacity-50 transition-all shadow-[0_4px_12px_rgba(0,0,0,0.1)] active:scale-95 flex items-center justify-center"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
           </button>
         </form>
       </div>

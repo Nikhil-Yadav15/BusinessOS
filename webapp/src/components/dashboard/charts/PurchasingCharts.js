@@ -77,18 +77,20 @@ export function PurchaseStatusPie({ purchases = [] }) {
   ].filter(d => d.value > 0);
 
   return (
-    <div className="h-[300px] w-full">
+    <div className="h-[240px] sm:h-[280px] w-full">
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie
             data={data}
             cx="50%"
-            cy="50%"
-            innerRadius={60}
-            outerRadius={90}
+            cy="45%"
+            innerRadius="50%"
+            outerRadius="72%"
             paddingAngle={2}
             dataKey="value"
             stroke="none"
+            label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
+            labelLine={false}
           >
             {data.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={entry.color} />
@@ -98,7 +100,7 @@ export function PurchaseStatusPie({ purchases = [] }) {
             contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
             formatter={(value) => [`${value} Bills`, 'Status']}
           />
-          <Legend verticalAlign="bottom" height={36} iconType="circle" wrapperStyle={{ fontSize: '13px' }}/>
+          <Legend verticalAlign="bottom" height={36} iconType="circle" wrapperStyle={{ fontSize: '12px' }}/>
         </PieChart>
       </ResponsiveContainer>
     </div>

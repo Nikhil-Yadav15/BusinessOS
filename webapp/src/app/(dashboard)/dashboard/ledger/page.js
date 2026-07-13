@@ -76,62 +76,62 @@ export default function LedgerPage() {
   }, {});
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Accounting Ledger</h1>
-          <p className="text-slate-500 text-sm mt-1">Chart of Accounts ({accounts.length} accounts)</p>
+          <h1 className="text-3xl font-extrabold tracking-tighter text-slate-900">Accounting Ledger</h1>
+          <p className="text-slate-500 text-sm mt-1 font-medium">Chart of Accounts ({accounts.length} accounts)</p>
         </div>
         <button onClick={fetchAccounts}
-          className="text-sm px-4 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600 transition-colors">
+          className="text-sm font-semibold px-4 py-2 bg-white rounded-xl border border-slate-200/60 shadow-sm hover:bg-slate-50 transition-all cursor-pointer active:scale-[0.98]">
           ↻ Refresh
         </button>
       </div>
 
       {error && (
-        <div className="px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">{error}</div>
+        <div className="px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm font-medium">{error}</div>
       )}
 
       {/* Account Type Summary */}
       {accounts.length > 0 && (
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-4">
           {Object.entries(byType).map(([type, count]) => (
-            <div key={type} className="bg-white border border-slate-200 rounded-lg px-4 py-2 text-sm shadow-sm">
-              <span className="text-slate-500">{type}: </span>
-              <span className="font-semibold text-slate-900">{count}</span>
+            <div key={type} className="bg-slate-50/50 border border-slate-200/60 rounded-[14px] px-5 py-3 text-[13px] font-medium shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]">
+              <span className="text-slate-500 font-bold uppercase tracking-widest text-[11px] mr-2">{type}</span>
+              <span className="font-extrabold text-slate-900">{count}</span>
             </div>
           ))}
         </div>
       )}
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8 print:hidden">
-        <div className="xl:col-span-2 bg-white border border-slate-200 rounded-2xl shadow-sm p-5 flex flex-col">
-           <div className="flex items-center gap-2 mb-6">
-             <div className="p-1.5 bg-blue-50 text-blue-600 rounded-md">
-               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><line x1="3" x2="21" y1="9" y2="9"/><path d="M9 21V9"/></svg>
+        <div className="xl:col-span-2 bg-white border border-slate-200/60 rounded-[24px] shadow-sm p-6 flex flex-col">
+           <div className="flex items-center gap-3 mb-6">
+             <div className="p-2 bg-slate-100 text-slate-900 rounded-xl shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] border border-slate-200/60">
+               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><line x1="3" x2="21" y1="9" y2="9"/><path d="M9 21V9"/></svg>
              </div>
              <div>
-               <h3 className="font-semibold text-slate-900 text-sm">Cashflow Balance</h3>
-               <p className="text-xs text-slate-500">Master Journal Credit (In) vs Debit (Out)</p>
+               <h3 className="font-extrabold text-slate-900 tracking-tight text-[15px]">Cashflow Balance</h3>
+               <p className="text-xs text-slate-500 font-medium tracking-wide">Master Journal Credit (In) vs Debit (Out)</p>
              </div>
            </div>
            <div className="flex-1 min-h-[300px]">
-             {loading ? <div className="h-[300px] flex items-center justify-center text-slate-400">Loading data...</div> : <CashflowBalanceBar journal={journal} />}
+             {loading ? <div className="h-[300px] flex items-center justify-center text-slate-400 font-medium text-sm">Loading data...</div> : <CashflowBalanceBar journal={journal} />}
            </div>
         </div>
         
-        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-5 flex flex-col">
-           <div className="flex items-center gap-2 mb-6">
-             <div className="p-1.5 bg-slate-100 text-slate-700 rounded-md">
-               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+        <div className="bg-white border border-slate-200/60 rounded-[24px] shadow-sm p-6 flex flex-col">
+           <div className="flex items-center gap-3 mb-6">
+             <div className="p-2 bg-slate-100 text-slate-900 rounded-xl shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] border border-slate-200/60">
+               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
              </div>
              <div>
-               <h3 className="font-semibold text-slate-900 text-sm">Expense Categories</h3>
-               <p className="text-xs text-slate-500">Distribution of logged expenses</p>
+               <h3 className="font-extrabold text-slate-900 tracking-tight text-[15px]">Expense Categories</h3>
+               <p className="text-xs text-slate-500 font-medium tracking-wide">Distribution of logged expenses</p>
              </div>
            </div>
            <div className="flex-1 min-h-[300px]">
-             {loading ? <div className="h-[300px] flex items-center justify-center text-slate-400">Loading ratio...</div> : <ExpenseCategoryPie expenses={expenses} />}
+             {loading ? <div className="h-[300px] flex items-center justify-center text-slate-400 font-medium text-sm">Loading ratio...</div> : <ExpenseCategoryPie expenses={expenses} />}
            </div>
         </div>
       </div>

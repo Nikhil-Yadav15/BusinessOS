@@ -48,22 +48,22 @@ export default function DashboardShell({ children }) {
     ? user.fullName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
     : 'US';
 
-  // The Navigation Sidebar is heavily styled based on the "Precision Merchant" design system
+  // The Navigation Sidebar is heavily styled based on the "Lumina" design system
   const NavigationSidebar = ({ isMobile }) => (
-    <aside className={`flex flex-col shrink-0 bg-[#0F172A] text-slate-300 h-full ${isMobile ? 'w-full' : 'w-64 border-r border-[#1E293B]'}`}>
+    <aside className={`flex flex-col shrink-0 bg-slate-50 text-slate-900 h-full ${isMobile ? 'w-full' : 'w-64 border-r border-slate-200/60'}`}>
       
       {/* Business Selector Mock */}
-      <div className="h-16 flex items-center px-4 border-b border-[#1E293B] group cursor-pointer hover:bg-slate-800 transition-colors shrink-0">
-        <div className="w-8 h-8 rounded-md bg-[#B5995D] flex items-center justify-center font-bold text-white shadow-sm shrink-0">
+      <div className="h-16 flex items-center px-4 border-b border-slate-200/60 group cursor-pointer hover:bg-slate-100 transition-colors shrink-0">
+        <div className="w-8 h-8 rounded-lg bg-black flex items-center justify-center font-bold text-white shadow-sm shrink-0 text-sm">
           A
         </div>
         <div className="ml-3 flex-1 min-w-0">
-          <h2 className="text-sm font-semibold text-white truncate font-serif">Atlas BusinessOS</h2>
-          <p className="text-xs text-slate-400 truncate">B-ID: {session?.businessId?.slice(0, 8) || 'Unknown'}</p>
+          <h2 className="text-sm font-extrabold text-slate-900 truncate tracking-tight">Atlas BusinessOS</h2>
+          <p className="text-[11px] font-medium text-slate-400 truncate">B-ID: {session?.businessId?.slice(0, 8) || 'Unknown'}</p>
         </div>
-        {!isMobile && <ChevronsUpDown size={16} className="text-slate-500 group-hover:text-slate-300 shrink-0" />}
+        {!isMobile && <ChevronsUpDown size={16} className="text-slate-400 group-hover:text-slate-600 shrink-0" />}
         {isMobile && (
-          <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-slate-400 hover:text-white">
+          <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-slate-400 hover:text-slate-900">
             <X size={20} />
           </button>
         )}
@@ -73,7 +73,7 @@ export default function DashboardShell({ children }) {
       <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-8">
         
         <div>
-          <p className="px-3 text-[11px] font-bold tracking-widest text-[#B5995D] uppercase mb-3">Modules</p>
+          <p className="px-3 text-[10px] font-extrabold tracking-[0.15em] text-slate-400 uppercase mb-3">Modules</p>
           <ul className="space-y-1">
             {navItems.map((item) => {
               const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href + '/'));
@@ -82,13 +82,13 @@ export default function DashboardShell({ children }) {
                   <Link
                     href={item.href}
                     onClick={() => isMobile && setIsMobileMenuOpen(false)}
-                    className={`flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-all ${
+                    className={`flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-xl transition-all ${
                       isActive
-                        ? 'bg-gradient-to-r from-slate-800 to-slate-800/20 text-white border-l-2 border-[#B5995D]'
-                        : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 border-l-2 border-transparent'
+                        ? 'bg-white text-slate-900 border border-slate-200/60 shadow-[0_2px_8px_rgba(0,0,0,0.04)]'
+                        : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 border border-transparent'
                     }`}
                   >
-                    <item.icon size={18} strokeWidth={isActive ? 2.5 : 2} className={isActive ? 'text-[#B5995D]' : 'text-slate-500'} />
+                    <item.icon size={18} strokeWidth={isActive ? 2.5 : 2} className={isActive ? 'text-slate-900' : 'text-slate-400'} />
                     {item.name}
                   </Link>
                 </li>
@@ -98,7 +98,7 @@ export default function DashboardShell({ children }) {
         </div>
 
         <div>
-           <p className="px-3 text-[11px] font-bold tracking-widest text-[#B5995D] uppercase mb-3">System</p>
+           <p className="px-3 text-[10px] font-extrabold tracking-[0.15em] text-slate-400 uppercase mb-3">System</p>
            <ul className="space-y-1">
              {secondaryNav.map((item) => {
                const isActive = pathname === item.href;
@@ -107,13 +107,13 @@ export default function DashboardShell({ children }) {
                    <Link
                      href={item.href}
                      onClick={() => isMobile && setIsMobileMenuOpen(false)}
-                     className={`flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-all ${
+                     className={`flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-xl transition-all ${
                        isActive
-                         ? 'bg-slate-800 text-white border-l-2 border-[#B5995D]'
-                         : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 border-l-2 border-transparent'
+                         ? 'bg-white text-slate-900 border border-slate-200/60 shadow-[0_2px_8px_rgba(0,0,0,0.04)]'
+                         : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 border border-transparent'
                      }`}
                    >
-                     <item.icon size={18} strokeWidth={isActive ? 2.5 : 2} className={isActive ? 'text-[#B5995D]' : 'text-slate-500'} />
+                     <item.icon size={18} strokeWidth={isActive ? 2.5 : 2} className={isActive ? 'text-slate-900' : 'text-slate-400'} />
                      {item.name}
                    </Link>
                  </li>
@@ -125,16 +125,16 @@ export default function DashboardShell({ children }) {
       </nav>
 
       {/* User Footer */}
-      <div className="p-4 border-t border-[#1E293B] shrink-0">
+      <div className="p-4 border-t border-slate-200/60 shrink-0">
         <div className="flex items-center gap-3 group">
-          <div className="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-white font-bold text-sm shrink-0">
+          <div className="w-9 h-9 rounded-full bg-slate-900 flex items-center justify-center text-white font-extrabold text-[11px] shrink-0 shadow-sm">
             {initials}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="font-semibold text-slate-200 text-sm truncate">{user?.fullName || 'Shop Manager'}</p>
+            <p className="font-extrabold text-slate-900 text-sm truncate tracking-tight">{user?.fullName || 'Shop Manager'}</p>
             <button
               onClick={logout}
-              className="text-slate-500 hover:text-red-400 text-xs font-medium transition-colors flex items-center gap-1 mt-0.5"
+              className="text-slate-400 hover:text-slate-900 text-[11px] font-bold transition-colors flex items-center gap-1 mt-0.5"
             >
               Logout Account
             </button>
@@ -212,9 +212,9 @@ export default function DashboardShell({ children }) {
       {/* Floating AI Action Button (FAB) */}
       <button 
         onClick={() => setAiOpen(true)}
-        className="fixed bottom-6 right-6 md:bottom-8 md:right-8 bg-[#0F172A] text-white px-5 py-3 rounded-full flex items-center gap-2 shadow-[0_8px_30px_rgb(15,23,42,0.2)] hover:scale-105 active:scale-95 transition-all z-40 font-semibold border border-slate-700 cursor-pointer"
+        className="fixed bottom-6 right-6 md:bottom-8 md:right-8 bg-slate-900 text-white px-5 py-3.5 rounded-full flex items-center gap-2 shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:bg-black hover:scale-105 active:scale-95 transition-all z-40 font-bold border border-slate-800 cursor-pointer"
       >
-        <Sparkles size={18} className="text-[#B5995D]" />
+        <Sparkles size={16} className="text-white" />
         Ask AI
       </button>
 

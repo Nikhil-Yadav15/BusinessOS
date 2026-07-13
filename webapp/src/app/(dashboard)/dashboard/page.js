@@ -122,19 +122,19 @@ export default function DashboardHome() {
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
          <div>
-           <h1 className="text-3xl font-bold text-[#0F172A] tracking-tight font-serif">Overview</h1>
-           <p className="text-slate-500 text-sm mt-1">Here's what's happening today.</p>
+           <h1 className="text-3xl font-extrabold text-slate-900 tracking-tighter">Overview</h1>
+           <p className="text-slate-500 text-sm mt-1 font-medium">Here's what's happening today.</p>
          </div>
          
          <div className="flex items-center gap-3 w-full sm:w-auto">
            <button
              onClick={() => { fetchAnalytics(); fetchNotifications(); fetchChartData(); }}
-             className="flex-1 sm:flex-none p-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-400 hover:text-slate-900 transition-all cursor-pointer active:scale-95 shadow-sm flex justify-center items-center h-10"
+             className="flex-1 sm:flex-none p-2.5 rounded-xl border border-slate-200/60 bg-white hover:bg-slate-50 text-slate-400 hover:text-slate-900 transition-all cursor-pointer active:scale-[0.98] shadow-sm flex justify-center items-center h-11"
              title="Refresh Data"
            >
-             <RefreshCcw size={16} className={loading || notifLoading || chartsLoading ? 'animate-spin text-[#B5995D]' : ''} />
+             <RefreshCcw size={16} className={loading || notifLoading || chartsLoading ? 'animate-spin text-slate-900' : ''} />
            </button>
-           <Link href="/dashboard/sales?action=new" className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 bg-[#0F172A] hover:bg-[#1E293B] text-white px-5 py-2 rounded-lg font-medium text-sm shadow-[0_4px_14px_0_rgba(15,23,42,0.39)] transition-all cursor-pointer active:scale-95 h-10">
+           <Link href="/dashboard/sales?action=new" className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 bg-slate-900 hover:bg-black text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-[0_4px_12px_rgba(0,0,0,0.1)] transition-all cursor-pointer active:scale-[0.98] h-11">
               <Plus size={16} /> New Sale
            </Link>
          </div>
@@ -144,54 +144,54 @@ export default function DashboardHome() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         
         {/* Metric 1 */}
-        <div className="bg-white rounded-xl border-t-2 border-t-[#B5995D] border-x border-b border-slate-200 shadow-[0_4px_20px_rgba(15,23,42,0.04)] p-6 hover:shadow-md transition-shadow">
+        <div className="bg-white rounded-[24px] border border-slate-200/60 shadow-[0_2px_12px_rgba(0,0,0,0.03)] p-6 hover:shadow-md transition-shadow group">
           <div className="flex justify-between items-start">
-            <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider font-serif">Total Revenue</p>
-            <div className="p-2 bg-slate-50 text-[#0F172A] rounded-lg">
+            <p className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest">Total Revenue</p>
+            <div className="p-2 bg-slate-50 text-slate-900 rounded-[14px] shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] border border-slate-200/60 group-hover:bg-slate-900 group-hover:text-white transition-colors">
               <CircleDollarSign size={16} />
             </div>
           </div>
           <div className="mt-4">
-            <h3 className="text-3xl font-bold text-[#0F172A] tracking-tight font-serif">
+            <h3 className="text-3xl font-extrabold text-slate-900 tracking-tighter">
               {loading ? '...' : `₹${parseFloat(metrics.totalSalesRevenue).toLocaleString('en-IN', { maximumFractionDigits: 0 })}`}
             </h3>
-            <div className="flex items-center gap-1.5 mt-2 text-xs font-medium text-emerald-600">
+            <div className="flex items-center gap-1.5 mt-2 text-xs font-bold text-emerald-600">
               <TrendingUp size={14} /> <span>Live tracking</span>
             </div>
           </div>
         </div>
 
         {/* Metric 2 */}
-        <div className="bg-white rounded-xl border border-slate-200 shadow-[0_4px_20px_rgba(15,23,42,0.04)] p-6 hover:shadow-md transition-shadow">
+        <div className="bg-white rounded-[24px] border border-slate-200/60 shadow-[0_2px_12px_rgba(0,0,0,0.03)] p-6 hover:shadow-md transition-shadow group">
            <div className="flex justify-between items-start">
-             <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider font-serif">Stock Alerts</p>
-             <div className="p-2 bg-slate-50 text-slate-600 rounded-lg">
+             <p className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest">Stock Alerts</p>
+             <div className="p-2 bg-slate-50 text-slate-900 rounded-[14px] shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] border border-slate-200/60 group-hover:bg-amber-50 group-hover:text-amber-600 transition-colors">
                <AlertTriangle size={16} />
              </div>
            </div>
            <div className="mt-4">
-             <h3 className="text-3xl font-bold text-[#0F172A] tracking-tight font-serif">
+             <h3 className="text-3xl font-extrabold text-slate-900 tracking-tighter">
                {loading ? '...' : notifications.filter(n => n.title?.includes('Low Stock')).length}
              </h3>
-             <Link href="/dashboard/inventory" className="flex items-center gap-1 mt-2 text-xs font-medium text-[#B5995D] hover:text-[#0F172A] transition-colors">
+             <Link href="/dashboard/inventory" className="flex items-center gap-1 mt-2 text-xs font-bold text-slate-900 hover:text-indigo-600 transition-colors">
                Review catalog <ChevronRight size={14} />
              </Link>
            </div>
         </div>
 
         {/* Metric 3 */}
-        <div className="bg-white rounded-xl border border-slate-200 shadow-[0_4px_20px_rgba(15,23,42,0.04)] p-6 hover:shadow-md transition-shadow">
+        <div className="bg-white rounded-[24px] border border-slate-200/60 shadow-[0_2px_12px_rgba(0,0,0,0.03)] p-6 hover:shadow-md transition-shadow group">
            <div className="flex justify-between items-start">
-             <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider font-serif">Event Queue</p>
-             <div className="p-2 bg-slate-50 text-slate-600 rounded-lg">
+             <p className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest">Event Queue</p>
+             <div className="p-2 bg-slate-50 text-slate-900 rounded-[14px] shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] border border-slate-200/60 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
                <Receipt size={16} />
              </div>
            </div>
            <div className="mt-4">
-             <h3 className="text-3xl font-bold text-[#0F172A] tracking-tight font-serif">
+             <h3 className="text-3xl font-extrabold text-slate-900 tracking-tighter">
                {loading ? '...' : metrics.pendingOutboxEvents}
              </h3>
-             <div className="flex items-center gap-1.5 mt-2 text-xs font-medium text-slate-500">
+             <div className="flex items-center gap-1.5 mt-2 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
                <span className="relative flex h-2 w-2">
                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
@@ -207,19 +207,19 @@ export default function DashboardHome() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
          
          {/* Sales Trend Engine */}
-         <div className="bg-white border border-slate-200 rounded-xl shadow-[0_4px_20px_rgba(15,23,42,0.04)] p-6 flex flex-col">
-           <div className="flex items-center gap-2 mb-6">
-             <div className="p-1.5 bg-slate-50 text-[#0F172A] rounded-md">
+         <div className="bg-white border border-slate-200/60 rounded-[24px] shadow-[0_2px_12px_rgba(0,0,0,0.03)] p-6 flex flex-col hover:shadow-md transition-shadow">
+           <div className="flex items-center gap-3 mb-6">
+             <div className="p-2 bg-slate-100 text-slate-900 rounded-xl shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] border border-slate-200/60">
                <BarChart3 size={16} />
              </div>
              <div>
-               <h3 className="font-semibold text-[#0F172A] text-sm font-serif">Revenue Timeline</h3>
-               <p className="text-xs text-slate-500">Recent sales cashflow</p>
+               <h3 className="font-extrabold text-slate-900 text-[15px] tracking-tight">Revenue Timeline</h3>
+               <p className="text-xs text-slate-500 font-medium tracking-wide">Recent sales cashflow</p>
              </div>
            </div>
            
            <div className="flex-1 flex flex-col items-center justify-center">
-             {chartsLoading ? <RefreshCcw className="animate-spin text-slate-300" size={24} /> : <ExecutiveSalesTrend invoices={invoices} />}
+             {chartsLoading ? <RefreshCcw className="animate-spin text-slate-900" size={24} /> : <ExecutiveSalesTrend invoices={invoices} />}
            </div>
          </div>
 
@@ -227,34 +227,34 @@ export default function DashboardHome() {
          <div className="flex flex-col gap-6">
             
             {/* Udhaar Top */}
-            <div className="bg-white border border-slate-200 rounded-xl shadow-[0_4px_20px_rgba(15,23,42,0.04)] p-6 flex-1 flex flex-col">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="p-1.5 bg-slate-50 text-[#0F172A] rounded-md">
+            <div className="bg-white border border-slate-200/60 rounded-[24px] shadow-[0_2px_12px_rgba(0,0,0,0.03)] p-6 flex-1 flex flex-col hover:shadow-md transition-shadow">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-slate-100 text-slate-900 rounded-xl shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] border border-slate-200/60">
                   <Users size={16} />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-[#0F172A] text-sm font-serif">Top Udhaar Balances</h3>
-                  <p className="text-xs text-slate-500">Accounts receivable</p>
+                  <h3 className="font-extrabold text-slate-900 text-[15px] tracking-tight">Top Udhaar Balances</h3>
+                  <p className="text-xs text-slate-500 font-medium tracking-wide">Accounts receivable</p>
                 </div>
               </div>
               <div className="flex-1 min-h-[140px] flex flex-col items-center justify-center">
-                {chartsLoading ? <RefreshCcw className="animate-spin text-slate-300" size={20} /> : <TopUdhaarAlert parties={parties} />}
+                {chartsLoading ? <RefreshCcw className="animate-spin text-slate-900" size={20} /> : <TopUdhaarAlert parties={parties} />}
               </div>
             </div>
 
             {/* Critical Stock */}
-            <div className="bg-white border border-slate-200 rounded-xl shadow-[0_4px_20px_rgba(15,23,42,0.04)] p-6 flex-1 flex flex-col">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="p-1.5 bg-slate-50 text-[#0F172A] rounded-md">
+            <div className="bg-white border border-slate-200/60 rounded-[24px] shadow-[0_2px_12px_rgba(0,0,0,0.03)] p-6 flex-1 flex flex-col hover:shadow-md transition-shadow">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-slate-100 text-slate-900 rounded-xl shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] border border-slate-200/60">
                   <Package size={16} />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-[#0F172A] text-sm font-serif">Critical Stock Alert</h3>
-                  <p className="text-xs text-slate-500">Items below minimum stock</p>
+                  <h3 className="font-extrabold text-slate-900 text-[15px] tracking-tight">Critical Stock Alert</h3>
+                  <p className="text-xs text-slate-500 font-medium tracking-wide">Items below minimum stock</p>
                 </div>
               </div>
               <div className="flex-1 min-h-[140px] flex flex-col items-center justify-center">
-                {chartsLoading ? <RefreshCcw className="animate-spin text-slate-300" size={20} /> : <CriticalStockAlert inventory={inventory} />}
+                {chartsLoading ? <RefreshCcw className="animate-spin text-slate-900" size={20} /> : <CriticalStockAlert inventory={inventory} />}
               </div>
             </div>
 
@@ -265,27 +265,25 @@ export default function DashboardHome() {
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         
         {/* Left Col: Recent Transactions Table (2/3 width) */}
-        <div className="xl:col-span-2 bg-white border border-slate-200 rounded-xl shadow-[0_4px_20px_rgba(15,23,42,0.04)] flex flex-col overflow-hidden">
-          <div className="px-6 py-5 border-b border-slate-200">
-             <h3 className="font-bold text-[#0F172A] text-lg font-serif">Recent Transactions</h3>
-             <p className="text-sm text-slate-500 mt-1">Latest records processed by zero-sum ledger system.</p>
+        <div className="xl:col-span-2 bg-white border border-slate-200/60 rounded-[24px] shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col overflow-hidden hover:shadow-md transition-shadow">
+          <div className="px-6 py-6 border-b border-slate-200/60">
+             <h3 className="font-extrabold text-slate-900 text-lg tracking-tight">Recent Transactions</h3>
+             <p className="text-[13px] font-medium text-slate-500 mt-1">Latest records processed by zero-sum ledger system.</p>
              
              <div className="flex items-center justify-between mt-6">
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <svg className="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                   </div>
-                  <input type="text" placeholder="Search records..." className="pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none w-64 transition-colors" />
+                  <input type="text" placeholder="Search records..." className="pl-10 pr-4 py-2 border border-slate-200/80 rounded-xl text-[13px] font-medium bg-slate-50/50 hover:bg-white focus:bg-white focus:ring-1 focus:ring-slate-400 focus:border-slate-400 focus:outline-none w-64 transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]" />
                 </div>
                 <div className="flex gap-3">
-                  <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-all cursor-pointer active:scale-95 shadow-sm">
-                    <svg className="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                  <button className="flex items-center gap-2 px-4 py-2 mt-auto sm:mt-0 bg-white border border-slate-200/80 rounded-xl text-[13px] font-bold text-slate-900 hover:bg-slate-50 transition-all cursor-pointer active:scale-95 shadow-sm">
                     Export CSV
                   </button>
-                  <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-all cursor-pointer active:scale-95 shadow-sm">
-                    <svg className="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                  <button className="flex items-center gap-2 px-4 py-2 mt-auto sm:mt-0 bg-white border border-slate-200/80 rounded-xl text-[13px] font-bold text-slate-900 hover:bg-slate-50 transition-all cursor-pointer active:scale-95 shadow-sm">
                     Columns
                   </button>
                 </div>
@@ -370,9 +368,9 @@ export default function DashboardHome() {
         </div>
 
         {/* Right Col: Operational Activity Feed (1/3 width timeline) */}
-        <div className="xl:col-span-1 bg-white border border-slate-200 rounded-xl shadow-[0_4px_20px_rgba(15,23,42,0.04)] overflow-hidden flex flex-col">
-          <div className="px-6 py-5 border-b border-slate-200 flex items-center gap-2">
-            <h3 className="font-bold text-[#0F172A] text-lg font-serif">Operational Activity Feed</h3>
+        <div className="xl:col-span-1 bg-white border border-slate-200/60 rounded-[24px] shadow-[0_2px_12px_rgba(0,0,0,0.03)] overflow-hidden flex flex-col hover:shadow-md transition-shadow">
+          <div className="px-6 py-6 border-b border-slate-200/60 flex items-center gap-2">
+            <h3 className="font-extrabold text-slate-900 text-[17px] tracking-tight">Operational Activity Feed</h3>
           </div>
           
           <div className="flex-1 p-6 overflow-y-auto">
@@ -420,10 +418,10 @@ export default function DashboardHome() {
                        <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 mb-1">
                           <h4 className="font-semibold text-slate-800 text-sm tracking-tight">{n.title}</h4>
                           <time className="text-[11px] font-semibold text-slate-400 whitespace-nowrap">
-                            {new Date(n.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                            {n.time}
                           </time>
                        </div>
-                       <p className="text-sm text-slate-500 leading-snug">{n.message}</p>
+                       <p className="text-sm text-slate-500 leading-snug">{n.desc || n.message}</p>
                     </div>
                   );
                 })}

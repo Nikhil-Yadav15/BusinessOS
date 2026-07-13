@@ -87,29 +87,29 @@ export default function VoiceAssistantFab() {
     <div className="fixed bottom-8 right-8 z-[100] flex flex-col items-end gap-4">
       {/* Visual Feedback Popover */}
       {(isRecording || isProcessing || transcript || replyText) && (
-        <div className="bg-white border border-slate-200 shadow-2xl rounded-2xl p-4 w-72 origin-bottom-right transition-all">
-          <div className="text-xs font-semibold text-indigo-600 mb-2">Atlas AI ✨</div>
+        <div className="bg-white/90 backdrop-blur-md border border-slate-200/60 shadow-[0_4px_24px_rgba(0,0,0,0.1)] rounded-[24px] p-5 w-72 origin-bottom-right transition-all">
+          <div className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/></svg> Atlas Voice AI</div>
           {transcript && (
-            <div className="text-sm text-slate-700 italic mb-3 border-l-2 border-indigo-200 pl-2">
+            <div className="text-[13px] text-slate-500 font-medium italic mb-4 border-l-2 border-slate-200 pl-3">
               {transcript}
             </div>
           )}
           {isProcessing && (
-            <div className="flex items-center gap-2 text-sm text-slate-500">
-              <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-bounce" />
-              <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-bounce delay-75" />
-              <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-bounce delay-150" />
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce" />
+              <div className="w-1.5 h-1.5 rounded-full bg-slate-600 animate-bounce delay-75" />
+              <div className="w-1.5 h-1.5 rounded-full bg-slate-900 animate-bounce delay-150" />
             </div>
           )}
           {replyText && (
-            <div className="text-sm text-slate-900 font-medium bg-indigo-50 p-3 rounded-xl border border-indigo-100">
+            <div className="text-[13px] text-slate-900 font-bold bg-slate-50/50 p-4 rounded-xl shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] border border-slate-200/60 leading-relaxed">
               {replyText}
             </div>
           )}
           {replyText && (
             <button 
               onClick={() => { setTranscript(''); setReplyText(''); }}
-              className="mt-3 text-xs text-slate-400 hover:text-slate-600 w-full text-center"
+              className="mt-4 text-[11px] font-extrabold uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-colors w-full text-center"
             >
               Dismiss
             </button>
@@ -124,7 +124,7 @@ export default function VoiceAssistantFab() {
         onMouseLeave={stopRecording}
         onTouchStart={startRecording}
         onTouchEnd={stopRecording}
-        className={`w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 select-none ${isRecording ? 'bg-red-500 scale-110' : 'bg-indigo-600 hover:bg-indigo-700 hover:scale-105'}`}
+        className={`w-14 h-14 rounded-full flex items-center justify-center shadow-[0_4px_24px_rgba(0,0,0,0.2)] transition-all duration-300 select-none ${isRecording ? 'bg-red-500 scale-110 shadow-red-500/40' : 'bg-slate-900 hover:bg-black hover:scale-105 shadow-slate-900/40 active:scale-95'}`}
       >
         {isRecording ? (
           <div className="flex gap-1 items-center justify-center">
@@ -133,7 +133,7 @@ export default function VoiceAssistantFab() {
              <div className="w-1.5 h-3 bg-white rounded-full animate-pulse delay-150" />
           </div>
         ) : (
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
         )}
       </button>
     </div>
