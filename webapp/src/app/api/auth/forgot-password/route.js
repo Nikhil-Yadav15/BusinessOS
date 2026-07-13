@@ -1,7 +1,7 @@
-import { buildAnonymousContext } from '../../../../infrastructure/context/buildContext.js';
 import { withApiHandler } from '../../../../infrastructure/context/withApiHandler.js';
 import { db } from '../../../../db/index.js';
 import { otps } from '../../../../db/schema/identity.js';
+import { UserRepository } from '../../../../persistence/repositories/UserRepository.js';
 import { eq, and, gt, isNull } from 'drizzle-orm';
 import { generateId } from '../../../../infrastructure/id/uuid.js';
 import crypto from 'crypto';
@@ -22,15 +22,25 @@ export const POST = withApiHandler(async (req) => {
     throw new Error('A valid email address is required.');
   }
 
+  // Ensure user exists
+  const user = await UserRepository.findByEmail(email);
+  if (!user) {
+    // For security, don't confirm if the user exists or not but we show success. 
+    // However, for user-friendliness, it's typically fine to throw an error, 
+    // depending on security context. Returning success indiscriminately prevents enumeration.
+    return Response.json({ message: 'If an account with that email exists, a reset code has been sent.' });
+  }
+
   // Rate-limit: Allow max 3 active OTPs per email in 10 minutes
   const recent = await db.select().from(otps).where(and(
-    eq(otps.mobile, email), // We reuse the 'mobile' column for email since schema supports varchar(15) — but email is longer. We'll use it safely.
+    eq(otps.mobile, email), // 'mobile' field is overloaded to mean contact medium
+    eq(otps.purpose, 'PASSWORD_RESET'),
     gt(otps.expiresAt, new Date()),
     isNull(otps.verifiedAt)
   ));
 
   if (recent.length >= 3) {
-    throw new Error('Too many OTP requests. Please wait a few minutes.');
+    throw new Error('Too many requests. Please wait a few minutes.');
   }
 
   // Generate & hash the OTP
@@ -39,8 +49,8 @@ export const POST = withApiHandler(async (req) => {
 
   await db.insert(otps).values({
     id: generateId(),
-    mobile: email, // Storing email in the 'mobile' field (both are contact identifiers)
-    purpose: 'MOBILE_VERIFICATION',
+    mobile: email, // Reusing mobile field for email per auth spec
+    purpose: 'PASSWORD_RESET',
     otpHash: hashed,
     expiresAt: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes
   });
@@ -48,18 +58,19 @@ export const POST = withApiHandler(async (req) => {
   // Send OTP
   await EmailNotificationService.send({
     to: email,
-    subject: `${plainOtp} is your Atlas verification code`,
+    subject: `Password Reset Request - Atlas BusinessOS`,
     html: `
       <div style="font-family:sans-serif;max-width:400px;margin:0 auto;padding:32px;">
-        <h2 style="color:#4338ca;margin-bottom:8px;">Atlas BusinessOS</h2>
+        <h2 style="color:#d97706;margin-bottom:8px;">⚠️ Password Reset Code</h2>
+        <p style="color:#475569;font-size:14px;">We received a request to reset the password associated with this email address.</p>
         <p style="color:#475569;font-size:14px;">Your verification code is:</p>
-        <div style="background:#f1f5f9;border-radius:12px;padding:20px;text-align:center;margin:16px 0;">
-          <span style="font-size:32px;font-weight:800;letter-spacing:8px;color:#1e293b;">${plainOtp}</span>
+        <div style="background:#fef3c7;border-radius:12px;padding:20px;text-align:center;margin:16px 0;">
+          <span style="font-size:32px;font-weight:800;letter-spacing:8px;color:#92400e;">${plainOtp}</span>
         </div>
-        <p style="color:#94a3b8;font-size:12px;">This code expires in 10 minutes. Do not share it with anyone.</p>
+        <p style="color:#94a3b8;font-size:12px;">This code expires in 10 minutes. If you did not request this change, please ignore this email.</p>
       </div>
     `
   });
 
-  return Response.json({ message: 'Verification code sent to your email.' });
+  return Response.json({ message: 'If an account with that email exists, a reset code has been sent.' });
 });

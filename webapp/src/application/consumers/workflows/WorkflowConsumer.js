@@ -3,6 +3,7 @@ import { db } from '../../../db/index.js';
 import { purchases, purchaseItems } from '../../../db/schema/purchasing.js';
 import { notifications, notificationDeliveries } from '../../../db/schema/notification.js';
 import { generateId } from '../../../infrastructure/id/uuid.js';
+import { EmailNotificationService } from '../../../infrastructure/notifications/EmailNotificationService.js';
 
 export class WorkflowConsumer {
   /**
@@ -126,22 +127,12 @@ export class WorkflowConsumer {
               status: 'SENT'
            });
 
-           // Background HTTP fire to Resend API
-           const apiKey = process.env.RESEND_API_KEY;
-           if (apiKey) {
-              fetch('https://api.resend.com/emails', {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  from: 'Atlas OS Alerts <alerts@atlasops.cloud>',
-                  to: [config.toEmail || 'owner@business.com'],
-                  subject: config.subject || 'Atlas Automation Triggered',
-                  html: `<h3>Atlas Background Process</h3><p>Workflow <strong>${rule.name}</strong> successfully executed. <br/>Payload: ${JSON.stringify(payload)}</p>`
-                })
-              }).catch(e => console.error("Resend API failed silently:", e));
-           } else {
-             console.log("No RESEND_API_KEY in .env.local - Email bypassed.");
-           }
+           // Background dispatch via EmailNotificationService
+           await EmailNotificationService.send({
+             to: config.toEmail || 'owner@business.com',
+             subject: config.subject || 'Atlas Automation Triggered',
+             html: `<h3>Atlas Background Process</h3><p>Workflow <strong>${rule.name}</strong> successfully executed. <br/>Payload: ${JSON.stringify(payload)}</p>`
+           });
            break;
         }
         case 'SEND_SMS': {
