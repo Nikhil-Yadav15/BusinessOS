@@ -199,7 +199,7 @@ export default function ForgotPasswordPage() {
               </div>
               <button
                 type="submit"
-                disabled={loading || success !== ''}
+                disabled={loading || success === 'Password reset successfully. Redirecting to login...'}
                 className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white font-bold py-3.5 rounded-xl transition-colors shadow-md mt-2 text-[15px]"
               >
                 {loading ? 'Resetting Password...' : 'Reset Password ✓'}
