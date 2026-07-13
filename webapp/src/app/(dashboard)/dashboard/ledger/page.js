@@ -77,13 +77,13 @@ export default function LedgerPage() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-3xl font-extrabold tracking-tighter text-slate-900">Accounting Ledger</h1>
           <p className="text-slate-500 text-sm mt-1 font-medium">Chart of Accounts ({accounts.length} accounts)</p>
         </div>
         <button onClick={fetchAccounts}
-          className="text-sm font-semibold px-4 py-2 bg-white rounded-xl border border-slate-200/60 shadow-sm hover:bg-slate-50 transition-all cursor-pointer active:scale-[0.98]">
+          className="w-full sm:w-auto text-sm font-semibold px-4 py-2 bg-white rounded-xl border border-slate-200/60 shadow-sm hover:bg-slate-50 transition-all cursor-pointer active:scale-[0.98]">
           ↻ Refresh
         </button>
       </div>

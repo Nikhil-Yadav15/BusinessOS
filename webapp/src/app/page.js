@@ -9,6 +9,7 @@ import {
 
 export default function HeroPage() {
   const [activeTab, setActiveTab] = useState('crm');
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   const tabs = [
     { id: 'crm', title: 'CRM & SALES', desc: 'Invoices & clients ledger', icon: <Shield className="w-4 h-4 text-orange-400" /> },
@@ -18,7 +19,7 @@ export default function HeroPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-slate-200 relative pt-20">
+    <div className="min-h-dvh bg-slate-50 text-slate-900 font-sans selection:bg-slate-200 relative pt-20">
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-xl border-b border-slate-200/50">
         <div className="flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
@@ -35,22 +36,51 @@ export default function HeroPage() {
           <Link href="#faq" className="hover:text-slate-900 transition-colors cursor-pointer">FAQ</Link>
         </div>
 
-        <div className="flex items-center gap-3">
-          <button className="p-2 text-slate-400 hover:text-slate-900 border border-slate-200/60 rounded-full bg-white/50 shadow-sm cursor-pointer transition-all">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <button className="hidden sm:flex p-2 text-slate-400 hover:text-slate-900 border border-slate-200/60 rounded-full bg-white/50 shadow-sm cursor-pointer transition-all">
             <Moon size={18} />
           </button>
-          <Link href="/login" className="text-sm font-semibold px-5 py-2.5 border border-slate-200/60 bg-white/80 rounded-xl hover:bg-slate-50 shadow-[0_2px_8px_rgba(0,0,0,0.04)] cursor-pointer transition-all">
+          <Link href="/login" className="hidden sm:inline-flex text-sm font-semibold px-5 py-2.5 border border-slate-200/60 bg-white/80 rounded-xl hover:bg-slate-50 shadow-[0_2px_8px_rgba(0,0,0,0.04)] cursor-pointer transition-all">
             Sign In
           </Link>
-          <Link href="/register" className="text-sm bg-slate-900 hover:bg-black text-white font-bold px-5 py-2.5 rounded-xl transition-all shadow-[0_4px_12px_rgba(0,0,0,0.1)] active:scale-[0.98] cursor-pointer">
+          <Link href="/register" className="text-sm bg-slate-900 hover:bg-black text-white font-bold px-4 sm:px-5 py-2.5 rounded-xl transition-all shadow-[0_4px_12px_rgba(0,0,0,0.1)] active:scale-[0.98] cursor-pointer">
             Get Started
           </Link>
+          {/* Mobile hamburger */}
+          <button
+            className="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+            onClick={() => setMobileNavOpen(!mobileNavOpen)}
+            aria-label="Toggle menu"
+          >
+            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+              {mobileNavOpen ? (
+                <><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></>
+              ) : (
+                <><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></>
+              )}
+            </svg>
+          </button>
         </div>
         </div>
+
+        {/* Mobile Nav dropdown */}
+        {mobileNavOpen && (
+          <div className="md:hidden border-t border-slate-200/60 bg-white/95 backdrop-blur-xl px-6 py-4 space-y-1">
+            {[['#features','Features'],['#walkthrough','Live Demo'],['#walkthrough','Technical Spec'],['#pricing','Pricing'],['#faq','FAQ']].map(([href, label]) => (
+              <Link key={label} href={href} onClick={() => setMobileNavOpen(false)}
+                className="block py-2.5 px-3 text-sm font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors">
+                {label}
+              </Link>
+            ))}
+            <div className="pt-3 border-t border-slate-100 mt-2 flex gap-2">
+              <Link href="/login" className="flex-1 text-center text-sm font-semibold px-4 py-2.5 border border-slate-200 bg-white rounded-xl hover:bg-slate-50 transition-all">Sign In</Link>
+            </div>
+          </div>
+        )}
       </nav>
 
       {/* Hero Section */}
-      <section className="text-center px-6 pt-24 pb-16 max-w-5xl mx-auto">
+      <section className="text-center px-4 sm:px-6 pt-16 sm:pt-24 pb-16 max-w-5xl mx-auto">
         <div className="inline-flex items-center gap-2 bg-slate-100 text-slate-600 rounded-full px-4 py-1.5 text-xs font-bold tracking-[0.1em] uppercase border border-slate-200/60 mb-8 mx-auto shadow-sm">
           <Sparkles size={14} className="text-slate-900" />
           V1.2 Released — AI Co-Pilot & Workflow Gateway
@@ -74,8 +104,8 @@ export default function HeroPage() {
           </Link>
         </div>
 
-        {/* Dashboard Mockup */}
-        <div className="mt-24 mx-auto max-w-5xl bg-white border border-slate-200/60 rounded-2xl shadow-[0_32px_64px_rgba(0,0,0,0.08)] overflow-hidden">
+        {/* Dashboard Mockup — hidden on small screens */}
+        <div className="hidden sm:block mt-24 mx-auto max-w-5xl bg-white border border-slate-200/60 rounded-2xl shadow-[0_32px_64px_rgba(0,0,0,0.08)] overflow-hidden">
           {/* Browser Bar */}
           <div className="bg-slate-50/50 backdrop-blur-md border-b border-slate-200/60 px-4 py-3 flex items-center justify-between">
             <div className="flex space-x-2">
@@ -211,7 +241,7 @@ export default function HeroPage() {
             </div>
 
             {/* Tab content area */}
-            <div className="flex-1 bg-white border border-slate-200/80 rounded-[24px] shadow-sm p-8 lg:p-10">
+            <div className="flex-1 bg-white border border-slate-200/80 rounded-[24px] shadow-sm p-6 lg:p-10 overflow-x-auto">
               <div className="flex justify-between items-center border-b border-slate-100 pb-5 mb-5">
                 <h3 className="font-bold text-slate-900 tracking-widest text-[11px] uppercase">Draft Invoice Ledger</h3>
                 <span className="bg-slate-100 text-slate-900 text-[10px] uppercase tracking-widest font-bold px-3 py-1.5 rounded-full border border-slate-200">4 Pending Approval</span>

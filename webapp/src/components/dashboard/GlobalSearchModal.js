@@ -71,7 +71,7 @@ export default function GlobalSearchModal({ isOpen, onClose, openAiDrawer }) {
   };
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-start justify-center pt-[15vh] px-4 animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[60] flex items-start justify-center pt-[15dvh] px-4 animate-in fade-in duration-200">
       
       {/* Backdrop */}
       <div 
@@ -106,7 +106,7 @@ export default function GlobalSearchModal({ isOpen, onClose, openAiDrawer }) {
         </div>
 
         {/* Results List */}
-        <div className="max-h-[60vh] overflow-y-auto w-full p-2">
+        <div className="max-h-[60dvh] overflow-y-auto w-full p-2">
           {results.length === 0 ? (
              <div className="py-12 text-center text-slate-500">
                <p>No matches found for &quot;{query}&quot;</p>

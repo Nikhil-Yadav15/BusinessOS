@@ -90,7 +90,7 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="flex min-h-screen bg-slate-50 font-sans selection:bg-slate-200">
+    <div className="flex min-h-dvh bg-slate-50 font-sans selection:bg-slate-200">
       {/* Left Panel — Branding (Hidden on mobile) */}
       <div className="hidden lg:flex lg:w-1/2 flex-col justify-center px-20 bg-gradient-to-b from-white to-slate-100/50">
         <div className="mb-12">

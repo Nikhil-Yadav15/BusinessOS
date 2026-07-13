@@ -270,20 +270,20 @@ export default function DashboardHome() {
              <h3 className="font-extrabold text-slate-900 text-lg tracking-tight">Recent Transactions</h3>
              <p className="text-[13px] font-medium text-slate-500 mt-1">Latest records processed by zero-sum ledger system.</p>
              
-             <div className="flex items-center justify-between mt-6">
-                <div className="relative">
+             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mt-6">
+                <div className="relative w-full sm:w-64">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <svg className="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                   </div>
-                  <input type="text" placeholder="Search records..." className="pl-10 pr-4 py-2 border border-slate-200/80 rounded-xl text-[13px] font-medium bg-slate-50/50 hover:bg-white focus:bg-white focus:ring-1 focus:ring-slate-400 focus:border-slate-400 focus:outline-none w-64 transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]" />
+                  <input type="text" placeholder="Search records..." className="pl-10 pr-4 py-2 border border-slate-200/80 rounded-xl text-[13px] font-medium bg-slate-50/50 hover:bg-white focus:bg-white focus:ring-1 focus:ring-slate-400 focus:border-slate-400 focus:outline-none w-full transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]" />
                 </div>
-                <div className="flex gap-3">
-                  <button className="flex items-center gap-2 px-4 py-2 mt-auto sm:mt-0 bg-white border border-slate-200/80 rounded-xl text-[13px] font-bold text-slate-900 hover:bg-slate-50 transition-all cursor-pointer active:scale-95 shadow-sm">
+                <div className="flex gap-3 w-full sm:w-auto">
+                  <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-white border border-slate-200/80 rounded-xl text-[13px] font-bold text-slate-900 hover:bg-slate-50 transition-all cursor-pointer active:scale-95 shadow-sm">
                     Export CSV
                   </button>
-                  <button className="flex items-center gap-2 px-4 py-2 mt-auto sm:mt-0 bg-white border border-slate-200/80 rounded-xl text-[13px] font-bold text-slate-900 hover:bg-slate-50 transition-all cursor-pointer active:scale-95 shadow-sm">
+                  <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-white border border-slate-200/80 rounded-xl text-[13px] font-bold text-slate-900 hover:bg-slate-50 transition-all cursor-pointer active:scale-95 shadow-sm">
                     Columns
                   </button>
                 </div>

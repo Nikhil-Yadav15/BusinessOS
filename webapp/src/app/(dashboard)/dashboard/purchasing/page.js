@@ -89,14 +89,14 @@ export default function PurchasingPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Purchasing</h1>
           <p className="text-slate-500 text-sm mt-1">{purchases.length} total</p>
         </div>
-        <div className="flex gap-2">
-          <button onClick={fetchPurchases} className="text-sm px-4 py-2 rounded-lg border border-slate-200">↻ Refresh</button>
-          <button onClick={() => setDrawerOpen(true)} className="cursor-pointer text-sm px-4 py-2 rounded-lg bg-indigo-600 text-white font-medium">+ Purchase Bill</button>
+        <div className="flex gap-2 w-full sm:w-auto">
+          <button onClick={fetchPurchases} className="flex-1 sm:flex-none text-sm px-4 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors">↻ Refresh</button>
+          <button onClick={() => setDrawerOpen(true)} className="flex-1 sm:flex-none cursor-pointer text-sm px-4 py-2 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition-colors">+ Purchase Bill</button>
         </div>
       </div>
 
@@ -153,22 +153,24 @@ export default function PurchasingPage() {
             </div>
             <div className="space-y-3">
               {form.lines.map((line, i) => (
-                <div key={i} className="flex gap-2 items-start p-3 bg-slate-50 border border-slate-100 rounded-lg">
-                  <div className="flex-1">
+                <div key={i} className="flex flex-col gap-2 p-3 bg-slate-50 border border-slate-100 rounded-lg">
+                  <div className="w-full">
                     <select required value={line.productId} onChange={e => updateLine(i, 'productId', e.target.value)} className="w-full px-2 py-1.5 text-sm border border-slate-200 rounded">
                       <option value="">Product...</option>
                       {products.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                     </select>
                   </div>
-                  <div className="w-20">
-                    <input required type="number" min="0.001" step="any" value={line.quantity} onChange={e => updateLine(i, 'quantity', e.target.value)} className="w-full px-2 py-1.5 text-sm border border-slate-200 rounded" placeholder="Qty" />
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1">
+                      <input required type="number" min="0.001" step="any" value={line.quantity} onChange={e => updateLine(i, 'quantity', e.target.value)} className="w-full px-2 py-1.5 text-sm border border-slate-200 rounded" placeholder="Qty" />
+                    </div>
+                    <div className="flex-1">
+                      <input required type="number" step="0.01" value={line.unitPrice} onChange={e => updateLine(i, 'unitPrice', e.target.value)} className="w-full px-2 py-1.5 text-sm border border-slate-200 rounded" placeholder="Cost" />
+                    </div>
+                    {form.lines.length > 1 && (
+                      <button type="button" onClick={() => setForm({ ...form, lines: form.lines.filter((_, idx) => idx !== i) })} className="text-red-500 font-bold px-2 py-1 shrink-0">✕</button>
+                    )}
                   </div>
-                  <div className="w-24">
-                    <input required type="number" step="0.01" value={line.unitPrice} onChange={e => updateLine(i, 'unitPrice', e.target.value)} className="w-full px-2 py-1.5 text-sm border border-slate-200 rounded" placeholder="Cost" />
-                  </div>
-                  {form.lines.length > 1 && (
-                    <button type="button" onClick={() => setForm({ ...form, lines: form.lines.filter((_, idx) => idx !== i) })} className="text-red-500 font-bold px-2 py-1">✕</button>
-                  )}
                 </div>
               ))}
             </div>

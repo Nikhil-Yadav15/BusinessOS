@@ -79,20 +79,20 @@ export default function CRMPage() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-extrabold tracking-tighter text-slate-900">CRM & Parties</h1>
           <p className="text-slate-500 text-sm mt-1 font-medium">{parties.length} record{parties.length !== 1 ? 's' : ''} found</p>
         </div>
-        <div className="flex items-center gap-3">
-          <select value={filter} onChange={(e) => setFilter(e.target.value)} className="text-[13px] font-medium px-4 py-2.5 rounded-xl border border-slate-200/60 bg-white text-slate-600 focus:outline-none focus:ring-1 focus:ring-slate-400 shadow-[2px_4px_12px_rgba(0,0,0,0.03)] cursor-pointer">
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+          <select value={filter} onChange={(e) => setFilter(e.target.value)} className="flex-1 sm:flex-none text-[13px] font-medium px-4 py-2.5 rounded-xl border border-slate-200/60 bg-white text-slate-600 focus:outline-none focus:ring-1 focus:ring-slate-400 shadow-[2px_4px_12px_rgba(0,0,0,0.03)] cursor-pointer">
             <option value="">All Types</option>
             <option value="CUSTOMER">Customers</option>
             <option value="SUPPLIER">Suppliers</option>
             <option value="BOTH">Both</option>
           </select>
-          <button onClick={fetchParties} className="text-sm font-semibold px-4 py-2 bg-white rounded-xl border border-slate-200/60 shadow-sm hover:bg-slate-50 transition-all cursor-pointer active:scale-[0.98]">↻ Refresh</button>
-          <button onClick={() => setDrawerOpen(true)} className="text-sm font-bold px-5 py-2.5 rounded-xl bg-slate-900 text-white hover:bg-black transition-all shadow-md shadow-slate-200 active:scale-[0.98]">+ Add Record</button>
+          <button onClick={fetchParties} className="text-sm font-semibold px-4 py-2.5 bg-white rounded-xl border border-slate-200/60 shadow-sm hover:bg-slate-50 transition-all cursor-pointer active:scale-[0.98]">↻ Refresh</button>
+          <button onClick={() => setDrawerOpen(true)} className="flex-1 sm:flex-none text-sm font-bold px-5 py-2.5 rounded-xl bg-slate-900 text-white hover:bg-black transition-all shadow-md shadow-slate-200 active:scale-[0.98]">+ Add Record</button>
         </div>
       </div>
 

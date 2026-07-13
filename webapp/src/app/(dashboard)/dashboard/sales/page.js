@@ -140,7 +140,7 @@ export default function SalesPage() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between print:hidden">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 print:hidden">
         <div>
           <h1 className="text-3xl font-extrabold tracking-tighter text-slate-900">Sales Invoices</h1>
           <p className="text-slate-500 text-sm mt-1 font-medium">{invoices.length} total operations</p>
@@ -277,12 +277,12 @@ export default function SalesPage() {
             <div className="p-8 sm:p-12 print:p-0">
                
                {/* Invoice Header */}
-               <div className="flex justify-between items-start border-b border-slate-200 pb-8">
+               <div className="flex flex-col sm:flex-row justify-between items-start gap-4 border-b border-slate-200 pb-8">
                   <div>
                     <h1 className="text-3xl font-black text-slate-900 tracking-tight">INVOICE</h1>
                     <p className="text-slate-500 text-sm mt-1">Receipt for goods and services</p>
                   </div>
-                  <div className="text-right">
+                  <div className="text-left sm:text-right">
                     <p className="font-bold text-slate-900">{viewingInvoice.invoiceNumber}</p>
                     <p className="text-sm text-slate-500 mt-1">{new Date(viewingInvoice.invoiceDate).toLocaleDateString()}</p>
                     <span className={`inline-flex px-2 py-0.5 mt-3 rounded-full text-[10px] font-bold tracking-widest uppercase ${statusColors[viewingInvoice.status] || 'bg-slate-100 text-slate-600'}`}>{viewingInvoice.status}</span>
