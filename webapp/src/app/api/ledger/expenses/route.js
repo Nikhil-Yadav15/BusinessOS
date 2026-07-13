@@ -3,6 +3,7 @@ import { withExecutionContext } from '../../../../infrastructure/context/withExe
 import { withPermission } from '../../../../infrastructure/context/withPermission.js';
 import { withApiHandler } from '../../../../infrastructure/context/withApiHandler.js';
 import { StandardResponse } from '../../../../application/common/StandardResponse.js';
+import { ExpenseRepository } from '../../../../persistence/repositories/ExpenseRepository.js';
 
 export const POST = withExecutionContext(
   // Re-using journal.write as expenses are fundamentally accounting ledger entries
@@ -15,6 +16,19 @@ export const POST = withExecutionContext(
         payload
       );
       return Response.json(StandardResponse.success(result), { status: 201 });
+    })
+  )
+);
+
+export const GET = withExecutionContext(
+  withPermission(
+    'ledger.journal.read',
+    withApiHandler(async (req, { executionContext }) => {
+      const result = await ExpenseRepository.findList({
+        filters: { businessId: executionContext.businessId },
+        limit: 500
+      });
+      return Response.json(StandardResponse.success(result));
     })
   )
 );

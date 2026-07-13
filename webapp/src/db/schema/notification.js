@@ -34,6 +34,7 @@ export const notifications = pgTable('notification', {
   recipientType: varchar('recipient_type', { length: 30 }).notNull(), // PARTY, USER, BUSINESS_MEMBER
   recipientId: uuid('recipient_id').notNull(),
   templateId: uuid('template_id').references(() => notificationTemplates.id),
+  channel: channelEnum('channel').notNull().default('WHATSAPP'), // Added to identify outbound target for ad-hoc alerts
   title: varchar('title', { length: 200 }),
   message: text('message').notNull(),
   status: notificationStatusEnum('status').notNull().default('PENDING'),

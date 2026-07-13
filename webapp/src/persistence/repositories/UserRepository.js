@@ -25,4 +25,11 @@ export class UserRepository extends BaseRepository {
     const [user] = await conn.select().from(this.table).where(eq(this.table.email, email)).limit(1);
     return user || null;
   }
+
+  static async updatePassword(userId, passwordHash, tx) {
+    const conn = this.getDB(tx);
+    await conn.update(this.table)
+      .set({ passwordHash, updatedAt: new Date() })
+      .where(eq(this.table.id, userId));
+  }
 }

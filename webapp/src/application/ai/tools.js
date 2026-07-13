@@ -7,6 +7,7 @@ import { CreateWorkflowOperation } from '../operations/workflows/CreateWorkflowO
 import { db } from '../../db/index.js';
 import { aiMemories } from '../../db/schema/ai.js';
 import { workflows } from '../../db/schema/workflow.js';
+import { units } from '../../db/schema/catalog.js';
 import { eq, and } from 'drizzle-orm';
 import { generateId } from '../../infrastructure/id/uuid.js';
 
@@ -183,6 +184,107 @@ export const buildAITools = (executionContext) => {
            workflowId: z.string().describe('The UUID of the workflow to toggle'),
            enable: z.boolean().describe('Set to true to activate the workflow, false to disable it')
          })
+      }
+    ),
+
+    // 8. Stage Add Product Tool (DRAFT ONLY)
+    tool(
+      async (payload) => {
+        // Auto-inject a default unitId to satisfy strict Dto Validation (e.g. PCS)
+        if (!payload.unitId) {
+           const defaultUnit = await db.select().from(units).where(eq(units.businessId, executionContext.businessId)).limit(1);
+           if (defaultUnit.length > 0) payload.unitId = defaultUnit[0].id;
+        }
+
+        // Return a structural drafted envelope instead of mutating DB
+        return JSON.stringify({
+          _type: 'ACTION_CONFIRMATION',
+          action: 'add_product',
+          endpoint: '/api/catalog/products',
+          payload
+        });
+      },
+      {
+        name: 'stage_add_product',
+        description: 'Drafts a new product to be added to the catalog. Does NOT execute it. Requires user confirmation. Always use this instead of trying to hit the database directly for products.',
+        schema: z.object({
+          name: z.string().describe('Readable product name'),
+          sku: z.string().describe('Barcode or unique SKU'),
+          purchasePrice: z.number().describe('Cost to buy this item'),
+          sellingPrice: z.number().describe('Price to sell this item'),
+          categoryId: z.string().optional().describe('Optional category UUID if known'),
+          type: z.enum(['PHYSICAL', 'DIGITAL', 'SERVICE']).describe('Type of product. Defaults to PHYSICAL if unsure.')
+        })
+      }
+    ),
+
+    // 9. Stage Adjust Inventory Tool (DRAFT ONLY)
+    tool(
+      async (payload) => {
+        return JSON.stringify({
+          _type: 'ACTION_CONFIRMATION',
+          action: 'adjust_inventory',
+          endpoint: '/api/inventory',
+          payload
+        });
+      },
+      {
+        name: 'stage_adjust_inventory',
+        description: 'Drafts an inventory stock adjustment. Requires user confirmation. Use this when user says "I received 10 units of XYZ" or "We threw away 2 units".',
+        schema: z.object({
+          productId: z.string().describe('UUID of the product'),
+          quantity: z.number().describe('The delta amount to change. Positive for received stock, negative for damages/loss.'),
+          reason: z.enum(['PURCHASED', 'SOLD', 'DAMAGED', 'RETURNED', 'STOCKTAKE']).describe('Reason for the stock change'),
+          notes: z.string().optional().describe('Any human readable notes like "found in warehouse"')
+        })
+      }
+    ),
+
+    // 10. Stage Add Customer Tool (DRAFT ONLY)
+    tool(
+      async (payload) => {
+        return JSON.stringify({
+          _type: 'ACTION_CONFIRMATION',
+          action: 'add_customer',
+          endpoint: '/api/crm/parties',
+          payload
+        });
+      },
+      {
+        name: 'stage_add_customer',
+        description: 'Drafts a new customer or supplier entity to be added to the CRM. Requires user confirmation.',
+        schema: z.object({
+          type: z.enum(['CUSTOMER', 'SUPPLIER']).describe('Whether this is a client (CUSTOMER) or a vendor (SUPPLIER)'),
+          name: z.string().describe('Full name or business name of the party'),
+          phone: z.string().optional().describe('Phone number of the party'),
+          email: z.string().optional().describe('Email address of the party')
+        })
+      }
+    ),
+
+    // 11. Stage Create Invoice Tool (DRAFT ONLY)
+    tool(
+      async (payload) => {
+        return JSON.stringify({
+          _type: 'ACTION_CONFIRMATION',
+          action: 'create_invoice',
+          endpoint: '/api/sales/invoices',
+          payload
+        });
+      },
+      {
+        name: 'stage_create_invoice',
+        description: 'Drafts a new sales invoice. Requires user confirmation. The payload represents the invoice envelope.',
+        schema: z.object({
+          customerId: z.string().optional().describe('UUID of the customer ordering. If unknown, leave blank.'),
+          items: z.array(z.object({
+            productId: z.string().describe('UUID of the product'),
+            quantity: z.number().describe('Quantity selling'),
+            price: z.number().describe('Unit price being sold at')
+          })).describe('Array of line items in the invoice'),
+          totalAmount: z.number().describe('Total computed amount of the invoice'),
+          amountPaid: z.number().describe('Amount the customer paid upfront. If 0, the invoice is an unpaid Udhaar/debt.')
+        })
       }
     )
   ];

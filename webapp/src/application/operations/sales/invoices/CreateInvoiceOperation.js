@@ -2,6 +2,8 @@ import { BaseOperation } from '../../BaseOperation.js';
 import { InvoiceRepository } from '../../../../persistence/repositories/InvoiceRepository.js';
 import { InvoiceItemRepository } from '../../../../persistence/repositories/InvoiceItemRepository.js';
 import { DomainEvent } from '../../../../infrastructure/events/DomainEvent.js';
+import { notifications } from '../../../../db/schema/notification.js';
+import { generateId } from '../../../../infrastructure/id/uuid.js';
 import { InvoiceDto } from '../dto/InvoiceDto.js';
 import { validateDto } from '../../../common/ValidationUtils.js';
 
@@ -51,6 +53,20 @@ export class CreateInvoiceOperation extends BaseOperation {
       };
       const createdItem = await InvoiceItemRepository.create(formattedItem, tx);
       createdItems.push(createdItem);
+    }
+
+    // 3. Queue WhatsApp Notification for the Customer
+    if (invoice.customerId) {
+      await tx.insert(notifications).values({
+        id: generateId(),
+        businessId,
+        recipientType: 'PARTY',
+        recipientId: invoice.customerId,
+        channel: 'WHATSAPP',
+        title: `Invoice ${invoiceNumber}`,
+        message: `🧾 *Atlas BusinessOS - New Invoice*\n\nInvoice #${invoiceNumber} has been generated for ₹${parseFloat(formattedHeader.totalAmount).toLocaleString('en-IN')}.\nLog in to view and manage this invoice.`,
+        status: 'PENDING'
+      });
     }
 
     return { invoice, items: createdItems };

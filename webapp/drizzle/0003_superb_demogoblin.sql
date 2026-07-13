@@ -1,0 +1,1 @@
+ALTER TABLE "notification" ADD COLUMN "channel" "notification_channel" DEFAULT 'WHATSAPP' NOT NULL;

@@ -5,6 +5,7 @@ import { otps } from '../../../../db/schema/identity.js';
 import { eq, and, gt, isNull } from 'drizzle-orm';
 import { generateId } from '../../../../infrastructure/id/uuid.js';
 import crypto from 'crypto';
+import { EmailNotificationService } from '../../../../infrastructure/notifications/EmailNotificationService.js';
 
 function generateOtp() {
   return crypto.randomInt(100000, 999999).toString();
@@ -44,32 +45,21 @@ export const POST = withApiHandler(async (req) => {
     expiresAt: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes
   });
 
-  // Send OTP via Resend
-  const resendKey = process.env.RESEND_API_KEY;
-  if (resendKey) {
-    await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        from: process.env.RESEND_FROM_EMAIL || 'Atlas OS <noreply@atlasops.cloud>',
-        to: [email],
-        subject: `${plainOtp} is your Atlas verification code`,
-        html: `
-          <div style="font-family:sans-serif;max-width:400px;margin:0 auto;padding:32px;">
-            <h2 style="color:#4338ca;margin-bottom:8px;">Atlas BusinessOS</h2>
-            <p style="color:#475569;font-size:14px;">Your verification code is:</p>
-            <div style="background:#f1f5f9;border-radius:12px;padding:20px;text-align:center;margin:16px 0;">
-              <span style="font-size:32px;font-weight:800;letter-spacing:8px;color:#1e293b;">${plainOtp}</span>
-            </div>
-            <p style="color:#94a3b8;font-size:12px;">This code expires in 10 minutes. Do not share it with anyone.</p>
-          </div>
-        `
-      })
-    });
-  } else {
-    // DEV MODE: Log OTP to terminal when no Resend key is configured
-    console.log(`\n🔑 [DEV] Email OTP for ${email}: ${plainOtp}\n`);
-  }
+  // Send OTP
+  await EmailNotificationService.send({
+    to: email,
+    subject: `${plainOtp} is your Atlas verification code`,
+    html: `
+      <div style="font-family:sans-serif;max-width:400px;margin:0 auto;padding:32px;">
+        <h2 style="color:#4338ca;margin-bottom:8px;">Atlas BusinessOS</h2>
+        <p style="color:#475569;font-size:14px;">Your verification code is:</p>
+        <div style="background:#f1f5f9;border-radius:12px;padding:20px;text-align:center;margin:16px 0;">
+          <span style="font-size:32px;font-weight:800;letter-spacing:8px;color:#1e293b;">${plainOtp}</span>
+        </div>
+        <p style="color:#94a3b8;font-size:12px;">This code expires in 10 minutes. Do not share it with anyone.</p>
+      </div>
+    `
+  });
 
   return Response.json({ message: 'Verification code sent to your email.' });
 });

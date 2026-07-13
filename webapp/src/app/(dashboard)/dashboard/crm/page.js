@@ -78,21 +78,21 @@ export default function CRMPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">CRM & Parties</h1>
-          <p className="text-slate-500 text-sm mt-1">{parties.length} record{parties.length !== 1 ? 's' : ''} found</p>
+          <h1 className="text-3xl font-extrabold tracking-tighter text-slate-900">CRM & Parties</h1>
+          <p className="text-slate-500 text-sm mt-1 font-medium">{parties.length} record{parties.length !== 1 ? 's' : ''} found</p>
         </div>
-        <div className="flex items-center gap-2">
-          <select value={filter} onChange={(e) => setFilter(e.target.value)} className="text-sm px-3 py-2 rounded-lg border border-slate-200 bg-white text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        <div className="flex items-center gap-3">
+          <select value={filter} onChange={(e) => setFilter(e.target.value)} className="text-[13px] font-medium px-4 py-2.5 rounded-xl border border-slate-200/60 bg-white text-slate-600 focus:outline-none focus:ring-1 focus:ring-slate-400 shadow-[2px_4px_12px_rgba(0,0,0,0.03)] cursor-pointer">
             <option value="">All Types</option>
             <option value="CUSTOMER">Customers</option>
             <option value="SUPPLIER">Suppliers</option>
             <option value="BOTH">Both</option>
           </select>
-          <button onClick={fetchParties} className="text-sm px-4 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600 transition-colors">↻ Refresh</button>
-          <button onClick={() => setDrawerOpen(true)} className="text-sm px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors shadow-sm font-medium">+ Add Record</button>
+          <button onClick={fetchParties} className="text-sm font-semibold px-4 py-2 bg-white rounded-xl border border-slate-200/60 shadow-sm hover:bg-slate-50 transition-all cursor-pointer active:scale-[0.98]">↻ Refresh</button>
+          <button onClick={() => setDrawerOpen(true)} className="text-sm font-bold px-5 py-2.5 rounded-xl bg-slate-900 text-white hover:bg-black transition-all shadow-md shadow-slate-200 active:scale-[0.98]">+ Add Record</button>
         </div>
       </div>
 
@@ -101,29 +101,29 @@ export default function CRMPage() {
       <DataTable columns={columns} data={parties} loading={loading} emptyMessage="No parties yet. Add customers and suppliers." />
 
       <Drawer isOpen={isDrawerOpen} onClose={() => setDrawerOpen(false)} title="Create New Record">
-        <form onSubmit={handleCreateParty} className="space-y-4">
+        <form onSubmit={handleCreateParty} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Party Type</label>
-            <select value={form.partyType} onChange={e => setForm({...form, partyType: e.target.value})} className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <label className="block text-[13px] font-bold text-slate-900 mb-1.5">Party Type</label>
+            <select value={form.partyType} onChange={e => setForm({...form, partyType: e.target.value})} className="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200/80 rounded-xl text-[13px] font-medium shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400 transition-all">
                <option value="CUSTOMER">Customer</option>
                <option value="SUPPLIER">Supplier</option>
                <option value="BOTH">Both</option>
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Business Name / Full Name *</label>
-            <input required type="text" value={form.name} onChange={e => setForm({...form, name: e.target.value})} className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            <label className="block text-[13px] font-bold text-slate-900 mb-1.5">Business Name / Full Name *</label>
+            <input required type="text" value={form.name} onChange={e => setForm({...form, name: e.target.value})} className="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200/80 rounded-xl text-[13px] font-medium shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400 transition-all" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Mobile Number</label>
-            <input type="text" value={form.mobile} onChange={e => setForm({...form, mobile: e.target.value})} className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            <label className="block text-[13px] font-bold text-slate-900 mb-1.5">Mobile Number</label>
+            <input type="text" value={form.mobile} onChange={e => setForm({...form, mobile: e.target.value})} className="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200/80 rounded-xl text-[13px] font-medium shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400 transition-all" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
-            <input type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            <label className="block text-[13px] font-bold text-slate-900 mb-1.5">Email</label>
+            <input type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} className="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200/80 rounded-xl text-[13px] font-medium shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400 transition-all" />
           </div>
-          <div className="pt-4 border-t border-slate-100">
-            <button type="submit" disabled={saving} className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white font-medium py-2.5 rounded-lg transition-colors shadow-sm">
+          <div className="pt-4 border-t border-slate-200/60 mt-4 text-center">
+            <button type="submit" disabled={saving} className="w-full bg-slate-900 hover:bg-black text-white font-bold py-3.5 rounded-xl transition-all cursor-pointer active:scale-[0.98] shadow-[0_4px_12px_rgba(0,0,0,0.1)] disabled:opacity-50">
               {saving ? 'Creating...' : 'Save Record'}
             </button>
           </div>

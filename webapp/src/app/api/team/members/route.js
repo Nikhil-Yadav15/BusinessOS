@@ -17,6 +17,11 @@ export const POST = withExecutionContext(
         payload
       );
 
+      // Async trigger for outbound email (Fire and forget)
+      const host = req.headers.get('host');
+      const protocol = host.includes('localhost') ? 'http' : 'https';
+      fetch(`${protocol}://${host}/api/system/jobs/deliver-notifications`, { method: 'POST' }).catch(() => {});
+
       return Response.json(result, {
         status: 201
       });

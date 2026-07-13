@@ -1,39 +1,52 @@
+import nodemailer from 'nodemailer';
+
 /**
  * EmailNotificationService
  * 
- * Sends transactional emails via the Resend API.
- * Requires: RESEND_API_KEY and RESEND_FROM_EMAIL in .env.local
+ * Sends transactional emails via Nodemailer.
+ * Requires: SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, and SMTP_FROM_EMAIL in .env.local
  * 
- * Gracefully skips sending if the API key is missing (dev mode — logs to terminal instead).
+ * Gracefully skips sending if SMTP credentials are missing (dev mode — logs to terminal instead).
  */
 export class EmailNotificationService {
-  static async send({ to, subject, html }) {
-    const apiKey = process.env.RESEND_API_KEY;
-    const fromEmail = process.env.RESEND_FROM_EMAIL || 'Atlas OS <noreply@atlasops.cloud>';
-
-    if (!apiKey) {
-      // DEV MODE: when no Resend key is set, log to terminal so dev can see what would be sent
-      console.log(`\n📧 [DEV - Email Not Sent] To: ${to} | Subject: ${subject}\n`);
-      return { skipped: true, reason: 'RESEND_API_KEY not configured' };
+  static getTransporter() {
+    if (!process.env.SMTP_HOST || !process.env.SMTP_USER) {
+      return null;
     }
-
-    const res = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
+    return nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: process.env.SMTP_PORT || 587,
+      secure: process.env.SMTP_PORT === '465',
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
       },
-      body: JSON.stringify({ from: fromEmail, to: [to], subject, html }),
     });
+  }
 
-    if (!res.ok) {
-      const body = await res.json().catch(() => ({}));
-      // Log but do NOT throw — a failed email should never crash a business transaction
-      console.error(`[EmailNotificationService] Resend API error:`, body);
-      return { success: false, error: body };
+  static async send({ to, subject, html }) {
+    const transporter = this.getTransporter();
+    const fromEmail = process.env.SMTP_FROM_EMAIL || 'Atlas OS <noreply@atlasops.cloud>';
+
+    if (!transporter) {
+      // DEV MODE: when no SMTP is configured, log to terminal so dev can see what would be sent
+      console.log(`\n📧 [DEV - Email Not Sent (No SMTP)] To: ${to} | Subject: ${subject}\n`);
+      return { skipped: true, reason: 'SMTP not configured' };
     }
 
-    return { success: true };
+    try {
+      await transporter.sendMail({
+        from: fromEmail,
+        to,
+        subject,
+        html,
+      });
+      return { success: true };
+    } catch (err) {
+      // Log but do NOT throw — a failed email should never crash a business transaction
+      console.error(`[EmailNotificationService] Nodemailer error:`, err);
+      return { success: false, error: err.message };
+    }
   }
 
   // Pre-built templates
