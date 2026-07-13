@@ -130,8 +130,13 @@ export default function DashboardShell({ children }) {
           <div className="w-9 h-9 rounded-full bg-slate-900 flex items-center justify-center text-white font-extrabold text-[11px] shrink-0 shadow-sm">
             {initials}
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="font-extrabold text-slate-900 text-sm truncate tracking-tight">{user?.fullName || 'Shop Manager'}</p>
+          <div className="flex-1 min-w-0 flex flex-col justify-center">
+            <div className="flex items-center gap-2">
+              <p className="font-extrabold text-slate-900 text-sm truncate tracking-tight">{user?.fullName || 'Shop Manager'}</p>
+              <span className="px-1.5 py-0.5 rounded bg-slate-200/70 text-slate-600 text-[9px] font-black uppercase tracking-widest leading-none">
+                {user?.role || 'Owner'}
+              </span>
+            </div>
             <button
               onClick={logout}
               className="text-slate-400 hover:text-slate-900 text-[11px] font-bold transition-colors flex items-center gap-1 mt-0.5"

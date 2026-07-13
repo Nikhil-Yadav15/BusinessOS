@@ -7,6 +7,11 @@ import { StandardResponse } from '../../../../../application/common/StandardResp
  */
 export async function GET(req) {
   try {
+    const authHeader = req.headers.get('authorization');
+    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+      return Response.json({ success: false, message: 'Unauthorized cron request' }, { status: 401 });
+    }
+
     const result = await OutboxProcessor.processBatch(25);
     return Response.json(StandardResponse.success(result));
   } catch (err) {

@@ -9,8 +9,10 @@ import { parties } from '../../../../../db/schema/crm.js';
 import { users } from '../../../../../db/schema/identity.js';
 
 export const POST = withApiHandler(async (req) => {
-  // This is a background job route. In production, secure this with an internal cron secret or auth token.
-  // For demo, we leave it open since it doesn't leak data, it just processes internal queues.
+  const authHeader = req.headers.get('authorization');
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return Response.json({ success: false, message: 'Unauthorized cron request' }, { status: 401 });
+  }
 
   // 1. Fetch pending notifications
   const pending = await db.select()

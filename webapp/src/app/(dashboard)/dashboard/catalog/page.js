@@ -24,9 +24,8 @@ const columns = [
     key: 'status',
     label: 'Status',
     render: (val) => (
-      <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${
-        val === 'ACTIVE' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'
-      }`}>
+      <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${val === 'ACTIVE' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'
+        }`}>
         {val}
       </span>
     ),
@@ -39,7 +38,7 @@ export default function CatalogPage() {
   const [units, setUnits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  
+
   // Drawer State
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -74,11 +73,11 @@ export default function CatalogPage() {
 
   const handleEdit = (row) => {
     setEditingId(row.id);
-    setForm({ 
-      name: row.name, 
-      sku: row.sku || '', 
-      type: row.type || 'PHYSICAL', 
-      sellingPrice: row.sellingPrice || '', 
+    setForm({
+      name: row.name,
+      sku: row.sku || '',
+      type: row.type || 'PHYSICAL',
+      sellingPrice: row.sellingPrice || '',
       purchasePrice: row.purchasePrice || '',
       unitId: row.unitId || ''
     });
@@ -123,7 +122,7 @@ export default function CatalogPage() {
       setEditingId(null);
       setForm({ name: '', sku: '', type: 'PHYSICAL', sellingPrice: '', purchasePrice: '', unitId: '' });
       fetchProducts(); // Refresh table
-    } catch(err) {
+    } catch (err) {
       alert(err.message || 'Failed to save product');
     } finally {
       setSaving(false);
@@ -132,14 +131,14 @@ export default function CatalogPage() {
 
   const handleCreateUnit = async () => {
     if (!newUnitForm.name) return alert('Unit name is required.');
-    
+
     try {
-      await apiClient.post('/api/catalog/units', { 
-        name: newUnitForm.name, 
-        shortName: newUnitForm.shortName || newUnitForm.name.substring(0, 3).toUpperCase() 
-      }, { 
-        token: session.token, 
-        businessId: session.businessId 
+      await apiClient.post('/api/catalog/units', {
+        name: newUnitForm.name,
+        shortName: newUnitForm.shortName || newUnitForm.name.substring(0, 3).toUpperCase()
+      }, {
+        token: session.token,
+        businessId: session.businessId
       });
       // Refetch units instantly
       const unitRes = await apiClient.get('/api/catalog/units', { token: session.token, businessId: session.businessId });
@@ -153,14 +152,14 @@ export default function CatalogPage() {
       if (newlyCreatedUnit) {
         setForm(prev => ({ ...prev, unitId: newlyCreatedUnit.id }));
       }
-    } catch(err) {
+    } catch (err) {
       alert('Failed to add unit: ' + err.message);
     }
   };
 
   const dynamicColumns = [...columns, {
-    key: 'actions', 
-    label: '', 
+    key: 'actions',
+    label: '',
     render: (_, row) => (
       <div className="flex justify-end gap-3 font-medium">
         <button onClick={() => handleEdit(row)} className="text-indigo-600 hover:text-indigo-800 transition-colors">Edit</button>
@@ -190,7 +189,7 @@ export default function CatalogPage() {
               setIsAddingUnit(false);
               setDrawerOpen(true);
             }}
-            className="text-sm px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors shadow-sm font-medium"
+            className="cursor-pointer text-sm px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors shadow-sm font-medium"
           >
             + Add Product
           </button>
@@ -205,33 +204,33 @@ export default function CatalogPage() {
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
         <div className="xl:col-span-2 bg-white border border-slate-200 rounded-2xl shadow-sm p-5 flex flex-col">
-           <div className="flex items-center gap-2 mb-6">
-             <div className="p-1.5 bg-purple-50 text-purple-600 rounded-md">
-               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-             </div>
-             <div>
-               <h3 className="font-semibold text-slate-900 text-sm">Profit Margin Analysis</h3>
-               <p className="text-xs text-slate-500">Margin spread (Selling minus Purchase price) across top products</p>
-             </div>
-           </div>
-           <div className="flex-1 min-h-[300px]">
-             {loading ? <div className="h-[300px] flex items-center justify-center text-slate-400">Loading data...</div> : <ProfitMarginBarChart products={products} />}
-           </div>
+          <div className="flex items-center gap-2 mb-6">
+            <div className="p-1.5 bg-purple-50 text-purple-600 rounded-md">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>
+            </div>
+            <div>
+              <h3 className="font-semibold text-slate-900 text-sm">Profit Margin Analysis</h3>
+              <p className="text-xs text-slate-500">Margin spread (Selling minus Purchase price) across top products</p>
+            </div>
+          </div>
+          <div className="flex-1 min-h-[300px]">
+            {loading ? <div className="h-[300px] flex items-center justify-center text-slate-400">Loading data...</div> : <ProfitMarginBarChart products={products} />}
+          </div>
         </div>
-        
+
         <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-5 flex flex-col">
-           <div className="flex items-center gap-2 mb-6">
-             <div className="p-1.5 bg-slate-100 text-slate-700 rounded-md">
-               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
-             </div>
-             <div>
-               <h3 className="font-semibold text-slate-900 text-sm">Catalog Distribution</h3>
-               <p className="text-xs text-slate-500">Physical Goods vs Digital & Services</p>
-             </div>
-           </div>
-           <div className="flex-1 min-h-[300px]">
-             {loading ? <div className="h-[300px] flex items-center justify-center text-slate-400">Loading ratio...</div> : <CatalogDistributionPie products={products} />}
-           </div>
+          <div className="flex items-center gap-2 mb-6">
+            <div className="p-1.5 bg-slate-100 text-slate-700 rounded-md">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83" /><path d="M22 12A10 10 0 0 0 12 2v10z" /></svg>
+            </div>
+            <div>
+              <h3 className="font-semibold text-slate-900 text-sm">Catalog Distribution</h3>
+              <p className="text-xs text-slate-500">Physical Goods vs Digital & Services</p>
+            </div>
+          </div>
+          <div className="flex-1 min-h-[300px]">
+            {loading ? <div className="h-[300px] flex items-center justify-center text-slate-400">Loading ratio...</div> : <CatalogDistributionPie products={products} />}
+          </div>
         </div>
       </div>
 
@@ -246,11 +245,11 @@ export default function CatalogPage() {
         <form onSubmit={handleSaveProduct} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">Product Name *</label>
-            <input required type="text" value={form.name} onChange={e => setForm({...form, name: e.target.value})} className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            <input required type="text" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">SKU</label>
-            <input type="text" value={form.sku} onChange={e => setForm({...form, sku: e.target.value})} className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            <input type="text" value={form.sku} onChange={e => setForm({ ...form, sku: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
           </div>
           <div>
             <div className="flex justify-between items-center mb-1">
@@ -261,17 +260,17 @@ export default function CatalogPage() {
                 </button>
               )}
             </div>
-            
+
             {isAddingUnit ? (
               <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 space-y-3 mb-2">
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-medium text-slate-600 mb-1">Name (e.g. Kilograms)</label>
-                    <input type="text" value={newUnitForm.name} onChange={e => setNewUnitForm({...newUnitForm, name: e.target.value})} className="w-full px-2 py-1.5 text-sm border border-slate-200 rounded focus:outline-none focus:border-indigo-500" placeholder="Pieces" />
+                    <input type="text" value={newUnitForm.name} onChange={e => setNewUnitForm({ ...newUnitForm, name: e.target.value })} className="w-full px-2 py-1.5 text-sm border border-slate-200 rounded focus:outline-none focus:border-indigo-500" placeholder="Pieces" />
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-slate-600 mb-1">Short Name (e.g. Kg)</label>
-                    <input type="text" value={newUnitForm.shortName} onChange={e => setNewUnitForm({...newUnitForm, shortName: e.target.value})} className="w-full px-2 py-1.5 text-sm border border-slate-200 rounded focus:outline-none focus:border-indigo-500" placeholder="Pcs" />
+                    <input type="text" value={newUnitForm.shortName} onChange={e => setNewUnitForm({ ...newUnitForm, shortName: e.target.value })} className="w-full px-2 py-1.5 text-sm border border-slate-200 rounded focus:outline-none focus:border-indigo-500" placeholder="Pcs" />
                   </div>
                 </div>
                 <div className="flex justify-end gap-2">
@@ -280,7 +279,7 @@ export default function CatalogPage() {
                 </div>
               </div>
             ) : (
-              <select required value={form.unitId} onChange={e => setForm({...form, unitId: e.target.value})} className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+              <select required value={form.unitId} onChange={e => setForm({ ...form, unitId: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
                 <option value="" disabled>Select a unit</option>
                 {units.map(u => (
                   <option key={u.id} value={u.id}>{u.name} ({u.shortName})</option>
@@ -291,11 +290,11 @@ export default function CatalogPage() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Selling Price</label>
-              <input type="number" step="0.01" value={form.sellingPrice} onChange={e => setForm({...form, sellingPrice: e.target.value})} className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+              <input type="number" step="0.01" value={form.sellingPrice} onChange={e => setForm({ ...form, sellingPrice: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Purchase Price</label>
-              <input type="number" step="0.01" value={form.purchasePrice} onChange={e => setForm({...form, purchasePrice: e.target.value})} className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+              <input type="number" step="0.01" value={form.purchasePrice} onChange={e => setForm({ ...form, purchasePrice: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
             </div>
           </div>
           <div className="pt-4 border-t border-slate-100">
