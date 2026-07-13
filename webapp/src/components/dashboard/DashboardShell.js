@@ -145,7 +145,7 @@ export default function DashboardShell({ children }) {
   );
 
   return (
-    <div className="flex h-screen bg-[#F8FAFC] text-slate-900 font-sans overflow-hidden">
+    <div className="flex h-dvh min-h-[100dvh] bg-[#F8FAFC] text-slate-900 font-sans overflow-hidden">
       
       {/* Desktop Sidebar */}
       <div className="hidden md:flex">
@@ -160,13 +160,13 @@ export default function DashboardShell({ children }) {
       )}
 
       {/* Main Area */}
-      <main className="flex-1 flex flex-col h-screen overflow-hidden">
+      <main className="flex-1 flex flex-col h-dvh overflow-hidden">
         
         {/* Top Header */}
-        <header className="h-16 border-b border-slate-200 flex items-center justify-between px-4 md:px-8 shrink-0 bg-white/80 backdrop-blur-md z-10 sticky top-0">
+        <header className="h-16 border-b border-slate-200/50 flex items-center justify-between px-4 md:px-8 shrink-0 bg-white/70 backdrop-blur-xl z-20 sticky top-0">
           <div className="flex items-center gap-4">
             <button 
-              className="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-md -ml-2"
+              className="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-md -ml-2 cursor-pointer transition-colors active:scale-95"
               onClick={() => setIsMobileMenuOpen(true)}
             >
               <Menu size={20} />
@@ -175,7 +175,7 @@ export default function DashboardShell({ children }) {
             {/* Clickable Search input triggering Modal */}
             <div 
               onClick={() => setIsSearchOpen(true)}
-              className="hidden sm:flex items-center gap-2 text-sm text-slate-500 bg-slate-50 hover:bg-slate-100 transition-colors border border-slate-200 px-3 py-1.5 rounded-lg cursor-pointer shadow-sm w-64"
+              className="hidden sm:flex items-center gap-2 text-sm text-slate-500 bg-slate-50/50 hover:bg-slate-100/80 transition-all active:scale-[0.98] border border-slate-200/60 px-3 py-1.5 rounded-lg cursor-pointer shadow-sm w-64"
             >
               <Command size={14} /> <span>Search everything...</span> <span className="text-xs border border-slate-200 px-1.5 rounded bg-white ml-auto text-slate-400 font-medium tracking-widest uppercase">⌘K</span>
             </div>
@@ -183,7 +183,7 @@ export default function DashboardShell({ children }) {
             {/* Mobile simplified search trigger */}
             <button 
               onClick={() => setIsSearchOpen(true)}
-              className="sm:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-md"
+              className="sm:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-md cursor-pointer transition-colors active:scale-95"
             >
               <Command size={20} />
             </button>
@@ -212,7 +212,7 @@ export default function DashboardShell({ children }) {
       {/* Floating AI Action Button (FAB) */}
       <button 
         onClick={() => setAiOpen(true)}
-        className="fixed bottom-6 right-6 md:bottom-8 md:right-8 bg-[#0F172A] text-white px-5 py-3 rounded-full flex items-center gap-2 shadow-[0_8px_30px_rgb(15,23,42,0.2)] hover:scale-105 transition-all z-40 font-semibold border border-slate-700"
+        className="fixed bottom-6 right-6 md:bottom-8 md:right-8 bg-[#0F172A] text-white px-5 py-3 rounded-full flex items-center gap-2 shadow-[0_8px_30px_rgb(15,23,42,0.2)] hover:scale-105 active:scale-95 transition-all z-40 font-semibold border border-slate-700 cursor-pointer"
       >
         <Sparkles size={18} className="text-[#B5995D]" />
         Ask AI

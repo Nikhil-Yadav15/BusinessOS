@@ -129,12 +129,12 @@ export default function DashboardHome() {
          <div className="flex items-center gap-3 w-full sm:w-auto">
            <button
              onClick={() => { fetchAnalytics(); fetchNotifications(); fetchChartData(); }}
-             className="flex-1 sm:flex-none p-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-400 hover:text-slate-900 transition-colors shadow-sm flex justify-center items-center h-10"
+             className="flex-1 sm:flex-none p-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-400 hover:text-slate-900 transition-all cursor-pointer active:scale-95 shadow-sm flex justify-center items-center h-10"
              title="Refresh Data"
            >
              <RefreshCcw size={16} className={loading || notifLoading || chartsLoading ? 'animate-spin text-[#B5995D]' : ''} />
            </button>
-           <Link href="/dashboard/sales?action=new" className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 bg-[#0F172A] hover:bg-[#1E293B] text-white px-5 py-2 rounded-lg font-medium text-sm shadow-[0_4px_14px_0_rgba(15,23,42,0.39)] transition-all h-10">
+           <Link href="/dashboard/sales?action=new" className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 bg-[#0F172A] hover:bg-[#1E293B] text-white px-5 py-2 rounded-lg font-medium text-sm shadow-[0_4px_14px_0_rgba(15,23,42,0.39)] transition-all cursor-pointer active:scale-95 h-10">
               <Plus size={16} /> New Sale
            </Link>
          </div>
@@ -280,11 +280,11 @@ export default function DashboardHome() {
                   <input type="text" placeholder="Search records..." className="pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none w-64 transition-colors" />
                 </div>
                 <div className="flex gap-3">
-                  <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors shadow-sm">
+                  <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-all cursor-pointer active:scale-95 shadow-sm">
                     <svg className="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                     Export CSV
                   </button>
-                  <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors shadow-sm">
+                  <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-all cursor-pointer active:scale-95 shadow-sm">
                     <svg className="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                     Columns
                   </button>

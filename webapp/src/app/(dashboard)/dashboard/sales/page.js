@@ -130,9 +130,9 @@ export default function SalesPage() {
     label: '', 
     render: (_, row) => (
       <div className="flex justify-end gap-3 font-medium text-xs">
-        <button onClick={() => openInvoiceReceipt(row)} className="text-indigo-600 hover:text-indigo-800 transition-colors">Receipt</button>
+        <button onClick={() => openInvoiceReceipt(row)} className="text-indigo-600 hover:text-indigo-800 transition-all cursor-pointer font-semibold active:scale-95">Receipt</button>
         {parseFloat(row.balanceAmount) > 0 && (
-          <button onClick={() => handleOpenPayment(row)} className="text-emerald-600 hover:text-emerald-800 transition-colors">Pay</button>
+          <button onClick={() => handleOpenPayment(row)} className="text-emerald-600 hover:text-emerald-800 transition-all cursor-pointer font-semibold active:scale-95">Pay</button>
         )}
       </div>
     )
@@ -145,9 +145,9 @@ export default function SalesPage() {
           <h1 className="text-2xl font-bold text-slate-900">Sales Invoices</h1>
           <p className="text-slate-500 text-sm mt-1">{invoices.length} total</p>
         </div>
-        <div className="flex gap-2">
-           <button onClick={fetchInvoices} className="text-sm px-4 py-2 rounded-lg border border-slate-200">↻ Refresh</button>
-           <button onClick={() => setDrawerOpen(true)} className="text-sm px-4 py-2 rounded-lg bg-indigo-600 text-white font-medium">+ Create Invoice</button>
+        <div className="flex gap-2 w-full sm:w-auto">
+           <button onClick={fetchInvoices} className="flex-1 sm:flex-none text-sm px-4 py-2 rounded-lg border border-slate-200/60 bg-white hover:bg-slate-50 transition-all cursor-pointer active:scale-95">↻ Refresh</button>
+           <button onClick={() => setDrawerOpen(true)} className="flex-1 sm:flex-none text-sm px-4 py-2 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition-all cursor-pointer active:scale-95 shadow-sm">+ Create Invoice</button>
         </div>
       </div>
 
@@ -164,8 +164,8 @@ export default function SalesPage() {
                <p className="text-xs text-slate-500">Daily revenue alongside total invoice volume</p>
              </div>
            </div>
-           <div className="flex-1 min-h-[300px]">
-             {loading ? <div className="h-[300px] flex items-center justify-center text-slate-400">Loading data...</div> : <DailyRevenueComposedChart invoices={invoices} />}
+           <div className="flex-1 min-h-[220px] md:min-h-[300px]">
+             {loading ? <div className="h-[220px] md:h-[300px] flex items-center justify-center text-slate-400">Loading data...</div> : <DailyRevenueComposedChart invoices={invoices} />}
            </div>
         </div>
         
@@ -179,8 +179,8 @@ export default function SalesPage() {
                <p className="text-xs text-slate-500">Breakdown of pending vs cleared payments</p>
              </div>
            </div>
-           <div className="flex-1 min-h-[300px]">
-             {loading ? <div className="h-[300px] flex items-center justify-center text-slate-400">Loading ratio...</div> : <InvoiceStatusPie invoices={invoices} />}
+           <div className="flex-1 min-h-[220px] md:min-h-[300px]">
+             {loading ? <div className="h-[220px] md:h-[300px] flex items-center justify-center text-slate-400">Loading ratio...</div> : <InvoiceStatusPie invoices={invoices} />}
            </div>
         </div>
       </div>
@@ -207,28 +207,31 @@ export default function SalesPage() {
              </div>
              <div className="space-y-3">
                {form.lines.map((line, i) => (
-                 <div key={i} className="flex gap-2 items-start p-3 bg-slate-50 border border-slate-100 rounded-lg">
-                   <div className="flex-1">
-                      <select required value={line.productId} onChange={e => updateLine(i, 'productId', e.target.value)} className="w-full px-2 py-1.5 text-sm border border-slate-200 rounded">
+                 <div key={i} className="flex flex-col sm:flex-row gap-2 sm:items-center p-3 sm:p-2 bg-slate-50/50 border border-slate-100/80 rounded-lg">
+                   <div className="flex-1 w-full sm:w-auto">
+                      <select required value={line.productId} onChange={e => updateLine(i, 'productId', e.target.value)} className="w-full px-2 py-1.5 text-sm border border-slate-200/60 rounded bg-white font-medium">
                          <option value="">Product...</option>
                          {products.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                       </select>
                    </div>
-                   <div className="w-20">
-                      <input required type="number" min="1" step="any" value={line.quantity} onChange={e => updateLine(i, 'quantity', e.target.value)} className="w-full px-2 py-1.5 text-sm border border-slate-200 rounded" placeholder="Qty" />
+                   <div className="flex items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0">
+                     <div className="w-20">
+                        <input required type="number" min="1" step="any" value={line.quantity} onChange={e => updateLine(i, 'quantity', e.target.value)} className="w-full px-2 py-1.5 text-sm border border-slate-200/60 rounded focus:ring-1 focus:ring-indigo-500" placeholder="Qty" />
+                     </div>
+                     <span className="text-slate-400 text-xs font-semibold">x</span>
+                     <div className="w-24">
+                        <input required type="number" step="0.01" value={line.unitPrice} onChange={e => updateLine(i, 'unitPrice', e.target.value)} className="w-full px-2 py-1.5 text-sm border border-slate-200/60 rounded focus:ring-1 focus:ring-indigo-500" placeholder="Price" />
+                     </div>
+                     {form.lines.length > 1 && (
+                       <button type="button" onClick={() => setForm({...form, lines: form.lines.filter((_, idx) => idx !== i)})} className="text-red-500 font-bold px-2 py-1 ml-auto sm:ml-0 cursor-pointer active:scale-95 transition-all">✕</button>
+                     )}
                    </div>
-                   <div className="w-24">
-                      <input required type="number" step="0.01" value={line.unitPrice} onChange={e => updateLine(i, 'unitPrice', e.target.value)} className="w-full px-2 py-1.5 text-sm border border-slate-200 rounded" placeholder="Price" />
-                   </div>
-                   {form.lines.length > 1 && (
-                     <button type="button" onClick={() => setForm({...form, lines: form.lines.filter((_, idx) => idx !== i)})} className="text-red-500 font-bold px-2 py-1">✕</button>
-                   )}
                  </div>
                ))}
              </div>
           </div>
           <div className="pt-4 border-t border-slate-100">
-            <button type="submit" disabled={saving} className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg transition-colors shadow-sm disabled:opacity-50">
+            <button type="submit" disabled={saving} className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl transition-all cursor-pointer active:scale-[0.98] shadow-sm disabled:opacity-50">
               {saving ? 'Generating...' : 'Finalize Invoice (Zero-Sum Ledger)'}
             </button>
           </div>
@@ -260,7 +263,7 @@ export default function SalesPage() {
             <input type="text" value={paymentForm.referenceNumber} onChange={e => setPaymentForm({...paymentForm, referenceNumber: e.target.value})} className="w-full px-3 py-2 border border-slate-200 rounded-lg" placeholder="UPI ID / Cheque Num" />
           </div>
           <div className="pt-4 border-t border-slate-100">
-            <button type="submit" disabled={saving} className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 rounded-lg transition-colors shadow-sm disabled:opacity-50">
+            <button type="submit" disabled={saving} className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-xl transition-all cursor-pointer active:scale-[0.98] shadow-sm disabled:opacity-50">
               {saving ? 'Processing...' : 'Record Payment into Ledger'}
             </button>
           </div>
@@ -309,9 +312,9 @@ export default function SalesPage() {
                </div>
                
                {/* Controls */}
-               <div className="mt-10 flex justify-end gap-3 print:hidden">
-                 <button onClick={() => setViewingInvoice(null)} className="px-5 py-2 rounded-lg text-sm font-medium text-slate-600 border border-slate-200 hover:bg-slate-50">Close</button>
-                 <button onClick={() => window.print()} className="px-5 py-2 rounded-lg text-sm font-medium text-white bg-slate-900 hover:bg-slate-800 shadow-xl shadow-slate-200 transition-all">Print & Download PDF</button>
+               <div className="mt-10 flex flex-col sm:flex-row justify-end gap-3 print:hidden">
+                 <button onClick={() => setViewingInvoice(null)} className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 border border-slate-200/80 hover:bg-slate-50 transition-all cursor-pointer active:scale-95">Close</button>
+                 <button onClick={() => window.print()} className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 shadow-xl shadow-slate-200 transition-all cursor-pointer active:scale-95">Print & Download PDF</button>
                </div>
 
             </div>

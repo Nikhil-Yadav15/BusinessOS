@@ -83,9 +83,9 @@ export default function InventoryPage() {
           <h1 className="text-2xl font-bold text-slate-900">Inventory Ledger</h1>
           <p className="text-slate-500 text-sm mt-1">Stock snapshots and movement history</p>
         </div>
-        <div className="flex gap-2">
-           <button onClick={fetchInventory} className="text-sm px-4 py-2 rounded-lg border border-slate-200">↻ Refresh</button>
-           <button onClick={() => setDrawerOpen(true)} className="text-sm px-4 py-2 rounded-lg bg-indigo-600 text-white font-medium">+ Adjust Stock</button>
+        <div className="flex gap-2 w-full sm:w-auto">
+           <button onClick={fetchInventory} className="flex-1 sm:flex-none text-sm px-4 py-2 rounded-lg border border-slate-200/60 bg-white hover:bg-slate-50 transition-all cursor-pointer active:scale-95">↻ Refresh</button>
+           <button onClick={() => setDrawerOpen(true)} className="flex-1 sm:flex-none text-sm px-4 py-2 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition-all cursor-pointer active:scale-95 shadow-sm">+ Adjust Stock</button>
         </div>
       </div>
 
@@ -107,8 +107,8 @@ export default function InventoryPage() {
                <p className="text-xs text-slate-500">Current actual physical quantity of catalog items in your business</p>
              </div>
            </div>
-           <div className="flex-1 min-h-[300px]">
-             {loading ? <div className="h-[300px] flex items-center justify-center text-slate-400">Loading data...</div> : <ProductStockBarChart inventory={snapshot} />}
+           <div className="flex-1 min-h-[220px] md:min-h-[300px]">
+             {loading ? <div className="h-[220px] md:h-[300px] flex items-center justify-center text-slate-400">Loading data...</div> : <ProductStockBarChart inventory={snapshot} />}
            </div>
         </div>
         
@@ -122,8 +122,8 @@ export default function InventoryPage() {
                <p className="text-xs text-slate-500">Ratio of healthy vs critically low stock</p>
              </div>
            </div>
-           <div className="flex-1 min-h-[300px]">
-             {loading ? <div className="h-[300px] flex items-center justify-center text-slate-400">Loading ratio...</div> : <StockHealthPie inventory={snapshot} />}
+           <div className="flex-1 min-h-[220px] md:min-h-[300px]">
+             {loading ? <div className="h-[220px] md:h-[300px] flex items-center justify-center text-slate-400">Loading ratio...</div> : <StockHealthPie inventory={snapshot} />}
            </div>
         </div>
       </div>
@@ -152,7 +152,7 @@ export default function InventoryPage() {
             <input type="text" value={form.reason} onChange={e => setForm({...form, reason: e.target.value})} className="w-full px-3 py-2 border border-slate-200 rounded-lg" />
           </div>
           <div className="pt-4 border-t border-slate-100">
-            <button type="submit" disabled={saving} className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg transition-colors shadow-sm disabled:opacity-50">
+            <button type="submit" disabled={saving} className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl transition-all cursor-pointer active:scale-[0.98] shadow-sm disabled:opacity-50">
               {saving ? 'Processing...' : 'Apply Adjustment'}
             </button>
           </div>

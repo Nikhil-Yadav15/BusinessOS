@@ -18,9 +18,9 @@ export default function DataTable({ columns, data = [], loading = false, emptyMe
   }
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+    <div className="bg-white rounded-xl border border-slate-200/60 shadow-sm overflow-hidden">
+      <div className="overflow-x-auto touch-pan-x overscroll-x-contain pb-1">
+        <table className="w-full text-sm min-w-max">
           <thead>
             <tr className="bg-slate-50 border-b border-slate-200">
               {columns.map((col) => (

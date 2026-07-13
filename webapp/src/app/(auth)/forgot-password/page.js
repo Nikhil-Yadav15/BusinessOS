@@ -90,18 +90,18 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="flex min-h-screen bg-[#F8FAFC] font-sans selection:bg-blue-100">
+    <div className="flex min-h-screen bg-slate-50 font-sans selection:bg-slate-200">
       {/* Left Panel — Branding (Hidden on mobile) */}
-      <div className="hidden lg:flex lg:w-1/2 flex-col justify-center px-20">
+      <div className="hidden lg:flex lg:w-1/2 flex-col justify-center px-20 bg-gradient-to-b from-white to-slate-100/50">
         <div className="mb-12">
-          <Link href="/" className="inline-flex items-center gap-2">
-            <div className="bg-blue-600 text-white rounded-md w-8 h-8 flex items-center justify-center font-bold text-lg shadow-sm">A</div>
-            <span className="text-xl font-extrabold tracking-tight text-slate-900">Atlas OS</span>
+          <Link href="/" className="inline-flex items-center gap-3 transition-opacity hover:opacity-80 cursor-pointer">
+            <div className="bg-black text-white rounded-xl w-10 h-10 flex items-center justify-center font-bold text-xl shadow-[0_4px_12px_rgba(0,0,0,0.1)]">A</div>
+            <span className="text-2xl font-extrabold tracking-tighter text-slate-900">Atlas.</span>
           </Link>
         </div>
         
-        <h2 className="text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight leading-[1.1] mb-2">
-          Secure account <span className="text-blue-600">recovery</span>.
+        <h2 className="text-4xl lg:text-6xl font-extrabold text-slate-900 tracking-tighter leading-[1.05] mb-2">
+          Secure account <br/> <span className="text-slate-400 font-medium">recovery.</span>
         </h2>
         
         <p className="text-slate-500 mt-6 text-sm lg:text-base leading-relaxed max-w-md">
@@ -110,12 +110,12 @@ export default function ForgotPasswordPage() {
       </div>
 
       {/* Right Panel — Form */}
-      <div className="flex-1 flex items-center justify-center p-6 lg:p-12">
-        <div className="w-full max-w-md bg-white p-10 rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100">
+      <div className="flex-1 flex items-center justify-center p-6 lg:p-12 relative">
+        <div className="w-full max-w-md bg-white/80 backdrop-blur-2xl p-10 rounded-[28px] shadow-[0_8px_40px_rgba(0,0,0,0.04)] border border-white">
           <div className="lg:hidden mb-10 text-center">
             <Link href="/" className="inline-flex items-center gap-2">
-              <div className="bg-blue-600 text-white rounded-md w-8 h-8 flex items-center justify-center font-bold text-lg">A</div>
-              <span className="text-xl font-extrabold tracking-tight text-slate-900">Atlas OS</span>
+              <div className="bg-black text-white rounded-xl w-8 h-8 flex items-center justify-center font-bold text-lg shadow-sm">A</div>
+              <span className="text-xl font-extrabold tracking-tighter text-slate-900">Atlas.</span>
             </Link>
           </div>
 
@@ -143,72 +143,72 @@ export default function ForgotPasswordPage() {
           {step === 'EMAIL_INPUT' ? (
             <form onSubmit={handleRequestReset} className="space-y-5">
               <div>
-                <label className="block text-xs font-bold text-slate-500 tracking-widest uppercase mb-2">Email Address</label>
+                <label className="block text-[11px] font-bold text-slate-400 tracking-[0.1em] uppercase mb-2">Email Address</label>
                 <input
                   type="email"
                   placeholder="owner@business.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-3.5 rounded-xl border border-slate-200 text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium text-sm"
+                  className="w-full px-4 py-4 rounded-xl border border-slate-200/80 bg-white/50 text-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 focus:border-slate-900 transition-all font-medium text-[15px] shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
                   required
                 />
               </div>
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white font-bold py-3.5 rounded-xl transition-colors shadow-md mt-2 text-[15px]"
+                className="w-full bg-slate-900 hover:bg-black disabled:opacity-60 text-white font-bold py-4 rounded-xl transition-all cursor-pointer active:scale-[0.98] shadow-md mt-4 text-[15px]"
               >
-                {loading ? 'Sending Request...' : 'Send Reset Code →'}
+                {loading ? 'Sending Request...' : 'Send Reset Code'}
               </button>
             </form>
           ) : (
             <form onSubmit={handleResetPassword} className="space-y-5">
               <div>
-                <label className="block text-xs font-bold text-slate-500 tracking-widest uppercase mb-2">Reset Code (OTP)</label>
+                <label className="block text-[11px] font-bold text-slate-400 tracking-[0.1em] uppercase mb-2">Reset Code (OTP)</label>
                 <input
                   type="text"
                   placeholder="6-digit code"
                   value={form.otp}
                   onChange={(e) => setForm(f => ({ ...f, otp: e.target.value }))}
-                  className="w-full px-4 py-3.5 rounded-xl border border-slate-200 text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium text-sm tracking-[4px] text-center"
+                  className="w-full px-4 py-4 rounded-xl border border-slate-200/80 bg-white/50 text-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 focus:border-slate-900 transition-all font-mono font-bold text-2xl tracking-[0.3em] text-center shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
                   maxLength={6}
                   required
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-500 tracking-widest uppercase mb-2">New Password</label>
+                <label className="block text-[11px] font-bold text-slate-400 tracking-[0.1em] uppercase mb-2">New Password</label>
                 <input
                   type="password"
                   placeholder="Minimum 8 characters"
                   value={form.newPassword}
                   onChange={(e) => setForm(f => ({ ...f, newPassword: e.target.value }))}
-                  className="w-full px-4 py-3.5 rounded-xl border border-slate-200 text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium text-sm"
+                  className="w-full px-4 py-4 rounded-xl border border-slate-200/80 bg-white/50 text-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 focus:border-slate-900 transition-all font-medium text-[15px] shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
                   required
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-500 tracking-widest uppercase mb-2">Confirm Password</label>
+                <label className="block text-[11px] font-bold text-slate-400 tracking-[0.1em] uppercase mb-2">Confirm Password</label>
                 <input
                   type="password"
                   placeholder="Rewrite password"
                   value={form.confirmPassword}
                   onChange={(e) => setForm(f => ({ ...f, confirmPassword: e.target.value }))}
-                  className="w-full px-4 py-3.5 rounded-xl border border-slate-200 text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium text-sm"
+                  className="w-full px-4 py-4 rounded-xl border border-slate-200/80 bg-white/50 text-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 focus:border-slate-900 transition-all font-medium text-[15px] shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
                   required
                 />
               </div>
               <button
                 type="submit"
                 disabled={loading || success === 'Password reset successfully. Redirecting to login...'}
-                className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white font-bold py-3.5 rounded-xl transition-colors shadow-md mt-2 text-[15px]"
+                className="w-full bg-slate-900 hover:bg-black disabled:opacity-60 text-white font-bold py-4 rounded-xl transition-all cursor-pointer active:scale-[0.98] shadow-md mt-4 text-[15px]"
               >
-                {loading ? 'Resetting Password...' : 'Reset Password ✓'}
+                {loading ? 'Resetting Password...' : 'Reset Password'}
               </button>
             </form>
           )}
 
-          <div className="mt-8 pt-6 border-t border-slate-100 flex justify-center text-sm font-medium">
-            <Link href="/login" className="text-slate-500 hover:text-blue-600 transition-colors">
+          <div className="mt-8 pt-6 border-t border-slate-100 flex justify-center text-[13px] font-bold">
+            <Link href="/login" className="text-slate-900 hover:text-slate-600 transition-all cursor-pointer">
               ← Back to Sign in
             </Link>
           </div>
