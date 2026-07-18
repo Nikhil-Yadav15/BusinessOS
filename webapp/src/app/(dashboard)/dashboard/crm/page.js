@@ -12,11 +12,10 @@ const columns = [
     key: 'partyType',
     label: 'Type',
     render: (val) => (
-      <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${
-        val === 'CUSTOMER' ? 'bg-blue-50 text-blue-700'
-        : val === 'SUPPLIER' ? 'bg-amber-50 text-amber-700'
-        : 'bg-slate-100 text-slate-600'
-      }`}>
+      <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${val === 'CUSTOMER' ? 'bg-blue-50 text-blue-700'
+          : val === 'SUPPLIER' ? 'bg-amber-50 text-amber-700'
+            : 'bg-slate-100 text-slate-600'
+        }`}>
         {val}
       </span>
     ),
@@ -28,9 +27,8 @@ const columns = [
     key: 'status',
     label: 'Status',
     render: (val) => (
-      <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${
-        val === 'ACTIVE' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'
-      }`}>
+      <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${val === 'ACTIVE' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'
+        }`}>
         {val}
       </span>
     ),
@@ -56,7 +54,7 @@ export default function CRMPage() {
       const url = filter ? `/api/crm/parties?partyType=${filter}` : '/api/crm/parties';
       const res = await apiClient.get(url, { token: session.token, businessId: session.businessId });
       setParties(Array.isArray(res.data) ? res.data : (res.data?.items || []));
-    } catch (err) { setError(err.message || 'Failed to load parties.'); } 
+    } catch (err) { setError(err.message || 'Failed to load parties.'); }
     finally { setLoading(false); }
   }, [session, filter]);
 
@@ -70,7 +68,7 @@ export default function CRMPage() {
       setDrawerOpen(false);
       setForm({ name: '', partyType: 'CUSTOMER', mobile: '', email: '' });
       fetchParties();
-    } catch(err) {
+    } catch (err) {
       alert(err.message || 'Failed to create CRM record');
     } finally {
       setSaving(false);
@@ -81,7 +79,7 @@ export default function CRMPage() {
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tighter text-slate-900">CRM & Parties</h1>
+          <h1 className="text-3xl font-extrabold tracking-tighter text-slate-900">Customers & Suppliers</h1>
           <p className="text-slate-500 text-sm mt-1 font-medium">{parties.length} record{parties.length !== 1 ? 's' : ''} found</p>
         </div>
         <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
@@ -104,23 +102,23 @@ export default function CRMPage() {
         <form onSubmit={handleCreateParty} className="space-y-5">
           <div>
             <label className="block text-[13px] font-bold text-slate-900 mb-1.5">Party Type</label>
-            <select value={form.partyType} onChange={e => setForm({...form, partyType: e.target.value})} className="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200/80 rounded-xl text-[13px] font-medium shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400 transition-all">
-               <option value="CUSTOMER">Customer</option>
-               <option value="SUPPLIER">Supplier</option>
-               <option value="BOTH">Both</option>
+            <select value={form.partyType} onChange={e => setForm({ ...form, partyType: e.target.value })} className="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200/80 rounded-xl text-[13px] font-medium shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400 transition-all">
+              <option value="CUSTOMER">Customer</option>
+              <option value="SUPPLIER">Supplier</option>
+              <option value="BOTH">Both</option>
             </select>
           </div>
           <div>
             <label className="block text-[13px] font-bold text-slate-900 mb-1.5">Business Name / Full Name *</label>
-            <input required type="text" value={form.name} onChange={e => setForm({...form, name: e.target.value})} className="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200/80 rounded-xl text-[13px] font-medium shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400 transition-all" />
+            <input required type="text" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} className="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200/80 rounded-xl text-[13px] font-medium shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400 transition-all" />
           </div>
           <div>
             <label className="block text-[13px] font-bold text-slate-900 mb-1.5">Mobile Number</label>
-            <input type="text" value={form.mobile} onChange={e => setForm({...form, mobile: e.target.value})} className="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200/80 rounded-xl text-[13px] font-medium shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400 transition-all" />
+            <input type="text" value={form.mobile} onChange={e => setForm({ ...form, mobile: e.target.value })} className="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200/80 rounded-xl text-[13px] font-medium shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400 transition-all" />
           </div>
           <div>
             <label className="block text-[13px] font-bold text-slate-900 mb-1.5">Email</label>
-            <input type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} className="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200/80 rounded-xl text-[13px] font-medium shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400 transition-all" />
+            <input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} className="w-full px-4 py-2.5 bg-slate-50/50 border border-slate-200/80 rounded-xl text-[13px] font-medium shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400 transition-all" />
           </div>
           <div className="pt-4 border-t border-slate-200/60 mt-4 text-center">
             <button type="submit" disabled={saving} className="w-full bg-slate-900 hover:bg-black text-white font-bold py-3.5 rounded-xl transition-all cursor-pointer active:scale-[0.98] shadow-[0_4px_12px_rgba(0,0,0,0.1)] disabled:opacity-50">

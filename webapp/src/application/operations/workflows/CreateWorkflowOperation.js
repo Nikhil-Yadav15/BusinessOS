@@ -17,7 +17,7 @@ export class CreateWorkflowOperation extends BaseOperation {
   }
 
   async perform(context, input, tx) {
-    const { businessId, user } = context;
+    const { businessId, userId } = context;
 
     // 1. Create the Parent Workflow Rule
     const workflowId = generateId();
@@ -29,7 +29,7 @@ export class CreateWorkflowOperation extends BaseOperation {
       triggerEvent: input.triggerEvent,
       condition: input.condition || {}, 
       isEnabled: input.isEnabled !== false,
-      createdBy: user.id
+      createdBy: userId
     }, tx);
 
     // 2. Insert the Sequential Actions securely locking them to the workflow

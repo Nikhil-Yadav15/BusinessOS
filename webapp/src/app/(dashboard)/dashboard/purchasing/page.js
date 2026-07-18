@@ -68,7 +68,35 @@ export default function PurchasingPage() {
     e.preventDefault();
     setSaving(true);
     try {
-      await apiClient.post('/api/purchasing/purchases', form, { token: session.token, businessId: session.businessId });
+      let subtotal = 0;
+      const items = form.lines.map(line => {
+        const qty = parseFloat(line.quantity) || 0;
+        const price = parseFloat(line.unitPrice) || 0;
+        const lineTotal = qty * price;
+        subtotal += lineTotal;
+        return {
+          productId: line.productId,
+          quantity: qty,
+          unitCost: price,
+          discountAmount: 0,
+          taxAmount: 0,
+          lineTotal
+        };
+      });
+
+      const payload = {
+        supplierId: form.supplierId,
+        purchaseType: 'PURCHASE',
+        purchaseDate: new Date().toISOString(),
+        subtotal,
+        discountAmount: 0,
+        taxAmount: 0,
+        totalAmount: subtotal,
+        status: 'FINALIZED',
+        items
+      };
+
+      await apiClient.post('/api/purchasing/purchases', payload, { token: session.token, businessId: session.businessId });
       setDrawerOpen(false);
       setForm({ supplierId: '', lines: [{ productId: '', quantity: 1, unitPrice: '' }] });
       fetchPurchases();
@@ -157,7 +185,7 @@ export default function PurchasingPage() {
                   <div className="w-full">
                     <select required value={line.productId} onChange={e => updateLine(i, 'productId', e.target.value)} className="w-full px-2 py-1.5 text-sm border border-slate-200 rounded">
                       <option value="">Product...</option>
-                      {products.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                      {products.filter(p => (p.stock || 0) > 0).map(p => <option key={p.id} value={p.id}>{p.name} (Stock: {p.stock})</option>)}
                     </select>
                   </div>
                   <div className="flex items-center gap-2">
@@ -171,8 +199,30 @@ export default function PurchasingPage() {
                       <button type="button" onClick={() => setForm({ ...form, lines: form.lines.filter((_, idx) => idx !== i) })} className="text-red-500 font-bold px-2 py-1 shrink-0">✕</button>
                     )}
                   </div>
+                  {/* Dynamic Line Total Display */}
+                  {line.productId && (
+                    <div className="text-xs text-slate-500 text-right font-medium">
+                      Line Total: ₹{((parseFloat(line.quantity) || 0) * (parseFloat(line.unitPrice) || 0)).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                    </div>
+                  )}
                 </div>
               ))}
+            </div>
+          </div>
+
+          {/* Running Totals Summary Section */}
+          <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-2">
+            <div className="flex justify-between text-sm text-slate-600">
+              <span>Subtotal:</span>
+              <span className="font-semibold text-slate-900">
+                ₹{form.lines.reduce((sum, l) => sum + (parseFloat(l.quantity) || 0) * (parseFloat(l.unitPrice) || 0), 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+              </span>
+            </div>
+            <div className="flex justify-between text-sm text-slate-900 font-bold border-t border-slate-200 pt-2">
+              <span>Total Price:</span>
+              <span>
+                ₹{form.lines.reduce((sum, l) => sum + (parseFloat(l.quantity) || 0) * (parseFloat(l.unitPrice) || 0), 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+              </span>
             </div>
           </div>
 

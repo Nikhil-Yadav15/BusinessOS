@@ -70,7 +70,45 @@ export default function SalesPage() {
     e.preventDefault();
     setSaving(true);
     try {
-      await apiClient.post('/api/sales/invoices', form, { token: session.token, businessId: session.businessId });
+      let subtotal = 0;
+      const items = form.lines.map(line => {
+        const qty = parseFloat(line.quantity) || 0;
+        const price = parseFloat(line.unitPrice) || 0;
+        const lineTotal = qty * price;
+        subtotal += lineTotal;
+        return {
+          productId: line.productId,
+          quantity: qty,
+          unitPrice: price,
+          discountAmount: 0,
+          taxAmount: 0,
+          lineTotal
+        };
+      });
+
+      // Quick client-side check against stock levels
+      for (const item of items) {
+        const p = products.find(prod => prod.id === item.productId);
+        if (p && item.quantity > p.stock) {
+          alert(`Cannot sell more than available stock for ${p.name} (Stock: ${p.stock})`);
+          setSaving(false);
+          return;
+        }
+      }
+
+      const payload = {
+        customerId: form.customerId || null,
+        invoiceType: 'SALE',
+        invoiceDate: new Date().toISOString(),
+        subtotal,
+        discountAmount: 0,
+        taxAmount: 0,
+        totalAmount: subtotal,
+        status: 'FINALIZED',
+        items
+      };
+
+      await apiClient.post('/api/sales/invoices', payload, { token: session.token, businessId: session.businessId });
       setDrawerOpen(false);
       setForm({ customerId: '', lines: [{ productId: '', quantity: 1, unitPrice: '' }] });
       fetchInvoices();
@@ -120,7 +158,23 @@ export default function SalesPage() {
     newLines[i][field] = value;
     if (field === 'productId') {
        const p = products.find(prod => prod.id === value);
-       if (p) newLines[i].unitPrice = p.sellingPrice || 0;
+       if (p) {
+         newLines[i].unitPrice = p.sellingPrice || 0;
+         // Reset/cap quantity if it exceeds new product's stock
+         if (parseFloat(newLines[i].quantity) > p.stock) {
+           newLines[i].quantity = p.stock;
+         }
+       }
+    }
+    if (field === 'quantity') {
+       const line = newLines[i];
+       const p = products.find(prod => prod.id === line.productId);
+       if (p) {
+         const val = parseFloat(value);
+         if (val > p.stock) {
+           newLines[i].quantity = p.stock;
+         }
+       }
     }
     setForm({ ...form, lines: newLines });
   };
@@ -206,35 +260,59 @@ export default function SalesPage() {
                 <button type="button" onClick={() => setForm({...form, lines: [...form.lines, {productId:'', quantity:1, unitPrice:''}]})} className="text-[11px] font-bold tracking-widest uppercase text-slate-900 bg-slate-100 border border-slate-200 px-2.5 py-1 rounded-full cursor-pointer hover:bg-slate-200 transition-all active:scale-[0.98]">+ Add Line</button>
              </div>
              <div className="space-y-3">
-               {form.lines.map((line, i) => (
-                 <div key={i} className="flex flex-col sm:flex-row gap-2 sm:items-center p-3 sm:p-2 bg-slate-50/50 border border-slate-200/60 rounded-[14px]">
-                   <div className="flex-1 w-full sm:w-auto">
-                      <select required value={line.productId} onChange={e => updateLine(i, 'productId', e.target.value)} className="w-full px-3 py-2 text-[13px] font-medium border border-slate-200/80 rounded-lg shadow-sm focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400">
-                         <option value="">Product...</option>
-                         {products.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-                      </select>
-                   </div>
-                   <div className="flex items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0">
-                     <div className="w-20">
-                        <input required type="number" min="1" step="any" value={line.quantity} onChange={e => updateLine(i, 'quantity', e.target.value)} className="w-full px-3 py-2 text-[13px] font-medium border border-slate-200/80 rounded-lg shadow-sm focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400" placeholder="Qty" />
-                     </div>
-                     <span className="text-slate-400 text-xs font-semibold">x</span>
-                     <div className="w-28">
-                        <input required type="number" step="0.01" value={line.unitPrice} onChange={e => updateLine(i, 'unitPrice', e.target.value)} className="w-full px-3 py-2 text-[13px] font-medium border border-slate-200/80 rounded-lg shadow-sm focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400" placeholder="Price" />
-                     </div>
-                     {form.lines.length > 1 && (
-                       <button type="button" onClick={() => setForm({...form, lines: form.lines.filter((_, idx) => idx !== i)})} className="text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg font-bold w-8 h-8 flex items-center justify-center ml-auto sm:ml-0 cursor-pointer active:scale-95 transition-all">✕</button>
-                     )}
-                   </div>
-                 </div>
-               ))}
+                {form.lines.map((line, i) => (
+                  <div key={i} className="flex flex-col p-3 bg-slate-50/50 border border-slate-200/60 rounded-[14px] gap-2">
+                    <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
+                       <div className="flex-1 w-full sm:w-auto">
+                          <select required value={line.productId} onChange={e => updateLine(i, 'productId', e.target.value)} className="w-full px-3 py-2 text-[13px] font-medium border border-slate-200/80 rounded-lg shadow-sm focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400">
+                             <option value="">Product...</option>
+                             {products.filter(p => (p.stock || 0) > 0).map(p => <option key={p.id} value={p.id}>{p.name} (Stock: {p.stock})</option>)}
+                          </select>
+                       </div>
+                       <div className="flex items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0">
+                         <div className="w-20">
+                            <input required type="number" min="1" max={products.find(p => p.id === line.productId)?.stock || undefined} step="any" value={line.quantity} onChange={e => updateLine(i, 'quantity', e.target.value)} className="w-full px-3 py-2 text-[13px] font-medium border border-slate-200/80 rounded-lg shadow-sm focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400" placeholder="Qty" />
+                         </div>
+                         <span className="text-slate-400 text-xs font-semibold">x</span>
+                         <div className="w-28">
+                            <input required type="number" step="0.01" value={line.unitPrice} onChange={e => updateLine(i, 'unitPrice', e.target.value)} className="w-full px-3 py-2 text-[13px] font-medium border border-slate-200/80 rounded-lg shadow-sm focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400" placeholder="Price" />
+                         </div>
+                         {form.lines.length > 1 && (
+                           <button type="button" onClick={() => setForm({...form, lines: form.lines.filter((_, idx) => idx !== i)})} className="text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg font-bold w-8 h-8 flex items-center justify-center ml-auto sm:ml-0 cursor-pointer active:scale-95 transition-all">✕</button>
+                         )}
+                       </div>
+                    </div>
+                    {line.productId && (
+                      <div className="text-xs text-slate-500 text-right font-medium pr-2">
+                        Line Total: ₹{((parseFloat(line.quantity) || 0) * (parseFloat(line.unitPrice) || 0)).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+           </div>
+
+           {/* Running Totals Summary Section */}
+           <div className="bg-slate-50 p-4 rounded-xl border border-slate-200/60 space-y-2">
+             <div className="flex justify-between text-xs text-slate-600 font-bold">
+               <span>Subtotal:</span>
+               <span className="text-slate-900 font-extrabold font-mono">
+                 ₹{form.lines.reduce((sum, l) => sum + (parseFloat(l.quantity) || 0) * (parseFloat(l.unitPrice) || 0), 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+               </span>
              </div>
-          </div>
-          <div className="pt-4 border-t border-slate-200/60">
-            <button type="submit" disabled={saving} className="w-full bg-slate-900 hover:bg-black text-white font-bold py-3.5 rounded-xl transition-all cursor-pointer active:scale-[0.98] shadow-[0_4px_12px_rgba(0,0,0,0.1)] disabled:opacity-50">
-              {saving ? 'Generating...' : 'Finalize Invoice (Zero-Sum Ledger)'}
-            </button>
-          </div>
+             <div className="flex justify-between text-xs text-slate-900 font-bold border-t border-slate-200/60 pt-2">
+               <span>Grand Total:</span>
+               <span className="text-slate-900 font-black font-mono">
+                 ₹{form.lines.reduce((sum, l) => sum + (parseFloat(l.quantity) || 0) * (parseFloat(l.unitPrice) || 0), 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+               </span>
+             </div>
+           </div>
+
+           <div className="pt-4 border-t border-slate-200/60">
+             <button type="submit" disabled={saving} className="w-full bg-slate-900 hover:bg-black text-white font-bold py-3.5 rounded-xl transition-all cursor-pointer active:scale-[0.98] shadow-[0_4px_12px_rgba(0,0,0,0.1)] disabled:opacity-50">
+               {saving ? 'Generating...' : 'Finalize Invoice (Zero-Sum Ledger)'}
+             </button>
+           </div>
         </form>
       </Drawer>
 

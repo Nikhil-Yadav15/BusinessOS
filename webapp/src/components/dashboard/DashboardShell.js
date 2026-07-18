@@ -11,7 +11,7 @@ import { Home, Users, Package, Tags, ReceiptText, ShoppingCart, Wallet, Settings
 
 const navItems = [
   { name: 'Overview', href: '/dashboard', icon: Home },
-  { name: 'Customers & CRM', href: '/dashboard/crm', icon: Users },
+  { name: 'Customers & Suppliers', href: '/dashboard/crm', icon: Users },
   { name: 'Product Catalog', href: '/dashboard/catalog', icon: Tags },
   { name: 'Inventory & Stock', href: '/dashboard/inventory', icon: Package },
   { name: 'Sales & Invoices', href: '/dashboard/sales', icon: ReceiptText },
@@ -30,7 +30,7 @@ export default function DashboardShell({ children }) {
   const [isAiOpen, setAiOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  
+
   // Register Cmd+K / Ctrl+K Global Shortcut
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -51,7 +51,7 @@ export default function DashboardShell({ children }) {
   // The Navigation Sidebar is heavily styled based on the "Lumina" design system
   const NavigationSidebar = ({ isMobile }) => (
     <aside className={`flex flex-col shrink-0 bg-slate-50 text-slate-900 h-full ${isMobile ? 'w-full' : 'w-64 border-r border-slate-200/60'}`}>
-      
+
       {/* Business Selector Mock */}
       <div className="h-16 flex items-center px-4 border-b border-slate-200/60 group cursor-pointer hover:bg-slate-100 transition-colors shrink-0">
         <div className="w-8 h-8 rounded-lg bg-black flex items-center justify-center font-bold text-white shadow-sm shrink-0 text-sm">
@@ -71,7 +71,7 @@ export default function DashboardShell({ children }) {
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-8">
-        
+
         <div>
           <p className="px-3 text-[10px] font-extrabold tracking-[0.15em] text-slate-400 uppercase mb-3">Modules</p>
           <ul className="space-y-1">
@@ -82,11 +82,10 @@ export default function DashboardShell({ children }) {
                   <Link
                     href={item.href}
                     onClick={() => isMobile && setIsMobileMenuOpen(false)}
-                    className={`flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-xl transition-all ${
-                      isActive
+                    className={`flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-xl transition-all ${isActive
                         ? 'bg-white text-slate-900 border border-slate-200/60 shadow-[0_2px_8px_rgba(0,0,0,0.04)]'
                         : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 border border-transparent'
-                    }`}
+                      }`}
                   >
                     <item.icon size={18} strokeWidth={isActive ? 2.5 : 2} className={isActive ? 'text-slate-900' : 'text-slate-400'} />
                     {item.name}
@@ -98,28 +97,27 @@ export default function DashboardShell({ children }) {
         </div>
 
         <div>
-           <p className="px-3 text-[10px] font-extrabold tracking-[0.15em] text-slate-400 uppercase mb-3">System</p>
-           <ul className="space-y-1">
-             {secondaryNav.map((item) => {
-               const isActive = pathname === item.href;
-               return (
-                 <li key={item.name}>
-                   <Link
-                     href={item.href}
-                     onClick={() => isMobile && setIsMobileMenuOpen(false)}
-                     className={`flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-xl transition-all ${
-                       isActive
-                         ? 'bg-white text-slate-900 border border-slate-200/60 shadow-[0_2px_8px_rgba(0,0,0,0.04)]'
-                         : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 border border-transparent'
-                     }`}
-                   >
-                     <item.icon size={18} strokeWidth={isActive ? 2.5 : 2} className={isActive ? 'text-slate-900' : 'text-slate-400'} />
-                     {item.name}
-                   </Link>
-                 </li>
-               );
-             })}
-           </ul>
+          <p className="px-3 text-[10px] font-extrabold tracking-[0.15em] text-slate-400 uppercase mb-3">System</p>
+          <ul className="space-y-1">
+            {secondaryNav.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <li key={item.name}>
+                  <Link
+                    href={item.href}
+                    onClick={() => isMobile && setIsMobileMenuOpen(false)}
+                    className={`flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-xl transition-all ${isActive
+                        ? 'bg-white text-slate-900 border border-slate-200/60 shadow-[0_2px_8px_rgba(0,0,0,0.04)]'
+                        : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 border border-transparent'
+                      }`}
+                  >
+                    <item.icon size={18} strokeWidth={isActive ? 2.5 : 2} className={isActive ? 'text-slate-900' : 'text-slate-400'} />
+                    {item.name}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
         </div>
 
       </nav>
@@ -151,7 +149,7 @@ export default function DashboardShell({ children }) {
 
   return (
     <div className="flex h-dvh min-h-[100dvh] bg-[#F8FAFC] text-slate-900 font-sans overflow-hidden">
-      
+
       {/* Desktop Sidebar */}
       <div className="hidden md:flex">
         <NavigationSidebar isMobile={false} />
@@ -166,11 +164,11 @@ export default function DashboardShell({ children }) {
 
       {/* Main Area */}
       <main className="flex-1 flex flex-col h-dvh overflow-hidden">
-        
+
         {/* Top Header */}
         <header className="h-16 border-b border-slate-200/50 flex items-center justify-between px-4 md:px-8 shrink-0 bg-white/70 backdrop-blur-xl z-20 sticky top-0">
           <div className="flex items-center gap-4">
-            <button 
+            <button
               className="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-md -ml-2 cursor-pointer transition-colors active:scale-95"
               onClick={() => setIsMobileMenuOpen(true)}
             >
@@ -178,24 +176,24 @@ export default function DashboardShell({ children }) {
             </button>
 
             {/* Clickable Search input triggering Modal */}
-            <div 
+            <div
               onClick={() => setIsSearchOpen(true)}
               className="hidden sm:flex items-center gap-2 text-sm text-slate-500 bg-slate-50/50 hover:bg-slate-100/80 transition-all active:scale-[0.98] border border-slate-200/60 px-3 py-1.5 rounded-lg cursor-pointer shadow-sm w-64"
             >
               <Command size={14} /> <span>Search everything...</span> <span className="text-xs border border-slate-200 px-1.5 rounded bg-white ml-auto text-slate-400 font-medium tracking-widest uppercase">⌘K</span>
             </div>
-            
+
             {/* Mobile simplified search trigger */}
-            <button 
+            <button
               onClick={() => setIsSearchOpen(true)}
               className="sm:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-md cursor-pointer transition-colors active:scale-95"
             >
               <Command size={20} />
             </button>
           </div>
-          
+
           <div className="flex items-center gap-4">
-            
+
             {/* NEW: Notification Dropdown Component */}
             <NotificationDropdown />
 
@@ -215,7 +213,7 @@ export default function DashboardShell({ children }) {
       </main>
 
       {/* Floating AI Action Button (FAB) */}
-      <button 
+      <button
         onClick={() => setAiOpen(true)}
         className="fixed bottom-6 right-6 md:bottom-8 md:right-8 bg-slate-900 text-white px-5 py-3.5 rounded-full flex items-center gap-2 shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:bg-black hover:scale-105 active:scale-95 transition-all z-40 font-bold border border-slate-800 cursor-pointer"
       >
@@ -227,12 +225,12 @@ export default function DashboardShell({ children }) {
       <ChatDrawer isOpen={isAiOpen} onClose={() => setAiOpen(false)} />
 
       {/* NEW: Global Search Modal Component */}
-      <GlobalSearchModal 
-        isOpen={isSearchOpen} 
+      <GlobalSearchModal
+        isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
         openAiDrawer={() => {
-           setIsSearchOpen(false);
-           setAiOpen(true);
+          setIsSearchOpen(false);
+          setAiOpen(true);
         }}
       />
     </div>

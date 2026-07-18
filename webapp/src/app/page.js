@@ -2,8 +2,8 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { 
-  Moon, Sparkles, Handshake, ReceiptText, Package, 
+import {
+  Moon, Sparkles, Handshake, ReceiptText, Package,
   ShoppingCart, Wallet, Zap, Check, ChevronDown, Shield, PieChart, Database, UserCheck
 } from 'lucide-react';
 
@@ -27,46 +27,46 @@ export default function HeroPage() {
             <div className="bg-black text-white rounded-xl w-8 h-8 flex items-center justify-center font-bold text-lg shadow-[0_4px_12px_rgba(0,0,0,0.1)]">A</div>
             <span className="text-xl font-extrabold tracking-tighter">Atlas.</span>
           </div>
-        
-        <div className="hidden md:flex items-center gap-8 text-[11px] font-bold text-slate-500 tracking-[0.1em] uppercase">
-          <Link href="#features" className="hover:text-slate-900 transition-colors cursor-pointer">Features</Link>
-          <Link href="#walkthrough" className="hover:text-slate-900 transition-colors cursor-pointer">Live Demo</Link>
-          <Link href="#walkthrough" className="hover:text-slate-900 transition-colors cursor-pointer">Technical Spec</Link>
-          <Link href="#pricing" className="hover:text-slate-900 transition-colors cursor-pointer">Pricing</Link>
-          <Link href="#faq" className="hover:text-slate-900 transition-colors cursor-pointer">FAQ</Link>
-        </div>
 
-        <div className="flex items-center gap-2 sm:gap-3">
-          <button className="hidden sm:flex p-2 text-slate-400 hover:text-slate-900 border border-slate-200/60 rounded-full bg-white/50 shadow-sm cursor-pointer transition-all">
-            <Moon size={18} />
-          </button>
-          <Link href="/login" className="hidden sm:inline-flex text-sm font-semibold px-5 py-2.5 border border-slate-200/60 bg-white/80 rounded-xl hover:bg-slate-50 shadow-[0_2px_8px_rgba(0,0,0,0.04)] cursor-pointer transition-all">
-            Sign In
-          </Link>
-          <Link href="/register" className="text-sm bg-slate-900 hover:bg-black text-white font-bold px-4 sm:px-5 py-2.5 rounded-xl transition-all shadow-[0_4px_12px_rgba(0,0,0,0.1)] active:scale-[0.98] cursor-pointer">
-            Get Started
-          </Link>
-          {/* Mobile hamburger */}
-          <button
-            className="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
-            onClick={() => setMobileNavOpen(!mobileNavOpen)}
-            aria-label="Toggle menu"
-          >
-            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-              {mobileNavOpen ? (
-                <><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></>
-              ) : (
-                <><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></>
-              )}
-            </svg>
-          </button>
-        </div>
+          <div className="hidden md:flex items-center gap-8 text-[11px] font-bold text-slate-500 tracking-[0.1em] uppercase">
+            <Link href="#features" className="hover:text-slate-900 transition-colors cursor-pointer">Features</Link>
+            <Link href="#walkthrough" className="hover:text-slate-900 transition-colors cursor-pointer">Live Demo</Link>
+            <Link href="#walkthrough" className="hover:text-slate-900 transition-colors cursor-pointer">Technical Spec</Link>
+            <Link href="#pricing" className="hover:text-slate-900 transition-colors cursor-pointer">Pricing</Link>
+            <Link href="#faq" className="hover:text-slate-900 transition-colors cursor-pointer">FAQ</Link>
+          </div>
+
+          <div className="flex items-center gap-2 sm:gap-3">
+            <button className="hidden sm:flex p-2 text-slate-400 hover:text-slate-900 border border-slate-200/60 rounded-full bg-white/50 shadow-sm cursor-pointer transition-all">
+              <Moon size={18} />
+            </button>
+            <Link href="/login" className="hidden sm:inline-flex text-sm font-semibold px-5 py-2.5 border border-slate-200/60 bg-white/80 rounded-xl hover:bg-slate-50 shadow-[0_2px_8px_rgba(0,0,0,0.04)] cursor-pointer transition-all">
+              Sign In
+            </Link>
+            <Link href="/register" className="text-sm bg-slate-900 hover:bg-black text-white font-bold px-4 sm:px-5 py-2.5 rounded-xl transition-all shadow-[0_4px_12px_rgba(0,0,0,0.1)] active:scale-[0.98] cursor-pointer">
+              Get Started
+            </Link>
+            {/* Mobile hamburger */}
+            <button
+              className="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+              onClick={() => setMobileNavOpen(!mobileNavOpen)}
+              aria-label="Toggle menu"
+            >
+              <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                {mobileNavOpen ? (
+                  <><line x1="4" y1="4" x2="20" y2="20" /><line x1="20" y1="4" x2="4" y2="20" /></>
+                ) : (
+                  <><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" /></>
+                )}
+              </svg>
+            </button>
+          </div>
         </div>
 
         {/* Mobile Nav dropdown */}
         {mobileNavOpen && (
           <div className="md:hidden border-t border-slate-200/60 bg-white/95 backdrop-blur-xl px-6 py-4 space-y-1">
-            {[['#features','Features'],['#walkthrough','Live Demo'],['#walkthrough','Technical Spec'],['#pricing','Pricing'],['#faq','FAQ']].map(([href, label]) => (
+            {[['#features', 'Features'], ['#walkthrough', 'Live Demo'], ['#walkthrough', 'Technical Spec'], ['#pricing', 'Pricing'], ['#faq', 'FAQ']].map(([href, label]) => (
               <Link key={label} href={href} onClick={() => setMobileNavOpen(false)}
                 className="block py-2.5 px-3 text-sm font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors">
                 {label}
@@ -87,7 +87,7 @@ export default function HeroPage() {
         </div>
 
         <h1 className="text-5xl md:text-8xl font-extrabold tracking-tighter leading-[1.05] text-slate-900">
-          Invisible precision. <br/>
+          Invisible precision. <br />
           <span className="text-slate-400 font-medium">Infinite scale.</span>
         </h1>
 
@@ -168,7 +168,7 @@ export default function HeroPage() {
                   </div>
                 </div>
               </div>
-              
+
               {/* Floating AI Assistant Mockup */}
               <div className="absolute right-8 top-32 w-80 bg-white/90 backdrop-blur-2xl border border-slate-200/80 rounded-[20px] shadow-[0_16px_40px_rgba(0,0,0,0.08)] overflow-hidden">
                 <div className="bg-slate-50/50 px-5 py-4 flex items-center justify-between border-b border-slate-100">
@@ -222,14 +222,13 @@ export default function HeroPage() {
             {/* Tabs sidebar */}
             <div className="md:w-72 space-y-3 flex-shrink-0">
               {tabs.map((tab) => (
-                <button 
+                <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`w-full text-left p-5 rounded-2xl border flex flex-col transition-all cursor-pointer active:scale-[0.98] ${
-                    activeTab === tab.id 
-                    ? 'bg-white border-slate-900 shadow-md' 
-                    : 'bg-white/50 border-slate-200 hover:border-slate-300 shadow-sm'
-                  }`}
+                  className={`w-full text-left p-5 rounded-2xl border flex flex-col transition-all cursor-pointer active:scale-[0.98] ${activeTab === tab.id
+                      ? 'bg-white border-slate-900 shadow-md'
+                      : 'bg-white/50 border-slate-200 hover:border-slate-300 shadow-sm'
+                    }`}
                 >
                   <div className="flex items-center space-x-3 mb-2">
                     {tab.icon}
@@ -246,7 +245,7 @@ export default function HeroPage() {
                 <h3 className="font-bold text-slate-900 tracking-widest text-[11px] uppercase">Draft Invoice Ledger</h3>
                 <span className="bg-slate-100 text-slate-900 text-[10px] uppercase tracking-widest font-bold px-3 py-1.5 rounded-full border border-slate-200">4 Pending Approval</span>
               </div>
-              
+
               <table className="w-full text-sm text-left">
                 <thead>
                   <tr className="text-slate-500 font-bold border-b border-slate-100">
@@ -287,7 +286,7 @@ export default function HeroPage() {
         </div>
       </section>
 
-      {/* Modules Grid */} 
+      {/* Modules Grid */}
       <section id="features" className="py-32 bg-white border-t border-b border-slate-200/60 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
@@ -301,7 +300,7 @@ export default function HeroPage() {
               <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200/60 shadow-sm flex items-center justify-center text-slate-900 mb-8">
                 <Handshake size={20} />
               </div>
-              <h3 className="font-extrabold text-slate-900 text-[17px] mb-3 tracking-tight">Unified CRM & Parties</h3>
+              <h3 className="font-extrabold text-slate-900 text-[17px] mb-3 tracking-tight">Unified Customers & Suppliers</h3>
               <p className="text-slate-500 text-[13px] leading-relaxed mb-8 font-medium">
                 Centralize customers and suppliers directory with real-time transaction logs, credit balance tracking, and registration.
               </p>
@@ -407,11 +406,11 @@ export default function HeroPage() {
               </div>
               <p className="text-[13px] text-slate-500 mb-8 leading-relaxed h-10 font-medium">Perfect for self-hosting, local testing, and individual operators.</p>
               <div className="space-y-4 mb-8">
-                <div className="flex items-start gap-3 text-[13px] text-slate-700 font-medium"><Check size={16} className="text-slate-900 mt-0.5 shrink-0"/> Full access to all 6 core modules</div>
-                <div className="flex items-start gap-3 text-[13px] text-slate-700 font-medium"><Check size={16} className="text-slate-900 mt-0.5 shrink-0"/> Unlimited local transactions</div>
-                <div className="flex items-start gap-3 text-[13px] text-slate-700 font-medium"><Check size={16} className="text-slate-900 mt-0.5 shrink-0"/> PostgreSQL or SQLite supported</div>
-                <div className="flex items-start gap-3 text-[13px] text-slate-700 font-medium"><Check size={16} className="text-slate-900 mt-0.5 shrink-0"/> Standard double-entry chart</div>
-                <div className="flex items-start gap-3 text-[13px] text-slate-700 font-medium"><Check size={16} className="text-slate-900 mt-0.5 shrink-0"/> Community Discord assistance</div>
+                <div className="flex items-start gap-3 text-[13px] text-slate-700 font-medium"><Check size={16} className="text-slate-900 mt-0.5 shrink-0" /> Full access to all 6 core modules</div>
+                <div className="flex items-start gap-3 text-[13px] text-slate-700 font-medium"><Check size={16} className="text-slate-900 mt-0.5 shrink-0" /> Unlimited local transactions</div>
+                <div className="flex items-start gap-3 text-[13px] text-slate-700 font-medium"><Check size={16} className="text-slate-900 mt-0.5 shrink-0" /> PostgreSQL or SQLite supported</div>
+                <div className="flex items-start gap-3 text-[13px] text-slate-700 font-medium"><Check size={16} className="text-slate-900 mt-0.5 shrink-0" /> Standard double-entry chart</div>
+                <div className="flex items-start gap-3 text-[13px] text-slate-700 font-medium"><Check size={16} className="text-slate-900 mt-0.5 shrink-0" /> Community Discord assistance</div>
               </div>
               <button className="w-full py-4 px-4 bg-white border border-slate-200 text-slate-900 font-bold rounded-xl hover:bg-slate-50 transition-colors shadow-sm active:scale-[0.98]">
                 Get Started
@@ -430,11 +429,11 @@ export default function HeroPage() {
               </div>
               <p className="text-[13px] text-slate-300 mb-8 leading-relaxed h-10 font-medium">For growing businesses requiring hosted infrastructure and cloud backups.</p>
               <div className="space-y-4 mb-8">
-                <div className="flex items-start gap-3 text-[13px] text-slate-200 font-medium"><Check size={16} className="text-white mt-0.5 shrink-0"/> Hosted Neon PostgreSQL database pool</div>
-                <div className="flex items-start gap-3 text-[13px] text-slate-200 font-medium"><Check size={16} className="text-white mt-0.5 shrink-0"/> Automated daily encrypted database backups</div>
-                <div className="flex items-start gap-3 text-[13px] text-slate-200 font-medium"><Check size={16} className="text-white mt-0.5 shrink-0"/> Up to 5 team members with RBAC settings</div>
-                <div className="flex items-start gap-3 text-[13px] text-slate-200 font-medium"><Check size={16} className="text-white mt-0.5 shrink-0"/> AI Co-Pilot natural language search integration</div>
-                <div className="flex items-start gap-3 text-[13px] text-slate-200 font-medium"><Check size={16} className="text-white mt-0.5 shrink-0"/> Standard email ticket support (24h response)</div>
+                <div className="flex items-start gap-3 text-[13px] text-slate-200 font-medium"><Check size={16} className="text-white mt-0.5 shrink-0" /> Hosted Neon PostgreSQL database pool</div>
+                <div className="flex items-start gap-3 text-[13px] text-slate-200 font-medium"><Check size={16} className="text-white mt-0.5 shrink-0" /> Automated daily encrypted database backups</div>
+                <div className="flex items-start gap-3 text-[13px] text-slate-200 font-medium"><Check size={16} className="text-white mt-0.5 shrink-0" /> Up to 5 team members with RBAC settings</div>
+                <div className="flex items-start gap-3 text-[13px] text-slate-200 font-medium"><Check size={16} className="text-white mt-0.5 shrink-0" /> AI Co-Pilot natural language search integration</div>
+                <div className="flex items-start gap-3 text-[13px] text-slate-200 font-medium"><Check size={16} className="text-white mt-0.5 shrink-0" /> Standard email ticket support (24h response)</div>
               </div>
               <button className="w-full py-4 px-4 bg-white text-slate-900 font-bold rounded-xl hover:bg-slate-100 transition-colors shadow-md active:scale-[0.98]">
                 Try Managed Pro
@@ -450,11 +449,11 @@ export default function HeroPage() {
               </div>
               <p className="text-[13px] text-slate-500 mb-8 leading-relaxed h-10 font-medium">For high-volume operations demanding custom configurations and SLA.</p>
               <div className="space-y-4 mb-8">
-                <div className="flex items-start gap-3 text-[13px] text-slate-700 font-medium"><Check size={16} className="text-slate-900 mt-0.5 shrink-0"/> Unlimited team members & contexts</div>
-                <div className="flex items-start gap-3 text-[13px] text-slate-700 font-medium"><Check size={16} className="text-slate-900 mt-0.5 shrink-0"/> Dedicated database connection pools</div>
-                <div className="flex items-start gap-3 text-[13px] text-slate-700 font-medium"><Check size={16} className="text-slate-900 mt-0.5 shrink-0"/> Custom webhooks outbox engine execution</div>
-                <div className="flex items-start gap-3 text-[13px] text-slate-700 font-medium"><Check size={16} className="text-slate-900 mt-0.5 shrink-0"/> Priority Slack SLA assistance (2h)</div>
-                <div className="flex items-start gap-3 text-[13px] text-slate-700 font-medium"><Check size={16} className="text-slate-900 mt-0.5 shrink-0"/> Custom invoice PDF template styling</div>
+                <div className="flex items-start gap-3 text-[13px] text-slate-700 font-medium"><Check size={16} className="text-slate-900 mt-0.5 shrink-0" /> Unlimited team members & contexts</div>
+                <div className="flex items-start gap-3 text-[13px] text-slate-700 font-medium"><Check size={16} className="text-slate-900 mt-0.5 shrink-0" /> Dedicated database connection pools</div>
+                <div className="flex items-start gap-3 text-[13px] text-slate-700 font-medium"><Check size={16} className="text-slate-900 mt-0.5 shrink-0" /> Custom webhooks outbox engine execution</div>
+                <div className="flex items-start gap-3 text-[13px] text-slate-700 font-medium"><Check size={16} className="text-slate-900 mt-0.5 shrink-0" /> Priority Slack SLA assistance (2h)</div>
+                <div className="flex items-start gap-3 text-[13px] text-slate-700 font-medium"><Check size={16} className="text-slate-900 mt-0.5 shrink-0" /> Custom invoice PDF template styling</div>
               </div>
               <button className="w-full py-4 px-4 border border-slate-200 text-slate-900 font-bold rounded-xl hover:bg-slate-50 transition-colors shadow-sm active:scale-[0.98]">
                 Talk to Sales
@@ -471,7 +470,7 @@ export default function HeroPage() {
             <h2 className="text-4xl font-extrabold text-slate-900 tracking-tighter">Frequently Asked Questions</h2>
             <p className="text-slate-500 mt-4 text-lg">Everything you need to know about the Atlas stack architecture.</p>
           </div>
-          
+
           <div className="space-y-4">
             <div className="p-6 border border-slate-200/60 rounded-[20px] flex justify-between items-center hover:border-slate-300 cursor-pointer transition-all shadow-sm bg-slate-50/50">
               <h3 className="font-bold text-slate-900 text-[15px]">What is Atlas BusinessOS?</h3>
