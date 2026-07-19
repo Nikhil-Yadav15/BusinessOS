@@ -39,8 +39,8 @@ export function CashflowBalanceBar({ journal = [] }) {
             formatter={(value) => [`₹${value.toLocaleString()}`, null]}
           />
           <Legend wrapperStyle={{ fontSize: '13px', paddingTop: '10px' }} iconType="circle" />
-          <Bar dataKey="credit" name="Credit (In)" fill="#10b981" radius={[4, 4, 0, 0]} maxBarSize={30} />
-          <Bar dataKey="debit" name="Debit (Out)" fill="#ef4444" radius={[4, 4, 0, 0]} maxBarSize={30} />
+          <Bar dataKey="credit" name="Paisa Aaya" fill="#10b981" radius={[4, 4, 0, 0]} maxBarSize={30} />
+          <Bar dataKey="debit" name="Paisa Gaya" fill="#ef4444" radius={[4, 4, 0, 0]} maxBarSize={30} />
         </BarChart>
       </ResponsiveContainer>
     </div>

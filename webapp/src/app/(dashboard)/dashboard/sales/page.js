@@ -196,7 +196,7 @@ export default function SalesPage() {
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 print:hidden">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tighter text-slate-900">Sales Invoices</h1>
+          <h1 className="text-3xl font-extrabold tracking-tighter text-slate-900">Bills (Sale)</h1>
           <p className="text-slate-500 text-sm mt-1 font-medium">{invoices.length} total operations</p>
         </div>
         <div className="flex gap-3 w-full sm:w-auto">
@@ -214,7 +214,7 @@ export default function SalesPage() {
                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
              </div>
              <div>
-               <h3 className="font-extrabold text-slate-900 tracking-tight text-[15px]">Velocity vs Cashflow</h3>
+               <h3 className="font-extrabold text-slate-900 tracking-tight text-[15px]">Sales This Week</h3>
                <p className="text-xs text-slate-500 font-medium tracking-wide">Daily revenue alongside total volume</p>
              </div>
            </div>

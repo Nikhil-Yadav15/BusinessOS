@@ -81,7 +81,7 @@ export default function InventoryPage() {
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tighter text-slate-900">Inventory Ledger</h1>
+          <h1 className="text-3xl font-extrabold tracking-tighter text-slate-900">Stock</h1>
           <p className="text-slate-500 text-sm mt-1 font-medium">Stock snapshots and movement history</p>
         </div>
         <div className="flex gap-3 w-full sm:w-auto">

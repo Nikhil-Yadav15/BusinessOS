@@ -122,7 +122,7 @@ export default function DashboardHome() {
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
          <div>
-           <h1 className="text-3xl font-extrabold text-slate-900 tracking-tighter">Overview</h1>
+           <h1 className="text-3xl font-extrabold text-slate-900 tracking-tighter">Home</h1>
            <p className="text-slate-500 text-sm mt-1 font-medium">Here's what's happening today.</p>
          </div>
          
@@ -146,7 +146,7 @@ export default function DashboardHome() {
         {/* Metric 1 */}
         <div className="bg-white rounded-[24px] border border-slate-200/60 shadow-[0_2px_12px_rgba(0,0,0,0.03)] p-6 hover:shadow-md transition-shadow group">
           <div className="flex justify-between items-start">
-            <p className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest">Total Revenue</p>
+            <p className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest">Today's Sales</p>
             <div className="p-2 bg-slate-50 text-slate-900 rounded-[14px] shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] border border-slate-200/60 group-hover:bg-slate-900 group-hover:text-white transition-colors">
               <CircleDollarSign size={16} />
             </div>
@@ -182,7 +182,7 @@ export default function DashboardHome() {
         {/* Metric 3 */}
         <div className="bg-white rounded-[24px] border border-slate-200/60 shadow-[0_2px_12px_rgba(0,0,0,0.03)] p-6 hover:shadow-md transition-shadow group">
            <div className="flex justify-between items-start">
-             <p className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest">Event Queue</p>
+             <p className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest">Pending Reminders</p>
              <div className="p-2 bg-slate-50 text-slate-900 rounded-[14px] shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] border border-slate-200/60 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
                <Receipt size={16} />
              </div>

@@ -10,18 +10,18 @@ import NotificationDropdown from './NotificationDropdown.js';
 import { Home, Users, Package, Tags, ReceiptText, ShoppingCart, Wallet, Settings, Command, Sparkles, ChevronsUpDown, Bell, Menu, X, Shield } from 'lucide-react';
 
 const navItems = [
-  { name: 'Overview', href: '/dashboard', icon: Home },
+  { name: 'Home', href: '/dashboard', icon: Home },
   { name: 'Customers & Suppliers', href: '/dashboard/crm', icon: Users },
-  { name: 'Product Catalog', href: '/dashboard/catalog', icon: Tags },
-  { name: 'Inventory & Stock', href: '/dashboard/inventory', icon: Package },
-  { name: 'Sales & Invoices', href: '/dashboard/sales', icon: ReceiptText },
-  { name: 'Purchasing & Bills', href: '/dashboard/purchasing', icon: ShoppingCart },
-  { name: 'Accounting Ledger', href: '/dashboard/ledger', icon: Wallet },
+  { name: 'My Products', href: '/dashboard/catalog', icon: Tags },
+  { name: 'Stock', href: '/dashboard/inventory', icon: Package },
+  { name: 'Bills (Sale)', href: '/dashboard/sales', icon: ReceiptText },
+  { name: 'Bills (Purchase)', href: '/dashboard/purchasing', icon: ShoppingCart },
+  { name: 'Khata', href: '/dashboard/ledger', icon: Wallet },
 ];
 
 const secondaryNav = [
-  { name: 'Team & Access', href: '/dashboard/team', icon: Shield },
-  { name: 'Settings & Workflows', href: '/dashboard/workflows', icon: Settings },
+  { name: 'Staff', href: '/dashboard/team', icon: Shield },
+  { name: 'Settings', href: '/dashboard/workflows', icon: Settings },
 ];
 
 export default function DashboardShell({ children }) {

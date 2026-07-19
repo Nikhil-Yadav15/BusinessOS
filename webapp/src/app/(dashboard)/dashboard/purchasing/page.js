@@ -101,7 +101,7 @@ export default function PurchasingPage() {
       setForm({ supplierId: '', lines: [{ productId: '', quantity: 1, unitPrice: '' }] });
       fetchPurchases();
     } catch (err) {
-      alert(err.message || 'Failed to create Purchase Bill');
+      alert(err.message || 'Failed to create Kharid Bill');
     } finally { setSaving(false); }
   };
 
@@ -119,12 +119,12 @@ export default function PurchasingPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Purchasing</h1>
+          <h1 className="text-2xl font-bold text-slate-900">Bills (Purchase)</h1>
           <p className="text-slate-500 text-sm mt-1">{purchases.length} total</p>
         </div>
         <div className="flex gap-2 w-full sm:w-auto">
           <button onClick={fetchPurchases} className="flex-1 sm:flex-none text-sm px-4 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors">↻ Refresh</button>
-          <button onClick={() => setDrawerOpen(true)} className="flex-1 sm:flex-none cursor-pointer text-sm px-4 py-2 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition-colors">+ Purchase Bill</button>
+          <button onClick={() => setDrawerOpen(true)} className="flex-1 sm:flex-none cursor-pointer text-sm px-4 py-2 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition-colors">+ Kharid Bill</button>
         </div>
       </div>
 
@@ -137,7 +137,7 @@ export default function PurchasingPage() {
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 17 12 7 8 11 2 5" /><line x1="22" y1="17" x2="16" y2="17" /><line x1="22" y1="17" x2="22" y2="11" /></svg>
             </div>
             <div>
-              <h3 className="font-semibold text-slate-900 text-sm">Expenditure Cashflow</h3>
+              <h3 className="font-semibold text-slate-900 text-sm">Kharch Kitna Hua</h3>
               <p className="text-xs text-slate-500">Daily cost map of purchased goods</p>
             </div>
           </div>
@@ -152,7 +152,7 @@ export default function PurchasingPage() {
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83" /><path d="M22 12A10 10 0 0 0 12 2v10z" /></svg>
             </div>
             <div>
-              <h3 className="font-semibold text-slate-900 text-sm">Supplier Debts</h3>
+              <h3 className="font-semibold text-slate-900 text-sm">Sellers ko Dena Hai</h3>
               <p className="text-xs text-slate-500">Breakdown of pending vs cleared bills</p>
             </div>
           </div>
@@ -164,7 +164,7 @@ export default function PurchasingPage() {
 
       <DataTable columns={columns} data={purchases} loading={loading} emptyMessage="No purchase bills yet." />
 
-      <Drawer isOpen={isDrawerOpen} onClose={() => setDrawerOpen(false)} title="New Purchase Bill">
+      <Drawer isOpen={isDrawerOpen} onClose={() => setDrawerOpen(false)} title="New Kharid Bill">
         <form onSubmit={handleCreatePurchase} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">Supplier *</label>

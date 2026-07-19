@@ -81,7 +81,7 @@ export default function TeamManagementPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
          <div>
-           <h1 className="text-3xl font-bold text-[#0F172A] tracking-tight font-serif">Team & Access</h1>
+           <h1 className="text-3xl font-bold text-[#0F172A] tracking-tight font-serif">Staff</h1>
            <p className="text-slate-500 text-sm mt-1">Manage staff accounts and security permissions.</p>
          </div>
          

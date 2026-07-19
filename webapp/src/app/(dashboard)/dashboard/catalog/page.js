@@ -172,7 +172,7 @@ export default function CatalogPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Product Catalog</h1>
+          <h1 className="text-2xl font-bold text-slate-900">My Products</h1>
           <p className="text-slate-500 text-sm mt-1">{products.length} product{products.length !== 1 ? 's' : ''} in this business</p>
         </div>
         <div className="flex gap-2 w-full sm:w-auto">
@@ -224,7 +224,7 @@ export default function CatalogPage() {
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83" /><path d="M22 12A10 10 0 0 0 12 2v10z" /></svg>
             </div>
             <div>
-              <h3 className="font-semibold text-slate-900 text-sm">Catalog Distribution</h3>
+              <h3 className="font-semibold text-slate-900 text-sm">Stock Value by Category</h3>
               <p className="text-xs text-slate-500">Physical Goods vs Digital & Services</p>
             </div>
           </div>

@@ -45,6 +45,7 @@ export default function LedgerPage() {
   const [journal, setJournal] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [advancedMode, setAdvancedMode] = useState(false);
 
   const fetchAccounts = useCallback(async () => {
     if (!session?.token || !session?.businessId) return;
@@ -79,13 +80,19 @@ export default function LedgerPage() {
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tighter text-slate-900">Accounting Ledger</h1>
-          <p className="text-slate-500 text-sm mt-1 font-medium">Chart of Accounts ({accounts.length} accounts)</p>
+          <h1 className="text-3xl font-extrabold tracking-tighter text-slate-900">Khata</h1>
+          <p className="text-slate-500 text-sm mt-1 font-medium">{advancedMode ? `Chart of Accounts (${accounts.length} accounts)` : 'Khata Ledger Summary'}</p>
         </div>
-        <button onClick={fetchAccounts}
-          className="w-full sm:w-auto text-sm font-semibold px-4 py-2 bg-white rounded-xl border border-slate-200/60 shadow-sm hover:bg-slate-50 transition-all cursor-pointer active:scale-[0.98]">
-          ↻ Refresh
-        </button>
+        <div className="flex gap-3 w-full sm:w-auto">
+          <button onClick={() => setAdvancedMode(!advancedMode)}
+            className="flex-1 sm:flex-none text-sm font-semibold px-4 py-2 bg-white rounded-xl border border-slate-200/60 shadow-sm hover:bg-slate-50 transition-all cursor-pointer active:scale-[0.98]">
+            {advancedMode ? 'Hide Advanced Mode' : 'Show Advanced Mode'}
+          </button>
+          <button onClick={fetchAccounts}
+            className="flex-1 sm:flex-none text-sm font-semibold px-4 py-2 bg-white rounded-xl border border-slate-200/60 shadow-sm hover:bg-slate-50 transition-all cursor-pointer active:scale-[0.98]">
+            ↻ Refresh
+          </button>
+        </div>
       </div>
 
       {error && (
@@ -93,7 +100,7 @@ export default function LedgerPage() {
       )}
 
       {/* Account Type Summary */}
-      {accounts.length > 0 && (
+      {advancedMode && accounts.length > 0 && (
         <div className="flex flex-wrap gap-4">
           {Object.entries(byType).map(([type, count]) => (
             <div key={type} className="bg-slate-50/50 border border-slate-200/60 rounded-[14px] px-5 py-3 text-[13px] font-medium shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]">
@@ -111,8 +118,8 @@ export default function LedgerPage() {
                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><line x1="3" x2="21" y1="9" y2="9"/><path d="M9 21V9"/></svg>
              </div>
              <div>
-               <h3 className="font-extrabold text-slate-900 tracking-tight text-[15px]">Cashflow Balance</h3>
-               <p className="text-xs text-slate-500 font-medium tracking-wide">Master Journal Credit (In) vs Debit (Out)</p>
+               <h3 className="font-extrabold text-slate-900 tracking-tight text-[15px]">This Month's Profit</h3>
+               <p className="text-xs text-slate-500 font-medium tracking-wide">Hisaab History (Paisa Aaya / Paisa Gaya)</p>
              </div>
            </div>
            <div className="flex-1 min-h-[300px]">
@@ -126,7 +133,7 @@ export default function LedgerPage() {
                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
              </div>
              <div>
-               <h3 className="font-extrabold text-slate-900 tracking-tight text-[15px]">Expense Categories</h3>
+               <h3 className="font-extrabold text-slate-900 tracking-tight text-[15px]">Kharch</h3>
                <p className="text-xs text-slate-500 font-medium tracking-wide">Distribution of logged expenses</p>
              </div>
            </div>
@@ -136,12 +143,14 @@ export default function LedgerPage() {
         </div>
       </div>
 
-      <DataTable
-        columns={accountColumns}
-        data={accounts}
-        loading={loading}
-        emptyMessage="No ledger accounts yet. Create your Chart of Accounts via the API."
-      />
+      {advancedMode && (
+        <DataTable
+          columns={accountColumns}
+          data={accounts}
+          loading={loading}
+          emptyMessage="No ledger accounts yet. Create your Chart of Accounts via the API."
+        />
+      )}
     </div>
   );
 }

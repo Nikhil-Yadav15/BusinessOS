@@ -13,13 +13,13 @@ const pool = new Pool({
   // localized to 10 prevents single server nodes from hoarding slots.
   max: 10,
   
-  // If the database takes longer than 3 seconds to establish a connection,
+  // If the database takes longer than 15 seconds to establish a connection,
   // abort it. Protects API routes from hanging indefinitely.
-  connectionTimeoutMillis: 3000,
+  connectionTimeoutMillis: 15000,
   
-  // Close and destroy unused connections after 15 seconds. 
+  // Close and destroy unused connections after 30 seconds. 
   // Keeps the pool lean and saves Neon compute billing.
-  idleTimeoutMillis: 15000,
+  idleTimeoutMillis: 30000,
   
   // Safe default for standard server operation.
   allowExitOnIdle: false,

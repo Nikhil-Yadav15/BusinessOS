@@ -5,14 +5,14 @@ import { useRouter } from 'next/navigation';
 import { Search, Sparkles, Home, Users, Tags, Package, ReceiptText, ShoppingCart, Wallet, Shield, X, ArrowRight } from 'lucide-react';
 
 const STATIC_ROUTES = [
-  { name: 'Dashboard Overview', href: '/dashboard', icon: Home, category: 'Navigation' },
+  { name: 'Home', href: '/dashboard', icon: Home, category: 'Navigation' },
   { name: 'Customers & Suppliers', href: '/dashboard/crm', icon: Users, category: 'Navigation' },
-  { name: 'Product Catalog', href: '/dashboard/catalog', icon: Tags, category: 'Navigation' },
-  { name: 'Inventory & Stock', href: '/dashboard/inventory', icon: Package, category: 'Navigation' },
-  { name: 'Sales & Invoices', href: '/dashboard/sales', icon: ReceiptText, category: 'Navigation' },
-  { name: 'Purchasing & Bills', href: '/dashboard/purchasing', icon: ShoppingCart, category: 'Navigation' },
-  { name: 'Accounting Ledger', href: '/dashboard/ledger', icon: Wallet, category: 'Navigation' },
-  { name: 'Team & Access', href: '/dashboard/team', icon: Shield, category: 'Settings' },
+  { name: 'My Products', href: '/dashboard/catalog', icon: Tags, category: 'Navigation' },
+  { name: 'Stock', href: '/dashboard/inventory', icon: Package, category: 'Navigation' },
+  { name: 'Bills (Sale)', href: '/dashboard/sales', icon: ReceiptText, category: 'Navigation' },
+  { name: 'Bills (Purchase)', href: '/dashboard/purchasing', icon: ShoppingCart, category: 'Navigation' },
+  { name: 'Khata', href: '/dashboard/ledger', icon: Wallet, category: 'Navigation' },
+  { name: 'Staff', href: '/dashboard/team', icon: Shield, category: 'Settings' },
 ];
 
 export default function GlobalSearchModal({ isOpen, onClose, openAiDrawer }) {

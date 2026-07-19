@@ -14,7 +14,10 @@ export function withExecutionContext(handler) {
       return await handler(req, { ...context, executionContext });
       
     } catch (error) {
-      console.error('Gateway Protection Error:', error.message);
+      console.error('Gateway Protection Error:', error);
+      if (error.cause) {
+        console.error('Gateway Protection Error Cause:', error.cause);
+      }
       
       const status = error.message.includes('Unauthorized') ? 401 : 403;
       return new Response(
