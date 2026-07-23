@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { cleanTextForSpeech } from '../../../../application/ai/speechSanitizer.js';
 import { buildCoPilot } from '../../../../application/ai/agent.js';
-import { getAuthContext } from '../../../../infrastructure/context/authContext.js';
+import { buildContext, buildAnonymousContext } from '../../../../infrastructure/context/buildContext.js';
 
 export async function POST(request) {
   try {
@@ -90,10 +90,12 @@ export async function POST(request) {
     }
 
     // Step B: Pass transcript to AI Agent
-    const businessId = request.headers.get('x-business-id') || '';
-    const authHeader = request.headers.get('authorization') || '';
-    const token = authHeader.replace('Bearer ', '');
-    const executionContext = getAuthContext(token, businessId);
+    let executionContext;
+    try {
+      executionContext = await buildContext(request);
+    } catch {
+      executionContext = buildAnonymousContext(request);
+    }
 
     const agent = await buildCoPilot(executionContext);
     const graphRes = await agent.invoke({
