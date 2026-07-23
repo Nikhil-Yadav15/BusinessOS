@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Drawer from '../ui/Drawer.js';
+import MarkdownRenderer from '../ui/MarkdownRenderer.js';
 import { useBusinessContext } from '../providers/BusinessProvider.js';
 
 export default function ChatDrawer({ isOpen, onClose }) {
@@ -219,7 +220,11 @@ export default function ChatDrawer({ isOpen, onClose }) {
                   className={`max-w-[85%] p-4 rounded-[20px] text-[13px] font-medium leading-relaxed
                     ${m.role === 'user' ? 'bg-slate-900 text-white rounded-br-[6px] shadow-[0_4px_12px_rgba(0,0,0,0.1)]' : 'bg-slate-50 border border-slate-200/60 rounded-bl-[6px] text-slate-700 shadow-[inset_0_2px_4px_rgba(0,0,0,0.01)]'}`}
                 >
-                  <p className="whitespace-pre-wrap">{m.content}</p>
+                  {m.role === 'user' ? (
+                    <p className="whitespace-pre-wrap">{m.content}</p>
+                  ) : (
+                    <MarkdownRenderer content={m.content} />
+                  )}
                 </div>
               </div>
             );

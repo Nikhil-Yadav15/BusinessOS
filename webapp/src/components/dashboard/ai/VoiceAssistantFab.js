@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import MarkdownRenderer from '../../ui/MarkdownRenderer.js';
 import { useBusinessContext } from '../../providers/BusinessProvider.js';
 
 export default function VoiceAssistantFab() {
@@ -103,7 +104,7 @@ export default function VoiceAssistantFab() {
           )}
           {replyText && (
             <div className="text-[13px] text-slate-900 font-bold bg-slate-50/50 p-4 rounded-xl shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] border border-slate-200/60 leading-relaxed">
-              {replyText}
+              <MarkdownRenderer content={replyText} />
             </div>
           )}
           {replyText && (
