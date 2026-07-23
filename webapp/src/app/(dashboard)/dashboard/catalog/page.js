@@ -59,7 +59,8 @@ export default function CatalogPage() {
         apiClient.get('/api/catalog/units', { token: session.token, businessId: session.businessId })
       ]);
       setProducts(Array.isArray(res.data) ? res.data : (res.data?.items || []));
-      setUnits(Array.isArray(unitRes.data) ? unitRes.data : (unitRes.data?.items || []));
+      const allUnits = Array.isArray(unitRes.data) ? unitRes.data : (unitRes.data?.items || []);
+      setUnits(allUnits.filter(u => u.status === 'ACTIVE'));
     } catch (err) {
       setError(err.message || 'Failed to load data.');
     } finally {
@@ -101,10 +102,11 @@ export default function CatalogPage() {
     e.preventDefault();
     setSaving(true);
     try {
+      // Strip empty strings — the backend DTO treats them as invalid
       const payload = {
         ...form,
-        sellingPrice: form.sellingPrice || undefined,
-        purchasePrice: form.purchasePrice || undefined
+        // SKU: auto-generate a simple SKU if left blank
+        sku: form.sku?.trim() || `SKU-${Date.now()}`,
       };
 
       if (editingId) {
@@ -142,7 +144,7 @@ export default function CatalogPage() {
       });
       // Refetch units instantly
       const unitRes = await apiClient.get('/api/catalog/units', { token: session.token, businessId: session.businessId });
-      const updatedUnits = Array.isArray(unitRes.data) ? unitRes.data : (unitRes.data?.items || []);
+      const updatedUnits = (Array.isArray(unitRes.data) ? unitRes.data : (unitRes.data?.items || [])).filter(u => u.status === 'ACTIVE');
       setUnits(updatedUnits);
       setIsAddingUnit(false);
       setNewUnitForm({ name: '', shortName: '' });
@@ -248,8 +250,8 @@ export default function CatalogPage() {
             <input required type="text" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">SKU</label>
-            <input type="text" value={form.sku} onChange={e => setForm({ ...form, sku: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            <label className="block text-sm font-medium text-slate-700 mb-1">SKU <span className="text-slate-400 font-normal text-xs">(leave blank to auto-generate)</span></label>
+            <input type="text" value={form.sku} onChange={e => setForm({ ...form, sku: e.target.value })} placeholder="e.g. PROD-001" className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
           </div>
           <div>
             <div className="flex justify-between items-center mb-1">
@@ -289,12 +291,12 @@ export default function CatalogPage() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Selling Price</label>
-              <input type="number" step="0.01" value={form.sellingPrice} onChange={e => setForm({ ...form, sellingPrice: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+              <label className="block text-sm font-medium text-slate-700 mb-1">Selling Price *</label>
+              <input required type="number" step="0.01" min="0" value={form.sellingPrice} onChange={e => setForm({ ...form, sellingPrice: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Purchase Price</label>
-              <input type="number" step="0.01" value={form.purchasePrice} onChange={e => setForm({ ...form, purchasePrice: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+              <label className="block text-sm font-medium text-slate-700 mb-1">Purchase Price *</label>
+              <input required type="number" step="0.01" min="0" value={form.purchasePrice} onChange={e => setForm({ ...form, purchasePrice: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
             </div>
           </div>
           <div className="pt-4 border-t border-slate-100">
